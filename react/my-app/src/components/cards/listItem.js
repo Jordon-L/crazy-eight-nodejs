@@ -3,7 +3,7 @@ import React from 'react';
 function ListItem(props) {
 
     function handleClick() {
-        props.onItemClick(props.item);
+        props.onItemClick(props.index);
     }
 
     return (

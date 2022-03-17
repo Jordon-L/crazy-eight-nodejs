@@ -5,7 +5,13 @@ function DiscardCard(props) {
     let socket = useContext(SocketContext);
 
     function discardAction() {
-        socket.emit('discard', "1");
+        let selectedIndices = []
+        props.selected.forEach((e,index) => {
+            if(e == true){
+                selectedIndices.push(index);
+            }
+        });
+        socket.emit('discard card', selectedIndices);
     }
 
     return (
