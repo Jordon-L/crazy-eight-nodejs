@@ -5,8 +5,9 @@ class Game {
         this.deck = new Deck();
         this.deck.shuffle();
         this.numOfPlayers = 0;
-        this.playerSocketIds = [null,null,null,null];
-        this.playerNames = [null,null,null,null];
+        this.ready = 0;
+        this.playerSocketIds = {};
+        this.players = {};
         this.p0Hand = [];
         this.p1Hand = [];
         this.p2Hand = [];
@@ -14,6 +15,7 @@ class Game {
         this.discardPile = [];
 
     }
+
 
 }
 

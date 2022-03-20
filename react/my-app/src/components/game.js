@@ -5,8 +5,13 @@ import DrawCard from './drawCard';
 import {SocketContext} from '../context/socket';
 import DiscardCard from './discardCard';
 import JoinRoom from './joinRoom';
+import PlayerTable from './playerTable'
 
 function Game(props){
+    function createPlayerStatus(name, ready) {
+        return { 'name': name, 'ready': ready};
+    }
+
     let socket = useContext(SocketContext);
     let connected = socket.connected;
     let gameStart = false;
@@ -14,7 +19,10 @@ function Game(props){
     const [cards, setCards] = useState([]);
     const [gameId, setgameId] = useState(null);
     const [players, setPlayers] = useState([]);
+    const [readyPlayers, setReadyPlayers] = useState([false,false,false,false])
+    const [playerIndex, setPlayerIndex] = useState(null);
     const [name, setName] = useState([]);
+    const [gameMaster,setGameMaster] = useState(false);
     const handlePlayerHand = useCallback((gameData) => {
         setCards(gameData.playerHand);
     }, []);
@@ -33,7 +41,9 @@ function Game(props){
 
     const handleUserJoined = useCallback((gameData) => {
         console.log('user joined');
-        setPlayers(gameData.players);
+        setPlayers(gameData.players);   
+        setName(gameData.name);
+        setgameId(gameData.gameId);
     }, []);
 
     const handleUserLeave = useCallback((gameData) => {
@@ -41,18 +51,27 @@ function Game(props){
         setPlayers(gameData.players);
     }, []);  
 
+    const handleGameReady = useCallback((gameData) => {
+        setReadyPlayers(gameData.readyPlayers);
+    }, []);  
+
+    const onClickReadyButton = function() {
+        socket.emit('game ready');
+    } 
     useEffect(() =>{
         socket.on('game', handlePlayerHand);
         socket.on('draw card', drawCard);
         socket.on('join', handleGameId);
         socket.on('user joined', handleUserJoined);
         socket.on('user leave', handleUserLeave);
+        socket.on('game ready', handleGameReady);
         return () => {
             socket.off('game', handlePlayerHand);
             socket.off('draw card', drawCard);
             socket.off('join', handleGameId);
             socket.off('user joined', handleUserJoined);
             socket.off('user leave', handleUserLeave);
+            socket.off('game ready', handleGameReady);
         }
     });
     let game = <div>
@@ -60,7 +79,7 @@ function Game(props){
         <DrawCard></DrawCard>
         </div>
     let waiting = <div> 
-        Game ID: {gameId} You are : {name} In Room: {players.toString()} <button onClick = {() => socket.emit('game start', gameId)}>test </button>
+        <PlayerTable players = {players}></PlayerTable>
     </div>
     let join = <JoinRoom></JoinRoom>
     return (
