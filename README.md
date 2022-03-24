@@ -1,4 +1,6 @@
 # crazy-eight-nodejs
+Work In Progress
+
 
 This is my implementation of Crazy Eights using Nodejs and React with SocketIO
 
