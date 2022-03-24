@@ -5,26 +5,24 @@ import DrawCard from './drawCard';
 import {SocketContext} from '../context/socket';
 import DiscardCard from './discardCard';
 import JoinRoom from './joinRoom';
-import PlayerTable from './playerTable'
+import PlayerTable from './playerTable/playerTable'
+export const GameContext = React.createContext();
 
 function Game(props){
-    function createPlayerStatus(name, ready) {
-        return { 'name': name, 'ready': ready};
+    function createPlayerStatus(name, number) {
+        return {'name': name, 'ready': false, 'number': number};;
     }
-
-    let socket = useContext(SocketContext);
-    let connected = socket.connected;
-    let gameStart = false;
-    const [gameJoin, setGameJoin] = useState(false);
+    const socket = useContext(SocketContext);
+    const [gameStatus, setGameStatus] = useState(1);
     const [cards, setCards] = useState([]);
-    const [gameId, setgameId] = useState(null);
+    const [gameId, setgameId] = useState('placeholder');
     const [players, setPlayers] = useState([]);
-    const [readyPlayers, setReadyPlayers] = useState([false,false,false,false])
-    const [playerIndex, setPlayerIndex] = useState(null);
-    const [name, setName] = useState([]);
+    const [name, setName] = useState('placeholder');
     const [gameMaster,setGameMaster] = useState(false);
+
     const handlePlayerHand = useCallback((gameData) => {
         setCards(gameData.playerHand);
+        setGameStatus(3);
     }, []);
 
     const drawCard = useCallback((gameData) => {
@@ -32,18 +30,16 @@ function Game(props){
         setCards(cards => [...cards, newCard]);
     }, []);
 
-    const handleGameId = useCallback((gameData) => {
-        setgameId(gameData.gameId);
-        setPlayers(gameData.players);
-        setName(gameData.name);
-        setGameJoin(true);
+    const handleGameId = useCallback((gameData, name, gameId) => {
+        setgameId(gameId);
+        setPlayers(gameData.players); 
+        setName(name);
+        setGameStatus(2);
     }, []);
 
     const handleUserJoined = useCallback((gameData) => {
         console.log('user joined');
         setPlayers(gameData.players);   
-        setName(gameData.name);
-        setgameId(gameData.gameId);
     }, []);
 
     const handleUserLeave = useCallback((gameData) => {
@@ -52,21 +48,21 @@ function Game(props){
     }, []);  
 
     const handleGameReady = useCallback((gameData) => {
-        setReadyPlayers(gameData.readyPlayers);
+        setPlayers(gameData.players);              
     }, []);  
 
     const onClickReadyButton = function() {
         socket.emit('game ready');
     } 
     useEffect(() =>{
-        socket.on('game', handlePlayerHand);
+        socket.on('start game', handlePlayerHand);
         socket.on('draw card', drawCard);
         socket.on('join', handleGameId);
         socket.on('user joined', handleUserJoined);
         socket.on('user leave', handleUserLeave);
         socket.on('game ready', handleGameReady);
         return () => {
-            socket.off('game', handlePlayerHand);
+            socket.off('start game', handlePlayerHand);
             socket.off('draw card', drawCard);
             socket.off('join', handleGameId);
             socket.off('user joined', handleUserJoined);
@@ -74,17 +70,33 @@ function Game(props){
             socket.off('game ready', handleGameReady);
         }
     });
-    let game = <div>
-        <PlayerHand cards = {cards}></PlayerHand>
-        <DrawCard></DrawCard>
-        </div>
-    let waiting = <div> 
-        <PlayerTable players = {players}></PlayerTable>
-    </div>
-    let join = <JoinRoom></JoinRoom>
+
+    function display(gameStatus, gameId, name, players){
+        switch(gameStatus) {
+            case 1:
+                return <JoinRoom></JoinRoom>;
+            case 2:
+                return <div>
+                    <GameContext.Provider value ={{gameId, name, players}}>
+                        <h1>Crazy Eight</h1>
+                        <h3>Game ID: {gameId.toString()}</h3>
+                        <h3>You are: {name}</h3>
+                        <PlayerTable players = {players}></PlayerTable>
+                    </GameContext.Provider>
+                    
+                    <button onClick = {onClickReadyButton}>Ready</button>
+                </div>;
+            case 3:
+                return <div>
+                    <PlayerHand cards = {cards}></PlayerHand>
+                </div>;
+            default:
+                return <div>Error</div>;
+        }
+    }
     return (
         <div>
-            {gameJoin ? waiting :join}
+            {display(gameStatus, gameId, name, players)}
         </div>
         
     )   

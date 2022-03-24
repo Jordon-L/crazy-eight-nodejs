@@ -2,8 +2,10 @@ import React,{useCallback, useContext, useEffect, useState} from 'react'
 import {SocketContext} from '../context/socket';
 
 function JoinRoom(props){
-    let socket = useContext(SocketContext);
+
+    const socket = useContext(SocketContext);
     const [input, setInput] = useState(null);
+    
     function join(){
         console.log(input)
         socket.emit("join game", input);

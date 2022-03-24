@@ -22,6 +22,29 @@ function createPlayer(name, number){
     return {'name': name, 'ready': false, 'number': number};
 }
 
+function gameStart(game){
+    let gameId = game.gameId;
+    let playerSocketIds = game.playerSocketIds;
+    let keys = Object.keys(playerSocketIds);
+    let deck = game.deck;
+    deck.createDeck();
+    deck.shuffle();
+    for(let i = 0; i < keys.length; i++){
+        let playerName = keys[i];
+        let socketId = playerSocketIds[playerName];
+        let playerHands = game.playerHands
+        playerHands[playerName] = deck.drawNCards(5);
+        let gameData = {
+            'playerHand' : game.playerHands[playerName],
+        }
+        console.log(gameData);
+        io.to(socketId).emit('start game', gameData);
+
+    }
+    
+
+}
+
 io.on('connection', function (socket) {
     console.log('a user connected');
 
@@ -31,18 +54,17 @@ io.on('connection', function (socket) {
         let playerName = 'player1';
         newGame.playerSocketIds[playerName] = socket.id;
         newGame.players[playerName] = createPlayer(playerName, 1);
-        newGame.players['player2'] = createPlayer('empty slot 1', 2);
-        newGame.players['player3'] = createPlayer('empty slot 2', 3);
-        newGame.players['player4'] = createPlayer('empty slot 3' ,4);
-        let gameId = "game" + latestGameId;        
+        newGame.players['player2'] = createPlayer('empty slot 2', 2);
+        newGame.players['player3'] = createPlayer('empty slot 3', 3);
+        newGame.players['player4'] = createPlayer('empty slot 4' ,4);
+        let gameId = "game" + latestGameId;
+        newGame.gameId = gameId;    
         socket.join(gameId);
 
         let gameData = {
-            "gameId" : gameId,
-            "players" : Object.values(newGame.players),
-            "name" : playerName            
+            "players" : Object.values(newGame.players),           
         }
-        socket.emit('join', gameData);
+        socket.emit('join', gameData, playerName, gameId);
 
         socket.gameId = gameId;
         socket.playerName = playerName;
@@ -68,12 +90,10 @@ io.on('connection', function (socket) {
                 }
             }
             let gameData = {
-                "gameId" : gameId,
-                "players" : Object.values(game.players),
-                "name" : playerName            
+                "players" : Object.values(game.players),         
             }
 
-            socket.emit('join', gameData);
+            socket.emit('join', gameData, playerName, gameId);
             socket.gameId = gameId;
             socket.playerName = playerName;
 
@@ -90,14 +110,35 @@ io.on('connection', function (socket) {
     });
 
     socket.on('game ready', function(){
+        
         let gameId = socket.gameId;
-        let playerNumber = socket.playerNumber;
+        let playerName = socket.playerName;
         let game = games[gameId];
-        let playerSockets = game.playerSocketsId;
-
-        if(game.ready >= 4){
-            io.to(gameId).emit('start game');
+        if(game != undefined){
+            let player = game.players[playerName];
+            player.ready = !(player.ready);
+            if(player.ready == true){
+                game.ready++;
+            }
+            else{
+                game.ready--;
+            }
+            let playersInGame = {
+                "players" : Object.values(game.players),
+            }
+            io.to(gameId).emit('game ready', playersInGame);
+            console.log(game.ready);
+            if(game.ready >= 4){
+                console.log('start game');
+                gameStart(game);
+                //io.to(gameId).emit('start game');
+            }            
         }
+        else{
+            console.log('error game ready');
+        }
+        
+
     });
 
     socket.on('disconnecting', function(){
@@ -113,7 +154,9 @@ io.on('connection', function (socket) {
                 playerSockets[socket.playerName] = null;
                 let player = game.players[socket.playerName];
                 let slotNumber = player.number;
-                game.players[socket.playerName] = createPlayer('empty slot ' + slotNumber, slotNumber);
+                let slot = game.players[socket.playerName];
+                slot.name = 'empty slot ' + slotNumber;
+                slot.ready = false;
                 let playersInGame = {
                     "players" : Object.values(game.players),
                 }  

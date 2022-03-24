@@ -30,6 +30,13 @@ class Deck {
     drawCard(){
         return this.cards.shift();
     }
+    drawNCards(n){
+        let cards = [];
+        for(let i = 0; i < n; i++){
+            cards.push(this.cards.shift());
+        }
+        return cards;
+    }
     insertCard(card){
         if(card instanceof Card){
             this.cards.push(card);

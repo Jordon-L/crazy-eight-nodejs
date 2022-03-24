@@ -37,6 +37,29 @@
   }
 }
 
+#playerHand {
+    position: fixed;
+    bottom: 0;
+    left: 40%;
+    margin: auto;
+    height: 340px;
+    padding: 10px;
+}
 #playerHand li {
   display:inline;
 }
+
+
+#table {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+tr {
+    height: 100px;
+  }
+  
+tr td {
+     height: auto !important;
+  }
+

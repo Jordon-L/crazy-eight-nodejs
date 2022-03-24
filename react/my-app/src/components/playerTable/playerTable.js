@@ -6,6 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import CheckMark from './checkMark';
 
 // players {"name": name , "ready" : false}
 
@@ -13,8 +14,8 @@ import Paper from '@mui/material/Paper';
 function PlayerTable(props) {
 
 return (
-    <TableContainer component = {Paper}>
-        <Table sx = {{minWidth: 650}} aria-label = 'players'>
+    <TableContainer id = 'table' component = {Paper}>
+        <Table aria-label = 'players'>
             <TableHead>
                 <TableRow>
                     <TableCell> Player Name </TableCell>
@@ -30,7 +31,7 @@ return (
                         <TableCell component = 'th' scope = 'row'>
                             {row.name}
                         </TableCell>
-                        <TableCell align = 'right'>{row.ready}</TableCell>
+                        <TableCell align = 'right'><CheckMark ready = {row.ready}></CheckMark></TableCell>
                     </TableRow>
                 ))}
             </TableBody>
