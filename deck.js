@@ -39,7 +39,8 @@ class Deck {
     }
     insertCard(card){
         if(card instanceof Card){
-            this.cards.push(card);
+            let length = this.cards.length
+            this.cards.splice(length/2, 0, card);
         }         
     }
 }

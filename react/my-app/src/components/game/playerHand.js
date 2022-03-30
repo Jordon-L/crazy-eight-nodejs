@@ -1,6 +1,10 @@
+/*
+    File name: playerHands.js
+    Description: Display the Player's hand given an array of Cards, save clicked on cards to be discarded
+*/
 import React from 'react';
-import Card from './card'
-import ListItem from './cards/listItem'
+import Card from '../cards/card'
+import ListItem from '../cards/listItem'
 import DiscardCard from './discardCard'
 function PlayerHand(props) {
 
@@ -10,23 +14,18 @@ function PlayerHand(props) {
     }
     let cards = props.cards;
     let clicked = new Array(cards.length).fill(false);
-    let spacing = 50;
     let cardList = cards.map(function(card, index){
         return <Card cardName ={card.fileName}></Card>;
     });
 
-
-    if(cards.length >= 5){
-        spacing = 50
-    }
 return (
     <div>
-        <ul id = 'playerHand'>
+        <DiscardCard selected ={clicked}></DiscardCard>
+        <ul id = 'playerHand'>   
             {cardList.map((item,index) =>
-                <ListItem index={index} item={item} spacing = {spacing} onItemClick={onItemClick} />
+                <ListItem index={index} item={item} onItemClick={onItemClick} />
             )}
         </ul>
-    <DiscardCard selected = {clicked}></DiscardCard>    
     </div>
 );
 }

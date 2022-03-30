@@ -9,9 +9,10 @@ class Game {
         this.ready = 0;
         this.playerSocketIds = {};
         this.players = {};
-        this.playerHands = {}
+        this.playerHands = {};
         this.discardPile = [];
-
+        this.currentlyInPlay = [];
+        this.playerHandsLength = {};
     }
 
 

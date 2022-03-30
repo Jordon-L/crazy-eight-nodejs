@@ -42,14 +42,80 @@
     bottom: 0;
     left: 40%;
     margin: auto;
-    height: 340px;
+    padding: 10px;
+    white-space:nowrap;
+}
+
+ul li {
+    margin-left: -50px;
+    display: inline;
+}
+
+#right {
+    position: fixed;
+    right: 0;
+    top: 40%;
+    margin: auto;
+    padding: 10px;
+    white-space:nowrap;
+    transform: rotate(90deg)
+}
+#right ul li {
+    margin-right: -50px;
+    display: inline;
+}
+
+#top {
+    position: fixed;
+    top: 0;
+    left: 40%;
+    margin: auto;
+    white-space:nowrap;
     padding: 10px;
 }
-#playerHand li {
-  display:inline;
+
+#left {
+    position: fixed;
+    left: 0;
+    top: 40%;
+    margin: auto;
+    padding: 10px;
+    white-space:nowrap;
+    transform: rotate(90deg);
 }
 
+#discard {
+    position: fixed;
+    bottom: 200px;
+    left: 40%;
+    margin: auto;   
+}
 
+#inPlay {
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+#inPlay button{
+    display: inline-block;
+    vertical-align: middle;
+}
+#inPlay ul {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 1em;
+    width: 200px;
+}
+
+#inPlay ul li {
+    margin-left: -85px;
+    display: inline;
+}
+#inPlay ul li:first-child{
+    display: inline;
+    margin-left: 0px;
+}
 #table {
     margin: auto;
     width: 50%;
@@ -63,3 +129,7 @@ tr td {
      height: auto !important;
   }
 
+img {
+    width : 100px;
+    height: 140px;
+}

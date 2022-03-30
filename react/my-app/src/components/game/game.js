@@ -1,28 +1,49 @@
+/*
+    File name : game.js
+    Description: handles the data sent by the server via sockets and handles the game logic of the game.
+
+*/
+
 import React,{useCallback, useContext, useEffect, useState} from 'react'
-import io from 'socket.io-client';
-import PlayerHand from "./playerHand";
-import DrawCard from './drawCard';
-import {SocketContext} from '../context/socket';
-import DiscardCard from './discardCard';
-import JoinRoom from './joinRoom';
-import PlayerTable from './playerTable/playerTable'
+import {SocketContext} from '../../context/socket';
+import {GameDataContext} from '../../context/gameData';
+import JoinRoom from '../room/joinRoom';
+import PlayerTable from '../room/playerTable'
+import GameSession from './gameSession';
 export const GameContext = React.createContext();
 
 function Game(props){
-    function createPlayerStatus(name, number) {
-        return {'name': name, 'ready': false, 'number': number};;
-    }
     const socket = useContext(SocketContext);
     const [gameStatus, setGameStatus] = useState(1);
     const [cards, setCards] = useState([]);
     const [gameId, setgameId] = useState('placeholder');
     const [players, setPlayers] = useState([]);
+    const [otherHands, setOtherHands] = useState({});
     const [name, setName] = useState('placeholder');
-    const [gameMaster,setGameMaster] = useState(false);
+    const [inPlay, setInPlay] = useState([]);
+    const [turn, setTurn] = useState(false);
+    
 
     const handlePlayerHand = useCallback((gameData) => {
         setCards(gameData.playerHand);
+        setOtherHands(gameData.otherHands);
+        setInPlay(gameData.inPlay);
         setGameStatus(3);
+    }, []);
+
+    const handleDiscard = useCallback((gameData) => {
+        setCards(gameData.playerHand);
+        setOtherHands(gameData.otherHands);
+        setInPlay(gameData.inPlay);
+        setGameStatus(3);
+        console.log('discard');
+    }, []);
+
+    const handleTurn = useCallback((gameData) => {
+        setOtherHands(gameData.otherHands);
+        setInPlay(gameData.inPlay);
+        setGameStatus(3);
+        console.log('other play turn');
     }, []);
 
     const drawCard = useCallback((gameData) => {
@@ -54,6 +75,7 @@ function Game(props){
     const onClickReadyButton = function() {
         socket.emit('game ready');
     } 
+
     useEffect(() =>{
         socket.on('start game', handlePlayerHand);
         socket.on('draw card', drawCard);
@@ -61,6 +83,9 @@ function Game(props){
         socket.on('user joined', handleUserJoined);
         socket.on('user leave', handleUserLeave);
         socket.on('game ready', handleGameReady);
+        socket.on('discard card', handleDiscard);
+        socket.on('other play turn', handleTurn);
+
         return () => {
             socket.off('start game', handlePlayerHand);
             socket.off('draw card', drawCard);
@@ -68,6 +93,8 @@ function Game(props){
             socket.off('user joined', handleUserJoined);
             socket.off('user leave', handleUserLeave);
             socket.off('game ready', handleGameReady);
+            socket.off('discard card', handleDiscard);
+            socket.off('other play turn', handleTurn);
         }
     });
 
@@ -88,7 +115,9 @@ function Game(props){
                 </div>;
             case 3:
                 return <div>
-                    <PlayerHand cards = {cards}></PlayerHand>
+                    <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay}}>
+                        <GameSession></GameSession>
+                    </GameDataContext.Provider>
                 </div>;
             default:
                 return <div>Error</div>;

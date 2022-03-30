@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {SocketContext} from '../context/socket';
+import {SocketContext} from '../../context/socket';
 
 function DiscardCard(props) {
     let socket = useContext(SocketContext);
@@ -11,11 +11,12 @@ function DiscardCard(props) {
                 selectedIndices.push(index);
             }
         });
+        console.log(selectedIndices);
         socket.emit('discard card', selectedIndices);
     }
 
     return (
-        <button onClick={discardAction}>
+        <button id = 'discard' onClick={discardAction}>
             Discard card
         </button>
     );

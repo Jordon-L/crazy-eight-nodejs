@@ -1,3 +1,8 @@
+/*
+    File name: listItem.js
+    Description: A clickable list item
+*/
+
 import React from 'react';
 
 function ListItem(props) {
@@ -6,7 +11,7 @@ function ListItem(props) {
         props.onItemClick(props.index);
     }
     return (
-        <li onClick={handleClick} style = {{position: 'absolute', left:(props.spacing * props.index) }} >
+        <li onClick={handleClick} >
             {props.item}
         </li>
     );

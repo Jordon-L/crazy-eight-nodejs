@@ -1,3 +1,8 @@
+/*
+    File name: card.js
+    Description: Image of a card given its file name.
+*/
+
 import React from 'react';
 import {cardPaths} from './cardPaths'
 

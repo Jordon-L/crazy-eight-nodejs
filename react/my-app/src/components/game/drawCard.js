@@ -1,5 +1,10 @@
+/*
+    File name: drawCard.js
+    Description: Draw a card
+*/
+
 import React, {useContext} from 'react';
-import {SocketContext} from '../context/socket';
+import {SocketContext} from '../../context/socket';
 
 function DrawCard(props) {
     let socket = useContext(SocketContext);

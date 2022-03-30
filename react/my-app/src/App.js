@@ -1,8 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import {SocketContext} from './context/socket'
-import Game from "./components/game";
-import DrawCard from "./components/drawCard";
+import Game from "./components/game/game";
 import io from 'socket.io-client';
 
 

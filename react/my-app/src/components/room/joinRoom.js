@@ -1,5 +1,10 @@
+/*
+    File name: joinRoom.js
+    Description: Display how to join a room and how to play game
+*/
+
 import React,{useCallback, useContext, useEffect, useState} from 'react'
-import {SocketContext} from '../context/socket';
+import {SocketContext} from '../../context/socket';
 
 function JoinRoom(props){
 

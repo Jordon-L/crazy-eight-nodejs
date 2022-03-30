@@ -1,3 +1,8 @@
+/*
+    File name: checkMark.js
+    Description: Display a check mark
+*/
+
 import React, { useEffect,useState } from 'react'
 import CheckIcon from '@mui/icons-material/Check';
 
