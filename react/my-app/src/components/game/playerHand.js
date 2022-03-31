@@ -9,17 +9,24 @@ import DiscardCard from './discardCard'
 function PlayerHand(props) {
 
     function onItemClick(id) {
-        clicked[id] = !clicked[id]
-        console.log(clicked[id]);
+        let index = clicked.indexOf(id);
+        console.log(id, clicked)
+        if(index !== -1){
+            clicked.splice(index,1);
+        }
+        else{
+            clicked.push(id);
+        }
+        console.log(id, clicked)
     }
     let cards = props.cards;
-    let clicked = new Array(cards.length).fill(false);
+    let clicked = [];
     let cardList = cards.map(function(card, index){
         return <Card cardName ={card.fileName}></Card>;
     });
 
 return (
-    <div>
+    <div >
         <DiscardCard selected ={clicked}></DiscardCard>
         <ul id = 'playerHand'>   
             {cardList.map((item,index) =>

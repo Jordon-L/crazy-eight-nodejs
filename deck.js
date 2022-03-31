@@ -43,6 +43,12 @@ class Deck {
             this.cards.splice(length/2, 0, card);
         }         
     }
+    insertDiscardPile(discardPile){
+        this.cards.push(...discardPile);
+    }
+    getLength(){
+        return this.cards.length;
+    }
 }
 
 module.exports = Deck;

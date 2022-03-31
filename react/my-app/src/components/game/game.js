@@ -114,20 +114,15 @@ function Game(props){
                     <button onClick = {onClickReadyButton}>Ready</button>
                 </div>;
             case 3:
-                return <div>
-                    <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay}}>
+                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay}}>
                         <GameSession></GameSession>
                     </GameDataContext.Provider>
-                </div>;
             default:
                 return <div>Error</div>;
         }
     }
     return (
-        <div>
-            {display(gameStatus, gameId, name, players)}
-        </div>
-        
+        display(gameStatus, gameId, name, players)
     )   
 }
 

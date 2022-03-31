@@ -14,8 +14,14 @@ class Game {
         this.currentlyInPlay = [];
         this.playerHandsLength = {};
     }
+    //is this a valid play
+    isValidPlay(cards){
 
+    }
+    //is there a valid play in hand
+    isValidHand(cards){
 
+    }
 }
 
 module.exports = Game;

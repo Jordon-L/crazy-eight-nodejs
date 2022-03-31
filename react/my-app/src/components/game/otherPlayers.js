@@ -13,7 +13,12 @@ function OtherPlayers(props) {
     let cards = function(n){
         let list = [];
         for(let i = 0; i < n; i++){
-            list.push(<Card cardName = '1B'></Card>);
+            if(props.location !== 'top'){
+                list.push(<Card cardName = '1BSide'></Card>);
+            }
+            else{
+                list.push(<Card cardName = '1B'></Card>);
+            }
         }
         return list;
     };
@@ -22,13 +27,11 @@ function OtherPlayers(props) {
     let cardList = cards(props.number);
 
 return (
-    <div>
-        <ul id = {props.location}>
+    <ul id = {props.location}>
             {cardList.map((item,index) =>
                 <ListItem index={index} item={item} onItemClick={onItemClick}  />
             )}
-        </ul>    
-    </div>
+    </ul>    
 );
 }
 
