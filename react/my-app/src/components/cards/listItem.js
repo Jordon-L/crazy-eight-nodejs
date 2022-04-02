@@ -7,11 +7,15 @@ import React from 'react';
 
 function ListItem(props) {
 
-    function handleClick() {
-        props.onItemClick(props.index);
+    let style = props.spacing;
+    if(props.index == 0){
+        style = {};
+    }
+    else{
+        style = props.spacing
     }
     return (
-        <li onClick={handleClick} >
+        <li style = {style}>
             {props.item}
         </li>
     );

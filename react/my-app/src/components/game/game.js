@@ -24,27 +24,35 @@ function Game(props){
     const [turn, setTurn] = useState(false);
     
 
-    const handlePlayerHand = useCallback((gameData) => {
+    const handleStart = useCallback((gameData) => {
         setCards(gameData.playerHand);
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
+        if(gameData.whosTurn === name){
+            setTurn(true);
+        }
         setGameStatus(3);
-    }, []);
+    }, [name]);
 
     const handleDiscard = useCallback((gameData) => {
         setCards(gameData.playerHand);
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
+        setTurn(false);
         setGameStatus(3);
         console.log('discard');
-    }, []);
+    }, [name]);
 
     const handleTurn = useCallback((gameData) => {
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
+        console.log(gameData.whosTurn);
+        if(gameData.whosTurn === name){
+            setTurn(true);
+        }
         setGameStatus(3);
         console.log('other play turn');
-    }, []);
+    }, [name]);
 
     const drawCard = useCallback((gameData) => {
         let newCard = gameData.newCard;
@@ -77,7 +85,7 @@ function Game(props){
     } 
 
     useEffect(() =>{
-        socket.on('start game', handlePlayerHand);
+        socket.on('start game', handleStart);
         socket.on('draw card', drawCard);
         socket.on('join', handleGameId);
         socket.on('user joined', handleUserJoined);
@@ -87,7 +95,7 @@ function Game(props){
         socket.on('other play turn', handleTurn);
 
         return () => {
-            socket.off('start game', handlePlayerHand);
+            socket.off('start game', handleStart);
             socket.off('draw card', drawCard);
             socket.off('join', handleGameId);
             socket.off('user joined', handleUserJoined);
@@ -103,7 +111,7 @@ function Game(props){
             case 1:
                 return <JoinRoom></JoinRoom>;
             case 2:
-                return <div>
+                return <React.Fragment>
                     <GameContext.Provider value ={{gameId, name, players}}>
                         <h1>Crazy Eight</h1>
                         <h3>Game ID: {gameId.toString()}</h3>
@@ -112,9 +120,9 @@ function Game(props){
                     </GameContext.Provider>
                     
                     <button onClick = {onClickReadyButton}>Ready</button>
-                </div>;
+                </React.Fragment>;
             case 3:
-                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay}}>
+                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay, turn}}>
                         <GameSession></GameSession>
                     </GameDataContext.Provider>
             default:

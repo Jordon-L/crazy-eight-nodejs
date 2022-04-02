@@ -37,82 +37,76 @@
   }
 }
 
-#playerHand {
-    position: fixed;
-    bottom: 0;
-    left: 40%;
-    margin: auto;
-    padding: 10px;
-    white-space:nowrap;
+#game{
+    height:1080px;
+    margin:auto;
+    display: grid;
+    grid-template-columns: 33.333% 33.333% 33.333%;
+    grid-template-rows: 20% 60% 20%;
+    grid-template-areas: 
+    "top top top"
+    "left middle right"
+    "bottom bottom bottom";
+    background-color: #2196F3;
+}
+#bottom {
+    grid-area: bottom;
 }
 
+#playerHand {
+    white-space:nowrap;
+}
+ul {
+    list-style-type: None;
+}
 ul li {
-    margin-left: -50px;
     display: inline;
 }
 
 #top {
-    position: fixed;
-    top: 0;
-    left: 40%;
-    margin: auto;
+    grid-area: top;
     white-space:nowrap;
-    padding: 10px;
+    
 }
 
 #right {
-    position: fixed;
-    right: 0;
-    top: 40%;
-    margin: auto;
-    padding: 10px;
+    grid-area: right;
     white-space:nowrap;
-    list-style: none;
+    list-style-type: None;
 }
-
-#right li:first-child{
+#right ul li:first-child{
     margin-top: 0px;
     display: list-item;   
 }
 
 #right li {
-    margin-top: -50px;
     display: list-item;
 }
 
 #left {
-    position: fixed;
-    left: 0;
-    top: 40%;
-    margin: auto;
-    padding: 10px;
+    grid-area: left;
     white-space:nowrap;
-    transform: rotate(180deg);
-    list-style: none;
 }
 
-#left li:first-child{
+#left ul li:first-child{
     margin-top: 0px;
     display: list-item;   
 }
 
 #left li {
-    margin-top: -50px;
     display: list-item;
 }
 
 #discard {
-    position: fixed;
-    bottom: 200px;
-    left: 40%;
-    margin: auto;   
+    margin: auto;
+    margin-bottom: 20px;   
 }
 
 #inPlay {
-    position: fixed;
-    bottom: 50%;
-    left: 50%;
-    transform: translate(-50%, 0);
+    grid-area: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 #inPlay button{
     display: inline-block;
@@ -155,8 +149,41 @@ tr td {
     width : 140px;
     height: 100px;
 }
-
+    
 img {
     width : 100px;
     height: 140px;
+    transform: translateY(0px);
+}
+
+.selected {
+    transition: 0.2s;
+    transform: translateY(-20px);
+}
+
+.numberCircle {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+
+    background: #fff;
+    border: 2px solid #666;
+    color: #666;
+    text-align: center;
+
+    font: 32px Arial, sans-serif;
+}
+
+.cardInline{
+    display: inline;
+    position: relative;
+}
+
+.text{
+    position: absolute;
+    bottom: 150px;
+    left: 0px;
+    padding-left: 20px;
+    padding-right: 20px;
 }

@@ -20,11 +20,12 @@ function GameSession(props) {
         let top = gameData.players[order[2]];
         let left = gameData.players[order[3]];
         return (
-            <div id = 'game'>
+            <div id = 'game'>  
                 <OtherPlayers location = 'top' number = {gameData.otherHands[top.name]}> </OtherPlayers>
-                <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]}> </OtherPlayers>
                 <OtherPlayers location = 'left' number = {gameData.otherHands[left.name]}> </OtherPlayers>
                 <InPlay cards = {gameData.inPlay}></InPlay>
+                <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]}> </OtherPlayers>
+                
                 <PlayerHand cards = {gameData.cards}></PlayerHand>
             </div>
         );

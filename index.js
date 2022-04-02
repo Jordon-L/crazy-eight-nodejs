@@ -46,7 +46,9 @@ function gameStart(game){
     game.currentlyInPlay.push(...firstCard);
     console.log(game.currentlyInPlay);
     //send out to client
-    
+    game.whosTurn = keys[0];
+    game.whosTurnIndex = 0;
+
     for(let i = 0; i < keys.length; i++){
         let playerName = keys[i];
         let socketId = playerSocketIds[playerName];
@@ -54,7 +56,8 @@ function gameStart(game){
         let gameData = {
             'playerHand' : game.playerHands[playerName],
             'otherHands': game.playerHandsLength,
-            'inPlay': game.currentlyInPlay
+            'inPlay': game.currentlyInPlay,
+            'whosTurn' : game.whosTurn,
         }
         io.to(socketId).emit('start game', gameData);
     }
@@ -163,36 +166,47 @@ io.on('connection', function (socket) {
         let socketId = socket.id;
         let game = games[gameId];
         let inPlay = [];
-        
-        if(game != undefined){
-            let playerHand = game.playerHands[playerName];
-            for(let i = 0; i < selectedCards.length; i++){
-                let index = selectedCards[i];
-                inPlay.push(playerHand[index]);
-                
-            }
-            selectedCards = selectedCards.sort();
-            for(let i = 0; i < selectedCards.length; i++){
-                let index = selectedCards[i]-i;
-                playerHand.splice(index, 1);        
-            }            
-            game.playerHandsLength[playerName] = playerHand.length;
 
-            game.discardPile.push(...game.currentlyInPlay);
-            game.currentlyInPlay = inPlay;
-            let gameData = {
-                'playerHand' : game.playerHands[playerName],
-                'otherHands': game.playerHandsLength,
-                'inPlay' : game.currentlyInPlay
+        if(game != undefined){
+            if(game.isValidPlay(selectedCards)){
+                let playerHand = game.playerHands[playerName];
+                for(let i = 0; i < selectedCards.length; i++){
+                    let index = selectedCards[i];
+                    inPlay.push(playerHand[index]);
+                    
+                }
+                selectedCards = selectedCards.sort();
+                for(let i = 0; i < selectedCards.length; i++){
+                    let index = selectedCards[i]-i;
+                    playerHand.splice(index, 1);        
+                }            
+                game.playerHandsLength[playerName] = playerHand.length;
+
+                game.discardPile.push(...game.currentlyInPlay);
+                game.currentlyInPlay = inPlay;
+
+                //next person's turn
+                game.nextTurn();
+
+                let gameData = {
+                    'playerHand' : game.playerHands[playerName],
+                    'otherHands': game.playerHandsLength,
+                    'inPlay' : game.currentlyInPlay,
+                    'whosTurn' : game.whosTurn,
+                }
+                io.to(socketId).emit('discard card', gameData);
+        
+                let turn = {
+                    'otherHands': game.playerHandsLength,
+                    'inPlay' : game.currentlyInPlay,
+                    'whosTurn' : game.whosTurn,            
+                }
+                console.log(game.playerHandsLength);
+                socket.broadcast.to(gameId).emit('other play turn', turn);                                
             }
-            io.to(socketId).emit('discard card', gameData);
-    
-            let turn = {
-                'otherHands': game.playerHandsLength,
-                'inPlay' : game.currentlyInPlay            
+            else{
+                console.log('invalid play');
             }
-            console.log(game.playerHandsLength);
-            socket.broadcast.to(gameId).emit('other play turn', turn);
         }
 
     });
@@ -234,21 +248,15 @@ io.on('connection', function (socket) {
             game.discardPile = [];
             deck.shuffle();
         }
-        let firstCard = deck.drawNCards(1);
+        let card = deck.drawNCards(1);
         let playerHand = game.playerHands[playerName];
-        while(firstCard.rank === 'eight'){
-            deck.insert(firstCard);
-            firstCard = deck.drawNCards(1);
-        }
-        playerHand.push(...firstCard);
+        playerHand.push(...card);
         game.playerHandsLength[playerName] = playerHand.length;
-        
+        console.log(card);
         let gameData = {
-            'playerHand' : game.playerHands[playerName],
-            'otherHands': game.playerHandsLength,
-            'inPlay' : game.currentlyInPlay
+            'newCard' : card[0]
         }
-        io.to(socketId).emit('discard card', gameData);
+        io.to(socketId).emit('draw card', gameData);
 
         let turn = {
             'otherHands': game.playerHandsLength,

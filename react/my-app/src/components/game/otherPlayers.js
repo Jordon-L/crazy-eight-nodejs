@@ -14,24 +14,38 @@ function OtherPlayers(props) {
         let list = [];
         for(let i = 0; i < n; i++){
             if(props.location !== 'top'){
-                list.push(<Card cardName = '1BSide'></Card>);
+                list.push(<Card cardName = '1BSide' clickedPos = {-1} onItemClick={onItemClick}></Card>);
             }
             else{
-                list.push(<Card cardName = '1B'></Card>);
+                list.push(<Card cardName = '1B' clickedPos = {-1} onItemClick={onItemClick}></Card>);
             }
         }
         return list;
     };
 
-    
-    let cardList = cards(props.number);
-
+    let cardList = cards(props.number);      
+    let spacing = "-50px";
+    if(props.number > 10){
+        spacing = "-75px"
+    }
+    if(props.number > 20){
+        spacing = "-85px"
+    }
+    let style = {};
+    if(props.location !== 'top'){
+        style = {marginTop: spacing}
+    }
+    else{
+        style = {marginLeft: spacing}
+    }
 return (
-    <ul id = {props.location}>
+    <div id = {props.location}>
+        <ul>
             {cardList.map((item,index) =>
-                <ListItem index={index} item={item} onItemClick={onItemClick}  />
+                    <ListItem index={index} item={item} spacing = {style}  />
             )}
-    </ul>    
+        </ul>
+    </div>    
 );
 }
 
