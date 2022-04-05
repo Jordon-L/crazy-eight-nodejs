@@ -22,14 +22,19 @@ function Game(props){
     const [name, setName] = useState('placeholder');
     const [inPlay, setInPlay] = useState([]);
     const [turn, setTurn] = useState(false);
-    
+    const [whosTurn, setWhosTurn] = useState('');
+    const [showSelectSuit, setShowSelectSuit] = useState(false);
+    const [showCurrentSuit, setShowCurrentSuit] = useState(false);
+    const [currentSuit, setCurrentSuit] = useState('placeholder');
+    const [twoStack, setTwoStack] = useState(0);
 
     const handleStart = useCallback((gameData) => {
         setCards(gameData.playerHand);
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
+        setWhosTurn(gameData.whosTurn);
         if(gameData.whosTurn === name){
-            setTurn(true);
+            setTurn(true);     
         }
         setGameStatus(3);
     }, [name]);
@@ -39,24 +44,45 @@ function Game(props){
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
         setTurn(false);
+        setShowCurrentSuit(false);
+        if(gameData.whosTurn !== undefined){
+            setWhosTurn(gameData.whosTurn);
+        }
         setGameStatus(3);
         console.log('discard');
-    }, [name]);
+    }, []);
+
+    const handleEightDiscard = useCallback((gameData) => {
+        setCards(gameData.playerHand);
+        setOtherHands(gameData.otherHands);
+        setInPlay(gameData.inPlay);
+        setShowSelectSuit(true);
+        setTurn(false);
+        setGameStatus(3);
+        console.log('discard eight');
+    }, []);
 
     const handleTurn = useCallback((gameData) => {
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
-        console.log(gameData.whosTurn);
+        setShowCurrentSuit(false);
+        setWhosTurn(gameData.whosTurn)
         if(gameData.whosTurn === name){
-            setTurn(true);
+            setTurn(true);     
         }
+        setTwoStack(gameData.twoStack);
         setGameStatus(3);
-        console.log('other play turn');
     }, [name]);
 
+    const displaySuit = useCallback((suit) => {
+        setCurrentSuit(suit);
+        setShowCurrentSuit(true);
+        setShowSelectSuit(false);     
+    },[]);
+
     const drawCard = useCallback((gameData) => {
-        let newCard = gameData.newCard;
-        setCards(cards => [...cards, newCard]);
+        let newCards = gameData.newCards;
+        setCards(cards => [...cards, ...newCards]);
     }, []);
 
     const handleGameId = useCallback((gameData, name, gameId) => {
@@ -84,6 +110,15 @@ function Game(props){
         socket.emit('game ready');
     } 
 
+    const displayMessage = useCallback((message) => {
+        alert(message);            
+    }, []);  
+
+    const winner = useCallback((gameData) => {
+        alert('game over ' + gameData.winner + ' won');
+        setPlayers(gameData.players);
+        setGameStatus(2);            
+    }, []);  
     useEffect(() =>{
         socket.on('start game', handleStart);
         socket.on('draw card', drawCard);
@@ -93,6 +128,10 @@ function Game(props){
         socket.on('game ready', handleGameReady);
         socket.on('discard card', handleDiscard);
         socket.on('other play turn', handleTurn);
+        socket.on('discard eight card', handleEightDiscard);
+        socket.on('display suit', displaySuit);
+        socket.on('display message', displayMessage);
+        socket.on('winner', winner);
 
         return () => {
             socket.off('start game', handleStart);
@@ -103,6 +142,10 @@ function Game(props){
             socket.off('game ready', handleGameReady);
             socket.off('discard card', handleDiscard);
             socket.off('other play turn', handleTurn);
+            socket.off('discard eight card', handleEightDiscard);
+            socket.off('display suit', displaySuit);
+            socket.off('display message', displayMessage);
+            socket.off('winner', winner);
         }
     });
 
@@ -122,7 +165,7 @@ function Game(props){
                     <button onClick = {onClickReadyButton}>Ready</button>
                 </React.Fragment>;
             case 3:
-                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay, turn}}>
+                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay, turn, showSelectSuit, showCurrentSuit, currentSuit, twoStack, setTwoStack , whosTurn}}>
                         <GameSession></GameSession>
                     </GameDataContext.Provider>
             default:

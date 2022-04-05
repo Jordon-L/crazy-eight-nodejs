@@ -3,14 +3,13 @@
     Description: Display the Player's hand given an array of Cards, save clicked on cards to be discarded
 */
 import React, {useState} from 'react';
-import Card from '../cards/card'
+import ClickableCard from '../cards/clickableCard'
 import ListItem from '../cards/listItem'
 import DiscardCard from './discardCard'
-
+import SelectSuit from './selectSuit'
 
 function PlayerHand(props) {
     
-
     function onItemClick(id) {
         let index = clicked.indexOf(id);
         if(index !== -1){
@@ -24,9 +23,8 @@ function PlayerHand(props) {
 
     let cards = props.cards;
     let cardList = cards.map(function(card, index){
-        let isClicked = false;
         let clickedPos = clicked.indexOf(index);
-        return <Card index ={index} cardName ={card.fileName} clickedPos = {clickedPos} onItemClick={onItemClick}></Card>;
+        return <ClickableCard index ={index} cardName ={card.fileName} clickedPos = {clickedPos} onItemClick={onItemClick}></ClickableCard>;
         
     });
   
@@ -41,7 +39,9 @@ function PlayerHand(props) {
 
 return (
     <div id = "bottom">
-        <DiscardCard selected ={clicked}></DiscardCard>
+        <p> You ({props.name})</p>
+        <SelectSuit></SelectSuit>
+        <DiscardCard selected ={clicked} setSelected = {setClicked}></DiscardCard>
         <ul id = 'playerHand'>   
             {cardList.map((item,index) => {
                 return( 

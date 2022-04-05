@@ -39,8 +39,10 @@ function OtherPlayers(props) {
         style = {marginLeft: spacing}
     }
 return (
-    <div id = {props.location}>
+    <div id = {props.location}>  
+        <p> {props.name} </p>
         <ul>
+            
             {cardList.map((item,index) =>
                     <ListItem index={index} item={item} spacing = {style}  />
             )}

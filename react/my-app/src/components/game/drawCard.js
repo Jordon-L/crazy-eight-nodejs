@@ -11,7 +11,15 @@ function DrawCard(props) {
     let gameData = useContext(GameDataContext);
     function drawAction() {
         console.log('sne')
-        socket.emit('draw card', "1");
+        let twoStack = gameData.twoStack;
+        if(twoStack !== 0){
+            let draw = twoStack * 2;
+            socket.emit('draw card', draw.toString());
+            gameData.setTwoStack(0);
+        }
+        else{
+            socket.emit('draw card', "1");
+        }
     }
 
     return (

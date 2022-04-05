@@ -28,11 +28,17 @@ class Deck {
         }
     }
     drawCard(){
+        if(this.cards.length === 0){
+            return [];
+        }
         return this.cards.shift();
     }
     drawNCards(n){
         let cards = [];
         for(let i = 0; i < n; i++){
+            if(this.cards.length === 0){
+                break;
+            }
             cards.push(this.cards.shift());
         }
         return cards;
