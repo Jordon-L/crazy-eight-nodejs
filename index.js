@@ -30,6 +30,10 @@ function gameStart(game){
     let deck = game.deck;
     game.discardPile = [];
     game.currentlyInPlay = [];
+    game.direction = 'counterClockwise';
+    game.whosTurn = 'player1';
+    game.whosTurnIndex = 0;
+    game.twoStack = 0;
     deck.createDeck();
     deck.shuffle();
 
