@@ -18,6 +18,7 @@ app.use(express.static(path.resolve(__dirname, './react/my-app/build')));
 app.get('/', (req, res) => {
   res.sendFile(path.resolve(__dirname, './react/my-app/build', 'index.html'));
 });
+
 function createPlayer(name, number){
     return {'name': name, 'ready': false, 'number': number};
 }
