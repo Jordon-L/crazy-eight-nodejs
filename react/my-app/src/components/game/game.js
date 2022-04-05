@@ -33,6 +33,10 @@ function Game(props){
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
         setWhosTurn(gameData.whosTurn);
+        setShowSelectSuit(false);
+        setShowCurrentSuit(false);
+        setCurrentSuit('placeholder');
+        setTwoStack(0);
         if(gameData.whosTurn === name){
             setTurn(true);     
         }

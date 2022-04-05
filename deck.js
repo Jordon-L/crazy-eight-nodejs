@@ -5,6 +5,7 @@ class Deck {
         this.cards = [];
     }
     createDeck(){
+        this.cards = [];
         let suits = ["club", "spade", "heart", "diamond"];
         let ranks = ["ace", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king"]; 
         let fileSuits = ["C", "S", "H", "D"];

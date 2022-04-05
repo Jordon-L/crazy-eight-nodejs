@@ -27,8 +27,11 @@ function gameStart(game){
     let playerSocketIds = game.playerSocketIds;
     let keys = Object.keys(playerSocketIds);
     let deck = game.deck;
+    game.discardPile = [];
+    game.currentlyInPlay = [];
     deck.createDeck();
     deck.shuffle();
+
     
     //deal cards
     for(let i = 0; i < keys.length; i++){
@@ -185,10 +188,9 @@ io.on('connection', function (socket) {
                 game.playerHandsLength[playerName] = playerHand.length;
                 if(game.playerHandsLength[playerName] === 0){
                     game.ready = 0;
-                    let players = game.players;
-                    for(let i = 0; i < players.length; i++){
-                        let player = players[i];
-                        player.ready = false;
+                    let keys = Object.keys(game.players);
+                    for(let i = 0; i < keys.length; i++){
+                        game.players[keys[i]].ready = false;
                     }
 
                     let gameData = {
@@ -295,7 +297,7 @@ io.on('connection', function (socket) {
                 return;
             }
             let deck = game.deck;
-            if(deck.getLength() === 0){
+            if(deck.getLength() < numberOfCards){
                 if(game.discardPile.length === 0){
                     io.to(socketId).emit('display message', 'no more cards available');
                     return;
