@@ -5,11 +5,12 @@
 */
 
 import React,{useCallback, useContext, useEffect, useState} from 'react'
-import {SocketContext} from '../../context/socket';
-import {GameDataContext} from '../../context/gameData';
-import JoinRoom from '../room/joinRoom';
-import PlayerTable from '../room/playerTable'
-import GameSession from './gameSession';
+import {SocketContext} from 'context/socket';
+import {GameDataContext} from 'context/gameData';
+import JoinRoom from 'components/room/joinRoom';
+import PlayerTable from 'components/room/playerTable'
+import GameSession from 'components/game/gameSession';
+import MKButton from "components/materialKit/MKButton";
 export const GameContext = React.createContext();
 
 function Game(props){
@@ -24,9 +25,9 @@ function Game(props){
     const [turn, setTurn] = useState(false);
     const [whosTurn, setWhosTurn] = useState('');
     const [showSelectSuit, setShowSelectSuit] = useState(false);
-    const [showCurrentSuit, setShowCurrentSuit] = useState(false);
     const [currentSuit, setCurrentSuit] = useState('placeholder');
     const [twoStack, setTwoStack] = useState(0);
+    const [specialPlayed, setSpecialPlayed] = useState()
 
     const handleStart = useCallback((gameData) => {
         setCards(gameData.playerHand);
@@ -34,8 +35,7 @@ function Game(props){
         setInPlay(gameData.inPlay);
         setWhosTurn(gameData.whosTurn);
         setShowSelectSuit(false);
-        setShowCurrentSuit(false);
-        setCurrentSuit('placeholder');
+        setCurrentSuit(gameData.currentSuit);
         setTwoStack(0);
         if(gameData.whosTurn === name){
             setTurn(true);     
@@ -48,12 +48,11 @@ function Game(props){
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
         setTurn(false);
-        setShowCurrentSuit(false);
+        setCurrentSuit(gameData.currentSuit);  
         if(gameData.whosTurn !== undefined){
             setWhosTurn(gameData.whosTurn);
         }
         setGameStatus(3);
-        console.log('discard');
     }, []);
 
     const handleEightDiscard = useCallback((gameData) => {
@@ -63,26 +62,22 @@ function Game(props){
         setShowSelectSuit(true);
         setTurn(false);
         setGameStatus(3);
-        console.log('discard eight');
     }, []);
 
     const handleTurn = useCallback((gameData) => {
         setOtherHands(gameData.otherHands);
         setInPlay(gameData.inPlay);
-        setShowCurrentSuit(false);
-        setWhosTurn(gameData.whosTurn)
+        setCurrentSuit(gameData.currentSuit);
+        setShowSelectSuit(false);
+        if(gameData.whosTurn !== undefined){
+            setWhosTurn(gameData.whosTurn);
+        }
         if(gameData.whosTurn === name){
             setTurn(true);     
         }
         setTwoStack(gameData.twoStack);
         setGameStatus(3);
     }, [name]);
-
-    const displaySuit = useCallback((suit) => {
-        setCurrentSuit(suit);
-        setShowCurrentSuit(true);
-        setShowSelectSuit(false);     
-    },[]);
 
     const drawCard = useCallback((gameData) => {
         let newCards = gameData.newCards;
@@ -97,12 +92,10 @@ function Game(props){
     }, []);
 
     const handleUserJoined = useCallback((gameData) => {
-        console.log('user joined');
         setPlayers(gameData.players);   
     }, []);
 
     const handleUserLeave = useCallback((gameData) => {
-        console.log('user leave');
         setPlayers(gameData.players);
     }, []);  
 
@@ -133,7 +126,6 @@ function Game(props){
         socket.on('discard card', handleDiscard);
         socket.on('other play turn', handleTurn);
         socket.on('discard eight card', handleEightDiscard);
-        socket.on('display suit', displaySuit);
         socket.on('display message', displayMessage);
         socket.on('winner', winner);
 
@@ -147,7 +139,6 @@ function Game(props){
             socket.off('discard card', handleDiscard);
             socket.off('other play turn', handleTurn);
             socket.off('discard eight card', handleEightDiscard);
-            socket.off('display suit', displaySuit);
             socket.off('display message', displayMessage);
             socket.off('winner', winner);
         }
@@ -166,10 +157,10 @@ function Game(props){
                         <PlayerTable players = {players}></PlayerTable>
                     </GameContext.Provider>
                     
-                    <button onClick = {onClickReadyButton}>Ready</button>
+                    <MKButton variant="text" color="info" onClick = {onClickReadyButton}>Ready</MKButton>
                 </React.Fragment>;
             case 3:
-                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay, turn, showSelectSuit, showCurrentSuit, currentSuit, twoStack, setTwoStack , whosTurn}}>
+                return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay, turn, showSelectSuit, currentSuit, twoStack, setTwoStack , whosTurn}}>
                         <GameSession></GameSession>
                     </GameDataContext.Provider>
             default:

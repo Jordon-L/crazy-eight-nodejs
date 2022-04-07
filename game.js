@@ -18,6 +18,7 @@ class Game {
         this.whosTurnIndex = 0;
         this.direction = 'counterClockwise';
         this.twoStack = 0;
+        this.started = false;
 
     }
     specialCard(card){
@@ -141,6 +142,26 @@ class Game {
         this.whosTurnIndex = index;
 
         this.whosTurn = keys[index];
+    }
+
+    whoPrevTurn(){
+        let index = this.whosTurnIndex;
+        let keys = Object.keys(this.playerSocketIds);
+        let maxIndex = keys.length - 1;
+        console.log(this.direction);
+        if(this.direction === 'counterClockwise'){
+            index--;
+            if(index < 0){
+                index = maxIndex;
+            }
+        }
+        else{
+            index++;
+            if(index > maxIndex){
+                index = 0;
+            }
+        }
+        return keys[index]
     }
 }
 

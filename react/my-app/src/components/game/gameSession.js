@@ -5,10 +5,10 @@
 
 
 import React, {useContext} from 'react';
-import {GameDataContext} from '../../context/gameData';
-import OtherPlayers from './otherPlayers';
-import PlayerHand from './playerHand';
-import InPlay from './inPlay';
+import {GameDataContext} from 'context/gameData';
+import OtherPlayers from 'components/game/otherPlayers';
+import PlayerHand from 'components/game/playerHand';
+import InPlay from 'components/game/inPlay';
 
 function GameSession(props) {
     let gameData = useContext(GameDataContext);

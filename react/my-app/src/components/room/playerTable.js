@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import CheckMark from './checkMark';
+import CheckMark from 'components/room/checkMark';
 
 // players {"name": name , "ready" : false}
 
@@ -16,7 +16,7 @@ function PlayerTable(props) {
 return (
     <TableContainer id = 'table' component = {Paper}>
         <Table aria-label = 'players'>
-            <TableHead>
+            <TableHead style = {{display:'table-header-group'}}>
                 <TableRow>
                     <TableCell> Player Name </TableCell>
                     <TableCell align = 'right'>Ready?</TableCell>

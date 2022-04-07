@@ -28,6 +28,7 @@ function gameStart(game){
     let playerSocketIds = game.playerSocketIds;
     let keys = Object.keys(playerSocketIds);
     let deck = game.deck;
+    game.started = true;
     game.discardPile = [];
     game.currentlyInPlay = [];
     game.direction = 'counterClockwise';
@@ -66,6 +67,7 @@ function gameStart(game){
             'otherHands': game.playerHandsLength,
             'inPlay': game.currentlyInPlay,
             'whosTurn' : game.whosTurn,
+            'currentSuit': game.currentSuit,
         }
         io.to(socketId).emit('start game', gameData);
     }
@@ -105,6 +107,10 @@ io.on('connection', function (socket) {
         if(games[gameId] != null && games[gameId].numOfPlayers < 4){
 
             let game = games[gameId]
+            if(game.started === true){
+                return;
+                //gamefull
+            }
             let playerName = "placeholder"
             let keys = Object.keys(game.players);
             for(let i = 0; i < 4; i++){
@@ -192,6 +198,7 @@ io.on('connection', function (socket) {
                 }            
                 game.playerHandsLength[playerName] = playerHand.length;
                 if(game.playerHandsLength[playerName] === 0){
+                    game.started = false;
                     game.ready = 0;
                     let keys = Object.keys(game.players);
                     for(let i = 0; i < keys.length; i++){
@@ -202,7 +209,6 @@ io.on('connection', function (socket) {
                         "players" : Object.values(game.players), 
                         'winner' : playerName,        
                     }
-        
                     io.to(gameId).emit('winner', gameData); 
                     return;
                 }
@@ -219,6 +225,7 @@ io.on('connection', function (socket) {
                         'otherHands': game.playerHandsLength,
                         'inPlay' : game.currentlyInPlay,
                         'whosTurn' : game.whosTurn,
+                        'currentSuit': game.currentSuit 
                     }
                     
             
@@ -226,7 +233,8 @@ io.on('connection', function (socket) {
                         'otherHands': game.playerHandsLength,
                         'inPlay' : game.currentlyInPlay,
                         'whosTurn' : game.whosTurn,
-                        'twoStack' : game.twoStack            
+                        'twoStack' : game.twoStack,
+                        'currentSuit': game.currentSuit,           
                     }
                 
                     io.to(socketId).emit('discard card', gameData);
@@ -254,16 +262,19 @@ io.on('connection', function (socket) {
         let playerName = socket.playerName;
         let socketId = socket.id;
         let game = games[gameId];
+        let direction = game.direction; 
+
         if(game !== undefined){
+            game.changeSuit(selectedSuit);
             let turn = {
                 'otherHands': game.playerHandsLength,
                 'inPlay' : game.currentlyInPlay,
                 'whosTurn' : game.whosTurn,
-                'twoStack' : game.twoStack,            
+                'twoStack' : game.twoStack,
+                'currentSuit': game.currentSuit            
             }
-            game.currentSuit = selectedSuit;
+            
             io.to(gameId).emit('other play turn', turn); 
-            io.to(gameId).emit('display suit', selectedSuit);
         }
        
     });
@@ -325,7 +336,8 @@ io.on('connection', function (socket) {
     
             let turn = {
                 'otherHands': game.playerHandsLength,
-                'inPlay' : game.currentlyInPlay            
+                'inPlay' : game.currentlyInPlay,
+                'whosTurn': game.whosTurn,            
             }
             socket.broadcast.to(gameId).emit('other play turn', turn);
         }

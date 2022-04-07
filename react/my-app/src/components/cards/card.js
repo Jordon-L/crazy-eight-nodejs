@@ -4,7 +4,7 @@
 */
 
 import React from 'react';
-import {cardPaths} from './cardPaths'
+import {cardPaths} from 'components/cards/cardPaths'
 
 /*
     Card Data
@@ -21,7 +21,7 @@ function Card(props) {
     }
     let path = cardPaths[`./${props.cardName}.svg`];
     return (
-        <img src={path} alt={props.cardName} onClick={handleClick}></img>
+        <img src={path.default} alt={props.cardName} onClick={handleClick}></img>
     );
 }
 

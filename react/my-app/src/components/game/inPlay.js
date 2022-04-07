@@ -3,11 +3,11 @@
     Description: Displays what cards were played and the draw button
 */
 import React, {useContext} from 'react';
-import Card from '../cards/card'
-import ListItem from '../cards/listItem'
-import DrawCard from './drawCard'
-import DisplaySuit from './DisplaySuit'
-import { GameDataContext } from '../../context/gameData';
+import Card from 'components/cards/card'
+import ListItem from 'components/cards/listItem'
+import DrawCard from 'components/game/drawCard'
+import DisplaySuit from 'components/game/displaySuit'
+import { GameDataContext } from 'context/gameData';
 
 function InPlay(props) {
     let gameData = useContext(GameDataContext);
@@ -21,8 +21,9 @@ function InPlay(props) {
 
 return (
     <div id = 'inPlay'>
-        
-        <DrawCard></DrawCard>
+        <ul>
+            <DrawCard></DrawCard>
+        </ul>
         
         <ul>   
             {cardList.map((item,index) =>

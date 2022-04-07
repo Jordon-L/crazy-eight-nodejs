@@ -4,7 +4,7 @@
 */
 
 import React from 'react';
-import {cardPaths} from './cardPaths'
+import {cardPaths} from 'components/cards/cardPaths'
 
 /*
     Card Data
@@ -32,7 +32,7 @@ function ClickableCard(props) {
     return (
         <div className = 'cardInline'>
             {selected ? <p className = 'text'>{displayNumber}</p> : <React.Fragment></React.Fragment>}
-            <img className={name} src={path} alt={props.cardName} onClick={handleClick}></img>
+            <img className={name} src={path.default} alt={props.cardName} onClick={handleClick}></img>
         </div>
     );
 }

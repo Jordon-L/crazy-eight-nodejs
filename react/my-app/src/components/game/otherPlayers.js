@@ -3,8 +3,8 @@
     Description: Display the back of other player's cards given the number of cards they have
 */
 import React from 'react';
-import Card from '../cards/card'
-import ListItem from '../cards/listItem'
+import Card from 'components/cards/card'
+import ListItem from 'components/cards/listItem'
 
 function OtherPlayers(props) {
 

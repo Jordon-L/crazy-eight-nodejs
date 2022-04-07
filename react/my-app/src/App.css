@@ -37,8 +37,23 @@
   }
 }
 
+h1{
+    margin:30px;
+}
+
+h4 {
+    margin:30px;
+}
+
+ol li {
+    list-style-type: none;
+}
+
+
+
 #game{
-    height:1080px;
+    min-height:900px;
+    height:100vh;
     margin:auto;
     display: grid;
     grid-template-columns: 33.333% 33.333% 33.333%;
@@ -112,7 +127,7 @@ ul li {
     display: inline-block;
     vertical-align: middle;
     padding: 1em;
-    width: 200px;
+    width: 400px;
 }
 
 #inPlay ul li {
@@ -137,20 +152,7 @@ tr td {
      height: auto !important;
   }
 
-#right img {
-    width : 140px;
-    height: 100px;
-}
-#left img {
-    width : 140px;
-    height: 100px;
-}
-    
-img {
-    width : 100px;
-    height: 140px;
-    transform: translateY(0px);
-}
+
 
 .selected {
     transition: 0.2s;
@@ -181,5 +183,50 @@ img {
     bottom: 150px;
     left: 0px;
     padding-left: 20px;
+    margin-bottom: 10px;
     padding-right: 20px;
+}
+
+.drawCard {
+    margin-Bottom: 2.25rem
+}
+
+@media only screen and (max-width: 992px) {
+    #right img {
+        width : 126px;
+        height: 90px;
+    }
+    #left img {
+        width : 126px;
+        height: 90px;
+    }
+        
+    img {
+        width : 90px;
+        height: 126px;
+        transform: translateY(0px);
+    }
+    p{
+        font-size: 1rem;
+    }
+    .text{
+        margin-bottom: 0px;
+    }
+}
+
+@media only screen and (min-width: 992px) {
+    #right img {
+        width : 140px;
+        height: 100px;
+    }
+    #left img {
+        width : 140px;
+        height: 100px;
+    }
+        
+    img {
+        width : 100px;
+        height: 140px;
+        transform: translateY(0px);
+    }
 }

@@ -1,19 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
-import {SocketContext} from './context/socket'
-import Game from "./components/game/game";
+import 'App.css';
+import {SocketContext} from 'context/socket'
+import Game from "components/game/game";
 import io from 'socket.io-client';
 
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+
+// Material Kit 2 React themes
+import theme from 'assets/theme';
 
 const socket = io();
-let username = 'test'
 
 function App() {
     return (
         <div className="App">
-            <SocketContext.Provider value={socket}>
-                <Game></Game>
-            </SocketContext.Provider>
+            <ThemeProvider theme={theme}>
+                <CssBaseline/>
+                <SocketContext.Provider value={socket}>
+                    <Game></Game>
+                </SocketContext.Provider>
+            </ThemeProvider>
 
         </div>
     );
