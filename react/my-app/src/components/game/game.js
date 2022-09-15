@@ -85,6 +85,10 @@ function Game(props){
     }, []);
 
     const handleGameId = useCallback((gameData, name, gameId) => {
+        if(gameData == -1){
+          console.log('error');
+          return;
+        }
         setgameId(gameId);
         setPlayers(gameData.players); 
         setName(name);
@@ -157,7 +161,7 @@ function Game(props){
                         <PlayerTable players = {players}></PlayerTable>
                     </GameContext.Provider>
                     
-                    <MKButton variant="text" color="info" onClick = {onClickReadyButton}>Ready</MKButton>
+                    <MKButton onClick = {onClickReadyButton}>Ready</MKButton>
                 </React.Fragment>;
             case 3:
                 return <GameDataContext.Provider value = {{cards, players, name, otherHands, inPlay, turn, showSelectSuit, currentSuit, twoStack, setTwoStack , whosTurn}}>

@@ -15,7 +15,6 @@ function App() {
     return (
         <div className="App">
             <ThemeProvider theme={theme}>
-                <CssBaseline/>
                 <SocketContext.Provider value={socket}>
                     <Game></Game>
                 </SocketContext.Provider>

@@ -138,7 +138,7 @@ io.on('connection', function (socket) {
             game.numOfPlayers++;             
         }
         else{
-            socket.emit('join game', -1);
+            socket.emit('join', -1);
         }
     });
 

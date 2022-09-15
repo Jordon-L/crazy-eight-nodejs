@@ -2,231 +2,240 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-h1{
-    margin:30px;
+h1 {
+  margin: 30px;
 }
 
 h4 {
-    margin:30px;
+  margin: 30px;
 }
 
 ol li {
-    list-style-type: none;
+  list-style-type: none;
+}
+
+body {
+  background-color: #427e60;
+}
+
+#home {
+  display: flex;
+  justify-content: center;
+}
+
+.home-content {
+  max-width: 1920px;
+  min-height: 900px;
+  height: 100vh;
+  max-height: 1080px;
+
+}
+
+.home-content h1 {
+  font-size: 85px;
+  letter-spacing: 4px;
+  color: #000000;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.home-image img {
+  width: 225px;
+  height: 315px;
+  margin-left:100px;
 }
 
 
 
-#game{
-    min-height:900px;
-    height:100vh;
-    margin:auto;
-    display: grid;
-    grid-template-columns: 33.333% 33.333% 33.333%;
-    grid-template-rows: 20% 50% 30%;
-    grid-template-areas: 
+#game {
+  min-height: 900px;
+  height: 100vh;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 33.333% 33.333% 33.333%;
+  grid-template-rows: 20% 50% 30%;
+  grid-template-areas:
     "top top top"
     "left middle right"
     "bottom bottom bottom";
-    background-color: #2196F3;
+  background-color: #2196F3;
 }
+
 #bottom {
-    grid-area: bottom;
+  grid-area: bottom;
 }
 
 #playerHand {
-    margin-top : 50px;
-    white-space:nowrap;
+  margin-top: 50px;
+  white-space: nowrap;
 }
+
 ul {
-    list-style-type: None;
+  list-style-type: None;
 }
+
 ul li {
-    display: inline;
+  display: inline;
 }
 
 #top {
-    grid-area: top;
-    white-space:nowrap;
-    
+  grid-area: top;
+  white-space: nowrap;
+
 }
 
 #right {
-    grid-area: right;
-    white-space:nowrap;
-    list-style-type: None;
+  grid-area: right;
+  white-space: nowrap;
+  list-style-type: None;
 }
-#right ul li:first-child{
-    margin-top: 0px;
-    display: list-item;   
+
+#right ul li:first-child {
+  margin-top: 0px;
+  display: list-item;
 }
 
 #right li {
-    display: list-item;
+  display: list-item;
 }
 
 #left {
-    grid-area: left;
-    white-space:nowrap;
+  grid-area: left;
+  white-space: nowrap;
 }
 
-#left ul li:first-child{
-    margin-top: 0px;
-    display: list-item;   
+#left ul li:first-child {
+  margin-top: 0px;
+  display: list-item;
 }
 
 #left li {
-    display: list-item;
+  display: list-item;
 }
 
 #inPlay {
-    grid-area: middle;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  grid-area: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-#inPlay button{
-    display: inline-block;
-    vertical-align: middle;
+
+#inPlay button {
+  display: inline-block;
+  vertical-align: middle;
 }
+
 #inPlay ul {
-    display: inline-block;
-    vertical-align: middle;
-    padding: 1em;
-    width: 400px;
+  display: inline-block;
+  vertical-align: middle;
+  padding: 1em;
+  width: 400px;
 }
 
 #inPlay ul li {
-    margin-left: -85px;
-    display: inline;
+  margin-left: -85px;
+  display: inline;
 }
 
-#inPlay ul li:first-child{
-    display: inline;
-    margin-left: 0px;
+#inPlay ul li:first-child {
+  display: inline;
+  margin-left: 0px;
 }
+
 #table {
-    margin: auto;
-    width: 50%;
-    padding: 10px;
+  margin: auto;
+  width: 50%;
+  padding: 10px;
 }
+
 tr {
-    height: 100px;
-  }
-  
+  height: 100px;
+}
+
 tr td {
-     height: auto !important;
-  }
+  height: auto !important;
+}
 
 
 
 .selected {
-    transition: 0.2s;
-    transform: translateY(-20px);
+  transition: 0.2s;
+  transform: translateY(-20px);
 }
 
 .numberCircle {
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    padding: 8px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 8px;
 
-    background: #fff;
-    border: 2px solid #666;
-    color: #666;
-    text-align: center;
+  background: #fff;
+  border: 2px solid #666;
+  color: #666;
+  text-align: center;
 
-    font: 32px Arial, sans-serif;
+  font: 32px Arial, sans-serif;
 }
 
-.cardInline{
-    display: inline;
-    position: relative;
+.cardInline {
+  display: inline;
+  position: relative;
 }
 
-.text{
-    position: absolute;
-    bottom: 150px;
-    left: 0px;
-    padding-left: 20px;
-    margin-bottom: 10px;
-    padding-right: 20px;
+.text {
+  position: absolute;
+  bottom: 150px;
+  left: 0px;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  padding-right: 20px;
 }
 
 .drawCard {
-    margin-Bottom: 2.25rem
+  margin-Bottom: 2.25rem
 }
 
 @media only screen and (max-width: 992px) {
-    #right img {
-        width : 126px;
-        height: 90px;
-    }
-    #left img {
-        width : 126px;
-        height: 90px;
-    }
-        
-    img {
-        width : 90px;
-        height: 126px;
-        transform: translateY(0px);
-    }
-    p{
-        font-size: 1rem;
-    }
-    .text{
-        margin-bottom: 0px;
-    }
+  #right img {
+    width: 126px;
+    height: 90px;
+  }
+
+  #left img {
+    width: 126px;
+    height: 90px;
+  }
+
+  img {
+    width: 90px;
+    height: 126px;
+    transform: translateY(0px);
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  .text {
+    margin-bottom: 0px;
+  }
 }
 
 @media only screen and (min-width: 992px) {
-    #right img {
-        width : 140px;
-        height: 100px;
-    }
-    #left img {
-        width : 140px;
-        height: 100px;
-    }
-        
-    img {
-        width : 100px;
-        height: 140px;
-        transform: translateY(0px);
-    }
+  #right img {
+    width: 140px;
+    height: 100px;
+  }
+
+  #left img {
+    width: 140px;
+    height: 100px;
+  }
+
+  img {
+    width: 100px;
+    height: 140px;
+    transform: translateY(0px);
+  }
 }

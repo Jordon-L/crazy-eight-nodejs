@@ -34,12 +34,12 @@ export default styled(TextField)(({ theme, ownerState }) => {
 
     "& .Mui-focused": {
       "& .MuiOutlinedInput-notchedOutline, &:after": {
-        borderColor: colorError.main,
+        borderColor: colorError.error,
       },
     },
 
     "& .MuiInputLabel-root.Mui-focused": {
-      color: colorError.main,
+      color: colorError.error,
     },
   });
 
@@ -53,17 +53,17 @@ export default styled(TextField)(({ theme, ownerState }) => {
 
     "& .Mui-focused": {
       "& .MuiOutlinedInput-notchedOutline, &:after": {
-        borderColor: colorSuccess.main,
+        borderColor: colorSuccess.black,
       },
     },
 
     "& .MuiInputLabel-root.Mui-focused": {
-      color: colorSuccess.main,
+      color: colorSuccess.black,
     },
   });
 
   return {
-    backgroundColor: disabled ? `${grey[200]} !important` : transparent.main,
+    backgroundColor: disabled ? `${'black'} !important` : transparent.main,
     pointerEvents: disabled ? "none" : "auto",
     ...(error && errorStyles()),
     ...(success && successStyles()),
