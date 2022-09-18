@@ -5,6 +5,7 @@
 
 h1 {
   margin: 30px;
+  text-align: center;
 }
 
 h4 {
@@ -17,6 +18,27 @@ ol li {
 
 body {
   background-color: #427e60;
+}
+
+button {
+  background-color:white;
+  border:none;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border-radius: 8px;
+  font-size:36px;
+  letter-spacing: 1px;
+  font-weight:800;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+
+button:hover {
+	-webkit-transform: translateY(-2px);
+  transform: translateY(-2px);
+  cursor: pointer;
 }
 
 #home {
@@ -40,13 +62,110 @@ body {
   font-style: italic;
 }
 
+.home-image{
+  margin-top: 100px;
+  margin-bottom: 200px;
+}
+
 .home-image img {
   width: 225px;
   height: 315px;
   margin-left:100px;
 }
 
+.login {
+  text-align: center;
+}
 
+.login button {
+  margin-bottom:50px;
+}
+
+#lobby{
+  display:flex;
+  flex-wrap: wrap;
+  margin-top: 100px;
+  width: 700px;
+  height: 800px;
+  background-color:white;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.user-input{
+  text-align: center;
+}
+
+.user-input p {
+  font-size:24px;
+  font-weight: 800;
+}
+
+input[type=text], input[type=submit]{
+  background-color:white;
+  border:none;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  font-size:24px;
+  font-weight: 800;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+  font-family: inherit;
+}
+
+.user-input input[type=submit]{
+  margin-left:20px;
+}
+
+.user-input button {
+  padding:10px;
+  font-size:24px;
+}
+
+.game-rooms{
+  align-self: center;
+  margin: 10px;
+  height:600px;
+  width:600px;
+  overflow-y: scroll;
+}
+
+
+.game-join{
+  height:100px;
+  width:600px;
+}
+
+table {
+  table-layout: fixed;
+  width:100%;
+  border-collapse: collapse;
+}
+
+thead{
+  background-color:#F8F8F8;
+}
+
+.inner-table{
+  box-shadow: 2px 2px 5px #555 inset;
+}
+
+tr { 
+  border: solid;
+  border-width: 1px 0;
+  height:100px;
+}
+
+th{
+  text-align: initial;
+  height:50px;
+}
+
+td{
+  margin:2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 #game {
   min-height: 900px;

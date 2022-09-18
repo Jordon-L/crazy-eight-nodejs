@@ -5,7 +5,6 @@
 
 import React,{useCallback, useContext, useEffect, useState} from 'react'
 import {SocketContext} from 'context/socket';
-import MKButton from "components/materialKit/MKButton";
 import Card from 'components/cards/card'
 
 function JoinRoom(props){
@@ -27,19 +26,81 @@ function JoinRoom(props){
     return (
         <div id='home'>
           <div class='home-content'>
-            <h1>Crazy Eights</h1>
-            <div class='home-image'>
-              <Card cardName = '8S'></Card>
-              <Card cardName = '8H'></Card>
-              <Card cardName = '8C'></Card>
-              <Card cardName = '8D'></Card>
-            </div>     
-            <h4> Create a new game </h4>
-            <MKButton onClick = {create}> create new game</MKButton>
+            <h1>Lobby</h1>
+            <div class='user-input'>
+              <button class="gameID-input">Create New Game</button>
+              <p>Enter in Game ID or select from below</p>
+              <input class="gameID-input" type="text" placeholder="Enter Game ID"></input>
+              <input type="submit"></input>
+            </div>
+            <div id="lobby">
+              <div class="game-rooms">
+                <table>
+                    <thead>
+                      <tr>
+                        <th>Game ID</th>
+                        <th>Room name</th>
+                        <th>Gamemaster</th>
+                      </tr>
+                    </thead>
+                  </table>
+                  <div class="inner-table">
+                    <tr>
+                      <td>Alfreds Futterkiste</td>
+                      <td>Maria Anders</td>
+                      <td>Maria Anders</td>
+                    </tr>
+                    <tr>
+                      <td>Centro comercial Moctezuma</td>
+                      <td>Francisco Chang</td>
+                      <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
+                    </tr>
+                    <tr>
+                      <td>Alfreds Futterkiste</td>
+                      <td>Maria Anders</td>
+                      <td>Maria Anders</td>
+                    </tr>
+                    <tr>
+                      <td>Centro comercial Moctezuma</td>
+                      <td>Francisco Chang</td>
+                      <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
+                    </tr>
+                    <tr>
+                      <td>Alfreds Futterkiste</td>
+                      <td>Maria Anders</td>
+                      <td>Maria Anders</td>
+                    </tr>
+                    <tr>
+                      <td>Centro comercial Moctezuma</td>
+                      <td>Francisco Chang</td>
+                      <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
+                    </tr>
+                    <tr>
+                      <td>Alfreds Futterkiste</td>
+                      <td>Maria Anders</td>
+                      <td>Maria Anders</td>
+                    </tr>
+                    <tr>
+                      <td>Centro comercial Moctezuma</td>
+                      <td>Francisco Chang</td>
+                      <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
+                    </tr>
+                    <tr>
+                      <td>Alfreds Futterkiste</td>
+                      <td>Maria Anders</td>
+                      <td>Maria Anders</td>
+                    </tr>
+                    <tr>
+                      <td>Centro comercial Moctezuma</td>
+                      <td>Francisco Chang</td>
+                      <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
+                    </tr>
+                  </div>           
+              </div>
+              <div class="game-join">
 
-            <h4>Join an existing game</h4>
-            <input label="Game Id" onChange={event => setInput(event.target.value) } onKeyDown={keyPress} />
-            <MKButton onClick = {join}>submit</MKButton>
+              </div>
+            </div>
           </div>
         </div>
         
