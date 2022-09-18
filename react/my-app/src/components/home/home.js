@@ -39,7 +39,7 @@ function Home(props){
                 <button>Login</button>
               </div>
               <div>
-                <button><Link to="/game" >Play as Guest</Link></button>
+                <Link to="/game" ><button>Play as Guest</button></Link>
               </div>
             </div>
           </div>
