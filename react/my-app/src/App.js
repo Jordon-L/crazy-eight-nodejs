@@ -1,6 +1,7 @@
 import 'App.css';
 import {SocketContext} from 'context/socket'
 import Game from "components/game/game";
+import Lobby from "components/lobby/lobby";
 import Home from "components/home/home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import io from 'socket.io-client';
@@ -30,14 +31,14 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<SocketContext.Provider value={socket}> <Home /> </SocketContext.Provider>} />
         <Route path="/game" element={
         <>
         <ThemeProvider theme={theme}>
         <SocketContext.Provider value={socket}><Game /></SocketContext.Provider>
         </ThemeProvider>
         </>
-        } />
+        }/>
       </Routes>
     </Router>
   );

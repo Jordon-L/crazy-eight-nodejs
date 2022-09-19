@@ -1,13 +1,17 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+import { Server } from 'socket.io';
+import Game from './game.js';
+import { strict } from 'assert';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const PORT = process.env.PORT || 5000;
 const app = express();
-const http = require('http');
+import http from 'http';
 const server = http.createServer(app);
-const { Server } = require("socket.io");
 const io = new Server(server);
-const Game = require('./game');
-const { strict } = require('assert');
 let users = 0;
 let userSockets = [];
 let games = {};
@@ -78,6 +82,8 @@ function gameStart(game){
 
 }
 
+function generateName(){}
+
 io.on('connection', function (socket) {
     console.log('a user connected');
 
@@ -105,6 +111,11 @@ io.on('connection', function (socket) {
         games[gameId] = newGame;
         
         latestGameId++;
+    });
+
+    socket.on('play as guest', function(){
+      socket.playerName = generate();
+
     });
 
     socket.on('join game', function(gameId) {

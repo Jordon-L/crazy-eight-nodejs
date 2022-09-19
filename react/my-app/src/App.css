@@ -22,7 +22,7 @@ body {
 
 button {
   background-color:white;
-  border:none;
+  border-style: solid;
   padding: 20px;
   text-align: center;
   text-decoration: none;
@@ -83,12 +83,11 @@ button:hover {
 
 #lobby{
   display:flex;
+  justify-content: center;
   flex-wrap: wrap;
   margin-top: 100px;
   width: 700px;
   height: 800px;
-  background-color:white;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 .user-input{
@@ -100,9 +99,9 @@ button:hover {
   font-weight: 800;
 }
 
-input[type=text], input[type=submit]{
-  background-color:white;
-  border:none;
+.user-input input[type=text]{
+  border-style:solid;
+  border-color:black;
   padding: 10px;
   text-align: center;
   border-radius: 8px;
@@ -110,23 +109,23 @@ input[type=text], input[type=submit]{
   font-weight: 800;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   font-family: inherit;
+  margin-right:20px;
 }
 
-.user-input input[type=submit]{
-  margin-left:20px;
-}
-
-.user-input button {
+.gameID-input {
   padding:10px;
   font-size:24px;
 }
 
 .game-rooms{
+  background-color:white;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   align-self: center;
   margin: 10px;
   height:600px;
   width:600px;
   overflow-y: scroll;
+  border-style: solid;
 }
 
 
@@ -135,37 +134,52 @@ input[type=text], input[type=submit]{
   width:600px;
 }
 
-table {
+.game-rooms table {
   table-layout: fixed;
   width:100%;
   border-collapse: collapse;
 }
 
-thead{
-  background-color:#F8F8F8;
+.game-rooms thead{
+  position: sticky;
+  top: 0px;
+  background-color: aliceblue;
 }
 
-.inner-table{
-  box-shadow: 2px 2px 5px #555 inset;
-}
-
-tr { 
+.game-rooms tr { 
   border: solid;
-  border-width: 1px 0;
+  border-width: 0px 0px 1px 0px;
   height:100px;
 }
 
-th{
-  text-align: initial;
+.game-rooms tbody tr:hover {
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+.game-rooms th{
   height:50px;
 }
 
-td{
+.game-rooms td{
   margin:2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+tbody{
+  text-align: center;
+}
+
+tbody tr td:first-child{
+  padding-left:10px;
+}
+
+.game-join{
+  text-align: end;
+}
+
 
 #game {
   min-height: 900px;

@@ -7,8 +7,8 @@
 import React,{useCallback, useContext, useEffect, useState} from 'react'
 import {SocketContext} from 'context/socket';
 import {GameDataContext} from 'context/gameData';
-import JoinRoom from 'components/room/joinRoom';
-import PlayerTable from 'components/room/playerTable'
+import Lobby from 'components/lobby/lobby';
+import PlayerTable from 'components/lobby/playerTable'
 import GameSession from 'components/game/gameSession';
 import MKButton from "components/materialKit/MKButton";
 export const GameContext = React.createContext();
@@ -85,7 +85,7 @@ function Game(props){
     }, []);
 
     const handleGameId = useCallback((gameData, name, gameId) => {
-        if(gameData == -1){
+        if(gameData === -1){
           console.log('error');
           return;
         }
@@ -119,7 +119,8 @@ function Game(props){
         alert('game over ' + gameData.winner + ' won');
         setPlayers(gameData.players);
         setGameStatus(2);            
-    }, []);  
+    }, []);
+
     useEffect(() =>{
         socket.on('start game', handleStart);
         socket.on('draw card', drawCard);
@@ -151,7 +152,7 @@ function Game(props){
     function display(gameStatus, gameId, name, players){
         switch(gameStatus) {
             case 1:
-                return <JoinRoom></JoinRoom>;
+                return <Lobby></Lobby>;
             case 2:
                 return <React.Fragment>
                     <GameContext.Provider value ={{gameId, name, players}}>
