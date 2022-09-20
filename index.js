@@ -4,6 +4,12 @@ import { Server } from 'socket.io';
 import Game from './game.js';
 import { strict } from 'assert';
 import { fileURLToPath } from 'url';
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals
+} from "unique-names-generator";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -82,7 +88,11 @@ function gameStart(game){
 
 }
 
-function generateName(){}
+function generateName(){
+  const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  const randomString = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals, numbers] });
+  return randomString;
+}
 
 io.on('connection', function (socket) {
     console.log('a user connected');
@@ -90,12 +100,13 @@ io.on('connection', function (socket) {
     socket.on('create game', function(data) {
         let newGame = new Game();
         
-        let playerName = 'player1';
+        let playerName = socket.playerName;
+        if(playerName == null){
+          playerName = generateName();
+          socket.playerName = playerName;
+        }
         newGame.playerSocketIds[playerName] = socket.id;
         newGame.players[playerName] = createPlayer(playerName, 1);
-        newGame.players['player2'] = createPlayer('empty slot 2', 2);
-        newGame.players['player3'] = createPlayer('empty slot 3', 3);
-        newGame.players['player4'] = createPlayer('empty slot 4' ,4);
         let gameId = "game" + latestGameId;
         newGame.gameId = gameId;    
         socket.join(gameId);
@@ -106,7 +117,6 @@ io.on('connection', function (socket) {
         socket.emit('join', gameData, playerName, gameId);
 
         socket.gameId = gameId;
-        socket.playerName = playerName;
         newGame.numOfPlayers++;
         games[gameId] = newGame;
         
@@ -114,8 +124,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('play as guest', function(){
-      socket.playerName = generate();
-
+      socket.playerName = generateName();
     });
 
     socket.on('join game', function(gameId) {
@@ -123,27 +132,26 @@ io.on('connection', function (socket) {
 
             let game = games[gameId]
             if(game.started === true){
+                socket.emit('join', -1);
                 return;
                 //gamefull
             }
-            let playerName = "placeholder"
-            let keys = Object.keys(game.players);
-            for(let i = 0; i < 4; i++){
-                let name = game.players[keys[i]].name
-                if(name.includes("empty slot")){
-                    game.players[keys[i]] = createPlayer(keys[i], i+1);
-                    game.playerSocketIds[keys[i]] = socket.id;
-                    playerName = keys[i];
-                    break;
-                }
+            let playerName = socket.playerName;
+            console.log('player', playerName);
+            if(playerName == null){
+              playerName = generateName();
+              socket.playerName = playerName;
             }
+            game.numOfPlayers++;
+            let playerNumber = game.numOfPlayers;
+            game.players[playerName] = createPlayer(playerName, playerNumber);
+            game.playerSocketIds[playerName] = socket.id;
             let gameData = {
                 "players" : Object.values(game.players),         
             }
 
             socket.emit('join', gameData, playerName, gameId);
             socket.gameId = gameId;
-            socket.playerName = playerName;
 
             let playersInGame = {
                 "players" : Object.values(game.players),

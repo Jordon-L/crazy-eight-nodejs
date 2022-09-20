@@ -11,19 +11,9 @@ import Card from 'components/cards/card'
 function Home(props){
 
     const socket = useContext(SocketContext);
-    const [input, setInput] = useState(null);
-    function join(){
-        socket.emit("join game", input);
+    function playAsGuest(){
+        socket.emit("play as guest");
     }
-    function create(){
-        socket.emit("create game", 'create');
-    }
-
-    function keyPress(e){
-        if(e.keyCode == 13){
-            join();
-        }
-     }
     return (
         <div id='home'>
           <div class='home-content'>
@@ -39,7 +29,7 @@ function Home(props){
                 <button>Login</button>
               </div>
               <div>
-                <Link to="/game" ><button>Play as Guest</button></Link>
+                <Link to="/game" ><button onClick={playAsGuest}>Play as Guest</button></Link>
               </div>
             </div>
           </div>

@@ -13,6 +13,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from 'assets/theme';
 
 const socket = io();
+let playerName;
 
 // function App() {
 //     return (
@@ -29,18 +30,20 @@ const socket = io();
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<SocketContext.Provider value={socket}> <Home /> </SocketContext.Provider>} />
-        <Route path="/game" element={
-        <>
-        <ThemeProvider theme={theme}>
-        <SocketContext.Provider value={socket}><Game /></SocketContext.Provider>
-        </ThemeProvider>
-        </>
-        }/>
-      </Routes>
-    </Router>
+    <SocketContext.Provider value={socket}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={
+          <>
+          <ThemeProvider theme={theme}>
+            <Game />
+          </ThemeProvider>
+          </>
+          }/>
+        </Routes>
+      </Router>
+    </SocketContext.Provider>
   );
 }
 
