@@ -4,7 +4,7 @@
 
 */
 
-import React,{useCallback, useContext, useEffect, useState} from 'react'
+import React,{useCallback, useContext, useEffect, useState, useRef} from 'react'
 import {SocketContext} from 'context/socket';
 import {GameDataContext} from 'context/gameData';
 import Lobby from 'components/lobby/lobby';
@@ -29,6 +29,13 @@ function Game(props){
     const [twoStack, setTwoStack] = useState(0);
     const [specialPlayed, setSpecialPlayed] = useState()
 
+    const nameRef = useRef({});
+    nameRef.current = name;
+    const gameIdRef = useRef({});
+    gameIdRef.current = gameId;
+    const gameStatusRef = useRef({});
+    gameStatusRef.current = gameStatus;
+    
     const handleStart = useCallback((gameData) => {
         setCards(gameData.playerHand);
         setOtherHands(gameData.otherHands);
@@ -37,11 +44,12 @@ function Game(props){
         setShowSelectSuit(false);
         setCurrentSuit(gameData.currentSuit);
         setTwoStack(0);
-        if(gameData.whosTurn === name){
+        console.log(gameData.whosTurn, nameRef.current)
+        if(gameData.whosTurn === nameRef.current){
             setTurn(true);     
         }
         setGameStatus(3);
-    }, [name]);
+    }, [nameRef]);
 
     const handleDiscard = useCallback((gameData) => {
         setCards(gameData.playerHand);
@@ -52,7 +60,6 @@ function Game(props){
         if(gameData.whosTurn !== undefined){
             setWhosTurn(gameData.whosTurn);
         }
-        setGameStatus(3);
     }, []);
 
     const handleEightDiscard = useCallback((gameData) => {
@@ -61,7 +68,7 @@ function Game(props){
         setInPlay(gameData.inPlay);
         setShowSelectSuit(true);
         setTurn(false);
-        setGameStatus(3);
+        
     }, []);
 
     const handleTurn = useCallback((gameData) => {
@@ -72,12 +79,11 @@ function Game(props){
         if(gameData.whosTurn !== undefined){
             setWhosTurn(gameData.whosTurn);
         }
-        if(gameData.whosTurn === name){
+        if(gameData.whosTurn === nameRef.current){
             setTurn(true);     
         }
         setTwoStack(gameData.twoStack);
-        setGameStatus(3);
-    }, [name]);
+    }, [nameRef]);
 
     const drawCard = useCallback((gameData) => {
         let newCards = gameData.newCards;
@@ -118,7 +124,7 @@ function Game(props){
     const winner = useCallback((gameData) => {
         alert('game over ' + gameData.winner + ' won');
         setPlayers(gameData.players);
-        setGameStatus(2);            
+        setGameStatus(2);          
     }, []);
 
     useEffect(() =>{
@@ -147,7 +153,7 @@ function Game(props){
             socket.off('display message', displayMessage);
             socket.off('winner', winner);
         }
-    });
+    }, []);
 
     function display(gameStatus, gameId, name, players){
         switch(gameStatus) {

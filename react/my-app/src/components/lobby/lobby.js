@@ -5,14 +5,17 @@
 
 import React,{useCallback, useContext, useEffect, useState} from 'react'
 import {SocketContext} from 'context/socket';
+import { AssessmentRounded } from '@mui/icons-material';
 
 function Lobby(props){
 
     const socket = useContext(SocketContext);
     const [input, setInput] = useState(null);
+    const [gameList, setGameList] = useState([]);
     function join(){
         socket.emit("join game", input);
     }
+    
     function create(){
         socket.emit("create game", 'create');
     }
@@ -22,6 +25,40 @@ function Lobby(props){
             join();
         }
      }
+    function getGames(){
+      socket.emit('game list');
+    }
+    function generateRow(gameId, name, gamemaster){
+      return (<>
+        <tr onClick={() => {
+          setInput(gameId)
+          join()}}>
+          <td>{gameId}</td>
+          <td>{name}</td>
+          <td>{gamemaster}</td>
+        </tr>
+      </>)
+    }
+    const handleGamesList = useCallback((list) => {
+      let newGameList = [];
+      for(let i = 0; i < list.length; i++){
+        let game = list[i];
+        newGameList.push(game);
+      }
+      setGameList(newGameList);
+    }, []);
+
+
+    useEffect(() =>{
+      getGames();
+      console.log('asd');
+      socket.on('game list', handleGamesList);
+      return () => {
+          socket.off('game list', handleGamesList);
+
+      }
+  },[]);
+
     return (
         <div id='home'>
           <div class='home-content'>
@@ -43,60 +80,13 @@ function Lobby(props){
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                        <td>Alfreds Futterkiste</td>
-                        <td>Maria Anders</td>
-                        <td>Maria Anders</td>
-                      </tr>
-                      <tr>
-                        <td>Centro comercial Moctezuma</td>
-                        <td>Francisco Chang</td>
-                        <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
-                      </tr>
-                      <tr>
-                        <td>Alfreds Futterkiste</td>
-                        <td>Maria Anders</td>
-                        <td>Maria Anders</td>
-                      </tr>
-                      <tr>
-                        <td>Centro comercial Moctezuma</td>
-                        <td>Francisco Chang</td>
-                        <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
-                      </tr>
-                      <tr>
-                        <td>Alfreds Futterkiste</td>
-                        <td>Maria Anders</td>
-                        <td>Maria Anders</td>
-                      </tr>
-                      <tr>
-                        <td>Centro comercial Moctezuma</td>
-                        <td>Francisco Chang</td>
-                        <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
-                      </tr>
-                      <tr>
-                        <td>Alfreds Futterkiste</td>
-                        <td>Maria Anders</td>
-                        <td>Maria Anders</td>
-                      </tr>
-                      <tr>
-                        <td>Centro comercial Moctezuma</td>
-                        <td>Francisco Chang</td>
-                        <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
-                      </tr>
-                      <tr>
-                        <td>Alfreds Futterkiste</td>
-                        <td>Maria Anders</td>
-                        <td>Maria Anders</td>
-                      </tr>
-                      <tr>
-                        <td>Centro comercial Moctezuma</td>
-                        <td>Francisco Chang</td>
-                        <td>Maria AndersMaria AnderMaria AnderMaria AnderMaria AnderMaria AnderMaria Ander</td>
-                      </tr>
-                    </tbody>
+                    {gameList.map((game) => generateRow(game[0], game[1], game[2]))}
+                  </tbody>
                 </table>
               </div>
               <div class="game-join">
+                <button class="gameID-input">Refresh</button>
+
                 <button class="gameID-input">Join</button>
               </div>
             </div>
