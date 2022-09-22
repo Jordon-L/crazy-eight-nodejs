@@ -3,15 +3,37 @@
     Description: Display how to join a room and how to play game
 */
 
-import React,{useCallback, useContext, useEffect, useState} from 'react'
+import React,{useCallback, useContext, useEffect, useState, useReducer} from 'react'
 import {SocketContext} from 'context/socket';
 import { AssessmentRounded } from '@mui/icons-material';
+
+const initialState = {
+  input: null,
+  gameList: [],
+};
+
+function reducer(state, action) {
+  let payload = action.payload;
+
+  switch (action.type) {
+    case 'gameList':
+      return {
+        ...state,
+        gameList:payload.gameList,
+      }
+    default:
+      throw new Error();
+  }
+
+  
+}
 
 function Lobby(props){
 
     const socket = useContext(SocketContext);
     const [input, setInput] = useState(null);
-    const [gameList, setGameList] = useState([]);
+    const [state, dispatch] = useReducer(reducer, initialState);
+
     function join(){
         socket.emit("join game", input);
     }
@@ -31,31 +53,23 @@ function Lobby(props){
     function generateRow(gameId, name, gamemaster){
       return (<>
         <tr onClick={() => {
-          setInput(gameId)
-          join()}}>
+          socket.emit("join game", gameId);}}>
           <td>{gameId}</td>
           <td>{name}</td>
           <td>{gamemaster}</td>
         </tr>
       </>)
     }
-    const handleGamesList = useCallback((list) => {
-      let newGameList = [];
-      for(let i = 0; i < list.length; i++){
-        let game = list[i];
-        newGameList.push(game);
-      }
-      setGameList(newGameList);
-    }, []);
 
+    function handleSocket(payload, type){
+      return dispatch({type: type, payload: payload});
+    }
 
     useEffect(() =>{
       getGames();
-      console.log('asd');
-      socket.on('game list', handleGamesList);
+      socket.on('game list', (payload) =>  handleSocket(payload, 'gameList'));
       return () => {
-          socket.off('game list', handleGamesList);
-
+        socket.removeAllListeners('game list');
       }
   },[]);
 
@@ -80,7 +94,7 @@ function Lobby(props){
                     </tr>
                   </thead>
                   <tbody>
-                    {gameList.map((game) => generateRow(game[0], game[1], game[2]))}
+                    {state.gameList.map((game) => generateRow(game[0], game[1], game[2]))}
                   </tbody>
                 </table>
               </div>

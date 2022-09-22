@@ -11,8 +11,8 @@ import PlayerHand from 'components/game/playerHand';
 import InPlay from 'components/game/inPlay';
 
 function GameSession(props) {
-    let gameData = useContext(GameDataContext);
-
+    let gameData = useContext(GameDataContext).state;
+    
     function cards() {
         //let bottom = gameData.players[order[0]];
         let order = displayOrder()
@@ -26,7 +26,7 @@ function GameSession(props) {
                 <InPlay cards = {gameData.inPlay}></InPlay>
                 <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]} name = {right.name} > </OtherPlayers>
                 
-                <PlayerHand cards = {gameData.cards} name = {gameData.name}></PlayerHand>
+                <PlayerHand cards = {gameData.playerHand} name = {gameData.playerName}></PlayerHand>
             </div>
         );
     }
@@ -37,7 +37,7 @@ function GameSession(props) {
         let order = [0,1,2,3]
         for(let i = 0; i < gameData.players.length; i++){
             let players = gameData.players;
-            if(players[i].name === gameData.name){
+            if(players[i].name === gameData.playerName){
                 
                 bottom = i;
                 switch(bottom){

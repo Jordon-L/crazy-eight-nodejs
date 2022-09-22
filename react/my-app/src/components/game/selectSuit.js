@@ -9,7 +9,6 @@ import {GameDataContext} from 'context/gameData';
 import MKButton from "components/materialKit/MKButton";
 function SelectSuit(props) {
     let socket = useContext(SocketContext);
-    let gameData = useContext(GameDataContext);
     
     
     function select(suit) {

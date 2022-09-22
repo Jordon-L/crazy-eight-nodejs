@@ -124,9 +124,11 @@ io.on('connection', function (socket) {
         socket.join(gameId);
 
         let gameData = {
+            'playerName': playerName,
+            'gameId': gameId,
             "players" : Object.values(newGame.players),           
         }
-        socket.emit('join', gameData, playerName, gameId);
+        socket.emit('join', gameData);
 
         socket.gameId = gameId;
         newGame.numOfPlayers++;
@@ -136,11 +138,11 @@ io.on('connection', function (socket) {
     });
 
     socket.on('play as guest', function(){
-      socket.playerName = generateName();
+        socket.playerName = generateName();
     });
 
     socket.on('game list', function() {
-      socket.emit('game list', getGameList());
+      socket.emit('game list', {gameList: getGameList()} );
     })
 
     socket.on('join game', function(gameId) {
@@ -164,16 +166,18 @@ io.on('connection', function (socket) {
             game.players[playerName] = createPlayer(playerName, playerNumber);
             game.playerSocketIds[playerName] = socket.id;
             let gameData = {
-                "players" : Object.values(game.players),         
+              'playerName': playerName,
+              'gameId': gameId,
+              "players" : Object.values(game.players),        
             }
 
-            socket.emit('join', gameData, playerName, gameId);
+            socket.emit('join', gameData);
             socket.gameId = gameId;
 
             let playersInGame = {
                 "players" : Object.values(game.players),
             }
-            io.to(gameId).emit('user joined', playersInGame);
+            io.to(gameId).emit('user change', playersInGame);
             socket.join(gameId);          
         }
         else{
@@ -198,12 +202,11 @@ io.on('connection', function (socket) {
             let playersInGame = {
                 "players" : Object.values(game.players),
             }
-            io.to(gameId).emit('game ready', playersInGame);
+            io.to(gameId).emit('user change', playersInGame);
             console.log(game.ready);
             if(game.ready >= 4){
                 console.log('start game');
                 gameStart(game);
-                //io.to(gameId).emit('start game');
             }            
         }
         else{
@@ -329,6 +332,8 @@ io.on('connection', function (socket) {
                 let playerSockets = game.playerSocketIds;
                 playerSockets[socket.playerName] = null;
                 delete game.players[socket.playerName];
+
+                console.log(game.numOfPlayers);
                 //let slotNumber = player.number;
                 //let slot = game.players[socket.playerName];
                 //slot.name = 'empty slot ' + slotNumber;
@@ -336,11 +341,13 @@ io.on('connection', function (socket) {
                 let playersInGame = {
                     "players" : Object.values(game.players),
                 }  
-                io.to(socket.gameId).emit('user leave', playersInGame);
+                io.to(socket.gameId).emit('user change', playersInGame);
             }
         }
     })
-    socket.on('draw card', function (numberOfCards) {   
+
+
+    socket.on('draw card', function () {   
         let playerName = socket.playerName;
         let gameId = socket.gameId;
         let socketId = socket.id;
@@ -351,7 +358,13 @@ io.on('connection', function (socket) {
                 io.to(socketId).emit('display message', 'you have a valid play');
                 return;
             }
+
             let deck = game.deck;
+            let numberOfCards = 1;
+            if(game.twoStack > 0){
+              numberOfCards = game.twoStack * 2;
+              game.twoStack = 0;
+            }
             if(deck.getLength() < numberOfCards){
                 if(game.discardPile.length === 0){
                     io.to(socketId).emit('display message', 'no more cards available');
@@ -361,22 +374,22 @@ io.on('connection', function (socket) {
                 game.discardPile = [];
                 deck.shuffle();
             }
-            if(numberOfCards !== '1'){
-                game.twoStack = 0;
-            }
+            
             let cards = deck.drawNCards(numberOfCards);
             
             playerHand.push(...cards);
             game.playerHandsLength[playerName] = playerHand.length;
             let gameData = {
-                'newCards' : cards
+                'playerHand' : playerHand,
+                'twoStack' : 0,
             }
             io.to(socketId).emit('draw card', gameData);
     
             let turn = {
                 'otherHands': game.playerHandsLength,
                 'inPlay' : game.currentlyInPlay,
-                'whosTurn': game.whosTurn,            
+                'whosTurn': game.whosTurn,
+                'twoStack' : 0,            
             }
             socket.broadcast.to(gameId).emit('other play turn', turn);
         }

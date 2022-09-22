@@ -11,7 +11,8 @@ import SelectSuit from 'components/game/selectSuit';
 
 function PlayerActions(props) {
     let socket = useContext(SocketContext);
-    let gameData = useContext(GameDataContext);
+    let gameData = useContext(GameDataContext).state;
+    
     let isDisabled = !gameData.turn;
     let show = gameData.showSelectSuit;
     return (

@@ -85,9 +85,8 @@ button:hover {
   display:flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 100px;
   width: 700px;
-  height: 800px;
+  height: 700px;
 }
 
 .user-input{
@@ -122,7 +121,7 @@ button:hover {
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   align-self: center;
   margin: 10px;
-  height:600px;
+  height:500px;
   width:600px;
   overflow-y: scroll;
   border-style: solid;
@@ -192,7 +191,6 @@ tbody tr td:first-child{
     "top top top"
     "left middle right"
     "bottom bottom bottom";
-  background-color: #2196F3;
 }
 
 #bottom {

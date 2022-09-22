@@ -10,7 +10,7 @@ import DisplaySuit from 'components/game/displaySuit'
 import { GameDataContext } from 'context/gameData';
 
 function InPlay(props) {
-    let gameData = useContext(GameDataContext);
+    let gameData = useContext(GameDataContext).state;
     function onItemClick(id) {
 
     }
