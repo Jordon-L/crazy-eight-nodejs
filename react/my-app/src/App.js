@@ -1,10 +1,8 @@
 import 'App.css';
 import {SocketContext} from 'context/socket'
 import Game from "components/game/game";
-import Lobby from "components/lobby/lobby";
 import Home from "components/home/home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import io from 'socket.io-client';
 
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
@@ -12,7 +10,7 @@ import { ThemeProvider } from "@mui/material/styles";
 // Material Kit 2 React themes
 import theme from 'assets/theme';
 
-const socket = io();
+
 let playerName;
 
 // function App() {
@@ -30,7 +28,6 @@ let playerName;
 
 const App = () => {
   return (
-    <SocketContext.Provider value={socket}>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -43,7 +40,6 @@ const App = () => {
           }/>
         </Routes>
       </Router>
-    </SocketContext.Provider>
   );
 }
 

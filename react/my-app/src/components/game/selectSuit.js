@@ -15,20 +15,20 @@ function SelectSuit(props) {
         socket.emit('discard eight card', suit);   
     }
     return (
-        <div className = 'selectSuit'>
-            <MKButton onClick={() => select('heart')}>
+        <>
+            <button class='game-button-input' onClick={() => select('heart')}>
                 Heart
-            </MKButton>
-            <MKButton  onClick={() => select('spade')}>
+            </button>
+            <button class='game-button-input' onClick={() => select('spade')}>
                 Spade
-            </MKButton>
-            <MKButton  onClick={() => select('club')}>
+            </button>
+            <button class='game-button-input' onClick={() => select('club')}>
                 Club
-            </MKButton>
-            <MKButton  onClick={() => select('diamond')}>
+            </button>
+            <button class='game-button-input' onClick={() => select('diamond')}>
                 Diamond
-            </MKButton>                                    
-        </div>        
+            </button>                                    
+        </>        
     );
 }
 

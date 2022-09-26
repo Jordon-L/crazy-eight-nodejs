@@ -78,10 +78,10 @@ function Lobby(props){
           <div class='home-content'>
             <h1>Lobby</h1>
             <div class='user-input'>
-              <button class="gameID-input" onClick={create}>Create New Game</button>
+              <button class="game-button-input" onClick={create}>Create New Game</button>
               <p>Enter in Game ID or select from below</p>
-              <input class="gameID-input" type="text" placeholder="Enter Game ID" onChange={event => setInput(event.target.value) } onKeyDown={keyPress}></input>
-              <button class="gameID-input" onClick={join}>Submit</button>
+              <input class="game-button-input" type="text" placeholder="Enter Game ID" onChange={event => setInput(event.target.value) } onKeyDown={keyPress}></input>
+              <button class="game-button-input" onClick={join}>Submit</button>
             </div>
             <div id="lobby">
               <div class="game-rooms">
@@ -99,9 +99,9 @@ function Lobby(props){
                 </table>
               </div>
               <div class="game-join">
-                <button class="gameID-input">Refresh</button>
+                <button class="game-button-input">Refresh</button>
 
-                <button class="gameID-input">Join</button>
+                <button class="game-button-input">Join</button>
               </div>
             </div>
           </div>

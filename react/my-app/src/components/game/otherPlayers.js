@@ -22,8 +22,12 @@ function OtherPlayers(props) {
         }
         return list;
     };
-
-    let cardList = cards(props.number);      
+    let number = props.number;
+    if(props.number > 10){
+      number = 10;
+    }
+    let cardList = cards(number);
+    
     let spacing = "-50px";
     if(props.number > 10){
         spacing = "-75px"

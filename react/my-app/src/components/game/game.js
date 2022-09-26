@@ -5,6 +5,7 @@
 */
 
 import React,{useCallback, useContext, useEffect, useState, useRef, useReducer} from 'react'
+import io from 'socket.io-client';
 import {SocketContext} from 'context/socket';
 import {GameDataContext} from 'context/gameData';
 import Lobby from 'components/lobby/lobby';
@@ -12,6 +13,7 @@ import PlayerTable from 'components/lobby/playerTable'
 import GameSession from 'components/game/gameSession';
 import MKButton from "components/materialKit/MKButton";
 export const GameContext = React.createContext();
+const socket = io();
 
 const initialState = {
   gameStatus: 1,
@@ -19,7 +21,7 @@ const initialState = {
   gameId: 'placeholder',
   players: [],
   otherHands: [],
-  playerName: 'placeholder',
+  playerName: '',
   inPlay: [],
   turn: false,
   whosTurn: '',
@@ -123,24 +125,7 @@ function reducer(state, action) {
 }
 
 function Game(props){
-    const socket = useContext(SocketContext);
     const [state, dispatch] = useReducer(reducer, initialState);
-    //console.log(state);
-
-
-    // const handleEightDiscard = useCallback((gameData) => {
-    //     setCards(gameData.playerHand);
-    //     setOtherHands(gameData.otherHands);
-    //     setInPlay(gameData.inPlay);
-    //     setShowSelectSuit(true);
-    //     setTurn(false);
-        
-    // }, []);
-
-    // const drawCard = useCallback((gameData) => {
-    //     let newCards = gameData.newCards;
-    //     setCards(cards => [...cards, ...newCards]);
-    // }, []);
 
  
 
@@ -162,8 +147,17 @@ function Game(props){
       console.log('asds');
       return dispatch({type: type, payload: payload});
     }
+
+    function playAsGuest(){
+      socket.emit("play as guest");
+    }
     //
     useEffect(() => {
+      socket.disconnect().connect();
+
+      if(state.playerName === ''){
+        playAsGuest();
+      }
       console.log('tst')
       socket.on('start game', (payload) => handleSocket(payload, 'handleStart'));
       socket.on('join', (payload) => handleSocket(payload, 'handleGameId'));
@@ -175,6 +169,7 @@ function Game(props){
       socket.on('winner', (payload) => handleSocket(payload, 'handleWinner'));
       return () => {
         socket.removeAllListeners();
+        socket.disconnect();
     }
     },[]);
     
@@ -189,22 +184,31 @@ function Game(props){
     function display(){
         switch(state.gameStatus) {
             case 1:
-                return <Lobby></Lobby>;
+                return <SocketContext.Provider value ={socket}><Lobby></Lobby></SocketContext.Provider>;
             case 2:
                 return <React.Fragment>
-                    <GameContext.Provider value ={{state}}>
-                        <h1>Crazy Eight</h1>
-                        <h3>Game ID: {state.gameId}</h3>
-                        <h3>You are: {state.playerName}</h3>
-                        <PlayerTable players = {state.players}></PlayerTable>
-                    </GameContext.Provider>
-                    
-                    <MKButton onClick = {onClickReadyButton}>Ready</MKButton>
+                    <SocketContext.Provider value ={socket}>
+                      <div>
+                        <GameContext.Provider value ={{state}}>
+                          <div class='game-info'>     
+                            <h1>Crazy Eights</h1>
+                            <h3>Game ID: {state.gameId}</h3>
+                            <h3>You are: {state.playerName}</h3>
+                          </div>
+                          <PlayerTable players = {state.players}></PlayerTable>
+                        </GameContext.Provider>
+                        <div class='game-ready'>
+                          <button class='game-button-input' onClick = {onClickReadyButton}>Ready</button>
+                        </div>
+                      </div>
+                    </SocketContext.Provider>
                 </React.Fragment>;
              case 3:
-                 return <GameDataContext.Provider value = {{state}}>
-                         <GameSession></GameSession>
+                 return <SocketContext.Provider value ={socket}>
+                    <GameDataContext.Provider value = {{state}}>
+                      <GameSession></GameSession>
                     </GameDataContext.Provider>
+                  </SocketContext.Provider>
             default:
                 return <div>Error</div>;
         }

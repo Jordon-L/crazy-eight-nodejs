@@ -91,7 +91,7 @@ function gameStart(game){
 
 function generateName(){
   const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  const randomString = uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals, numbers] });
+  const randomString = uniqueNamesGenerator({ dictionaries: [colors, animals, numbers] });
   return randomString;
 }
 
@@ -107,8 +107,8 @@ function getGameList(){
 }
 
 io.on('connection', function (socket) {
-    console.log('a user connected');
 
+    console.log('a user connected');
     socket.on('create game', function(data) {
         let newGame = new Game();
         
@@ -321,7 +321,7 @@ io.on('connection', function (socket) {
        
     });
     socket.on('disconnecting', function(){
-        if(socket.gameId != undefined){
+        if(games[socket.gameId] != undefined){
             let game = games[socket.gameId];
             game.numOfPlayers--;
             if(game.numOfPlayers <= 0){
@@ -329,11 +329,11 @@ io.on('connection', function (socket) {
                 delete games[socket.gameId];
             }
             else{
-                let playerSockets = game.playerSocketIds;
-                playerSockets[socket.playerName] = null;
+                let playerName = socket.playerName;
+                delete game.playerSocketIds[socket.playerName];
                 delete game.players[socket.playerName];
-
-                console.log(game.numOfPlayers);
+                
+                console.log(game.players);
                 //let slotNumber = player.number;
                 //let slot = game.players[socket.playerName];
                 //slot.name = 'empty slot ' + slotNumber;

@@ -111,7 +111,7 @@ button:hover {
   margin-right:20px;
 }
 
-.gameID-input {
+.game-button-input {
   padding:10px;
   font-size:24px;
 }
@@ -179,22 +179,42 @@ tbody tr td:first-child{
   text-align: end;
 }
 
+.game-info{
+  text-align: center;
+}
+
+.game-ready{
+  text-align: end;
+  margin: auto;
+  width: 50%;
+  margin-top: 10px;
+}
 
 #game {
   min-height: 900px;
   height: 100vh;
-  margin: auto;
-  display: grid;
-  grid-template-columns: 33.333% 33.333% 33.333%;
-  grid-template-rows: 20% 50% 30%;
-  grid-template-areas:
-    "top top top"
-    "left middle right"
-    "bottom bottom bottom";
+  margin: auto
 }
 
-#bottom {
-  grid-area: bottom;
+.row{
+  display:flex;
+  gap: 10px;
+  margin-bottom:10px;
+}
+
+.column{
+  display:flex;
+  padding: 1rem 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.column-right{
+  justify-content: end;
+}
+
+.column-left{
+  justify-content: start;
 }
 
 #playerHand {
@@ -210,16 +230,18 @@ ul li {
   display: inline;
 }
 
-#top {
-  grid-area: top;
-  white-space: nowrap;
-
+#bottom {
+  text-align: center;
 }
 
 #right {
-  grid-area: right;
   white-space: nowrap;
   list-style-type: None;
+}
+
+#right ul {
+  padding-right:40px;
+  padding-left:0px;
 }
 
 #right ul li:first-child {
@@ -232,7 +254,6 @@ ul li {
 }
 
 #left {
-  grid-area: left;
   white-space: nowrap;
 }
 
@@ -245,11 +266,13 @@ ul li {
   display: list-item;
 }
 
+#left p {
+  text-align: end;
+}
+
 #inPlay {
-  grid-area: middle;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
+  margin: auto;
 }
 
 #inPlay button {
@@ -261,7 +284,6 @@ ul li {
   display: inline-block;
   vertical-align: middle;
   padding: 1em;
-  width: 400px;
 }
 
 #inPlay ul li {
@@ -274,10 +296,20 @@ ul li {
   margin-left: 0px;
 }
 
+.discard-pile{
+  width:200px;
+}
+
+.discard-pile p {
+  margin-top:0px;
+}
+
 #table {
   margin: auto;
   width: 50%;
   padding: 10px;
+  border-style: solid;
+  border-radius: 8px;
 }
 
 tr {
@@ -321,10 +353,6 @@ tr td {
   padding-left: 20px;
   margin-bottom: 10px;
   padding-right: 20px;
-}
-
-.drawCard {
-  margin-Bottom: 2.25rem
 }
 
 @media only screen and (max-width: 992px) {

@@ -11,9 +11,7 @@ import Card from 'components/cards/card'
 function Home(props){
 
     const socket = useContext(SocketContext);
-    function playAsGuest(){
-        socket.emit("play as guest");
-    }
+
     return (
         <div id='home'>
           <div class='home-content'>
@@ -29,7 +27,7 @@ function Home(props){
                 <button>Login</button>
               </div>
               <div>
-                <Link to="/game" ><button onClick={playAsGuest}>Play as Guest</button></Link>
+                <Link to="/game" ><button>Play as Guest</button></Link>
               </div>
             </div>
           </div>

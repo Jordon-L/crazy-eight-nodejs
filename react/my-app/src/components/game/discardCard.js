@@ -23,9 +23,11 @@ function DiscardCard(props) {
  
     }
     return (
-        <MKButton id = 'discard' onClick={discardAction} disabled = {isDisabled}>
-            Discard card
-        </MKButton>
+        <>
+          <button class='game-button-input' onClick={discardAction} disabled = {isDisabled}>
+              Discard card
+          </button>
+        </>
     );
 }
 
