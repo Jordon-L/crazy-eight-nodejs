@@ -23,19 +23,18 @@ function GameSession(props) {
             <div id = 'game'>
                 <div class='row'>
                   <div class='column'>
-                    <OtherPlayers location = 'top' number = {gameData.otherHands[top.name]} name = {top.name}> </OtherPlayers>
+                    {top ? <OtherPlayers location = 'top' number = {gameData.otherHands[top.name]} name = {top.name}> </OtherPlayers> : <></>}
                   </div>
                 </div> 
-
                 <div class='row'>
                   <div class='column column-left'>
-                    <OtherPlayers location = 'left' number = {gameData.otherHands[left.name]} name = {left.name}> </OtherPlayers> 
+                    {left ? <OtherPlayers location = 'left' number = {gameData.otherHands[left.name]} name = {left.name}> </OtherPlayers>  : <></>}         
                   </div>
                   <div class='column'>
                     <InPlay cards = {gameData.inPlay}></InPlay>
                   </div>
                   <div class='column column-right'>
-                    <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]} name = {right.name} > </OtherPlayers>
+                    {right ? <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]} name = {right.name} > </OtherPlayers> : <></>}      
                   </div>                  
                 </div>                  
                 <div class='row'>

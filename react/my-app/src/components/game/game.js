@@ -64,9 +64,22 @@ function reducer(state, action) {
         gameStatus:2,
       }
     case 'handleUserChange':
+      if(gameData.whosTurn !== undefined){
+        whosTurn = gameData.whosTurn;
+      }
+      if(gameData.whosTurn === state.playerName){
+        turn = true;
+      }
       return {
         ...state,
         players: gameData.players,
+        otherHands: gameData.otherHands,
+        inPlay: gameData.inPlay,
+        currentSuit: gameData.currentSuit,
+        whosTurn : whosTurn,
+        turn: turn,
+        twoStack: gameData.twoStack,
+        showSelectSuit:false,
       }
     case 'handleDiscard':
       if(gameData.whosTurn !== undefined){

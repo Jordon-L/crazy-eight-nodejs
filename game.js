@@ -14,7 +14,7 @@ class Game {
         this.currentlyInPlay = [];
         this.currentSuit = '';
         this.playerHandsLength = {};
-        this.whosTurn = 'player1';
+        this.whosTurn = undefined;
         this.whosTurnIndex = 0;
         this.direction = 'counterClockwise';
         this.twoStack = 0;

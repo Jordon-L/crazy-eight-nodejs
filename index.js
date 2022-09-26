@@ -332,7 +332,9 @@ io.on('connection', function (socket) {
                 let playerName = socket.playerName;
                 delete game.playerSocketIds[socket.playerName];
                 delete game.players[socket.playerName];
-                
+                if(game.whosTurn === socket.playerName && game.started === true){
+                  game.nextTurn();
+                }
                 console.log(game.players);
                 //let slotNumber = player.number;
                 //let slot = game.players[socket.playerName];
@@ -340,7 +342,13 @@ io.on('connection', function (socket) {
                 //slot.ready = false;
                 let playersInGame = {
                     "players" : Object.values(game.players),
-                }  
+                    'otherHands': game.playerHandsLength,
+                    'inPlay' : game.currentlyInPlay,
+                    'whosTurn' : game.whosTurn,
+                    'twoStack' : game.twoStack,
+                    'currentSuit': game.currentSuit,  
+                }
+                
                 io.to(socket.gameId).emit('user change', playersInGame);
             }
         }

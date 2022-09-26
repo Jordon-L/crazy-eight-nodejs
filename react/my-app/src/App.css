@@ -31,7 +31,6 @@ button {
   font-size:36px;
   letter-spacing: 1px;
   font-weight:800;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
 }
 
 
@@ -106,7 +105,6 @@ button:hover {
   border-radius: 8px;
   font-size:24px;
   font-weight: 800;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   font-family: inherit;
   margin-right:20px;
 }
@@ -118,7 +116,6 @@ button:hover {
 
 .game-rooms{
   background-color:white;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
   align-self: center;
   margin: 10px;
   height:500px;
