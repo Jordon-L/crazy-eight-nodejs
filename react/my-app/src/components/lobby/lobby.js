@@ -100,8 +100,6 @@ function Lobby(props){
               </div>
               <div class="game-join">
                 <button class="game-button-input">Refresh</button>
-
-                <button class="game-button-input">Join</button>
               </div>
             </div>
           </div>

@@ -72,6 +72,10 @@ button:hover {
   margin-left:100px;
 }
 
+.home-image img:first-child {
+  margin-left:0;
+}
+
 .login {
   text-align: center;
 }
@@ -175,6 +179,7 @@ tbody tr td:first-child{
 .game-join{
   text-align: end;
 }
+
 
 .game-info{
   text-align: center;
@@ -317,25 +322,9 @@ tr td {
   height: auto !important;
 }
 
-
-
 .selected {
   transition: 0.2s;
   transform: translateY(-20px);
-}
-
-.numberCircle {
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  padding: 8px;
-
-  background: #fff;
-  border: 2px solid #666;
-  color: #666;
-  text-align: center;
-
-  font: 32px Arial, sans-serif;
 }
 
 .cardInline {
@@ -352,7 +341,59 @@ tr td {
   padding-right: 20px;
 }
 
-@media only screen and (max-width: 992px) {
+
+@media only screen and (max-width: 1200px) {
+  .home-content h1{
+    font-size:64px;
+
+  }
+  .home-image {
+    margin-top:50px;
+    margin-bottom:100px;
+  }
+
+  .home-image img {
+    width:112.5px;
+    height:157.5px;
+    margin-left:50px;
+  }
+
+  button {
+    font-size:24px;
+  }
+   
+  #lobby{
+    width:400px;
+    height:400px;
+  }
+
+  .user-input p {
+    font-size:16px;
+  }
+  
+  .user-input input[type=text]{
+    font-size:16px;
+  }
+  
+  .game-button-input {
+    padding:10px;
+    font-size:16px;
+  }
+
+  .game-rooms{
+    height:300px;
+    width:400px;
+  }
+  
+  .game-join{
+    height:100px;
+    width:400px;
+  }
+
+  .game-join .game-button-input{
+    margin-right:10px;
+  }
+
   #right img {
     width: 126px;
     height: 90px;
@@ -362,6 +403,12 @@ tr td {
     width: 126px;
     height: 90px;
   }
+
+  #top img {
+    width: 90px;
+    height: 126px;
+    transform: translateY(0px);  
+  }  
 
   img {
     width: 90px;
@@ -369,16 +416,104 @@ tr td {
     transform: translateY(0px);
   }
 
-  p {
-    font-size: 1rem;
+  tr {
+    height: 50px;
   }
 
-  .text {
-    margin-bottom: 0px;
-  }
 }
 
-@media only screen and (min-width: 992px) {
+@media only screen and (max-width: 480px){
+  .home-content h1{
+    font-size:40px;
+    margin:10px;
+
+  }
+  .home-image {
+    text-align: center;
+    margin-top:25px;
+    margin-bottom:50px;
+  }
+
+  .home-image img {
+    width: 72px;
+    height: 100.8px;
+    margin-left:0px;
+  }
+
+  button {
+    font-size:24px;
+  }
+   
+  #lobby{
+    width:100vw;
+    height:400px;
+  }
+
+  .user-input p {
+    font-size:16px;
+  }
+  
+  .user-input input[type=text]{
+    font-size:16px;
+    margin-right:0px;
+  }
+  
+  .game-button-input {
+    padding:10px;
+    font-size:16px;
+  }
+
+  .game-rooms{
+    height:250px;
+    width:100vw;
+  }
+
+  .game-rooms tr { 
+    height:50px;
+  }
+
+  .game-join{
+    height:100px;
+    width:100vw;
+  }
+
+  #right img {
+    width: 126px;
+    height: 90px;
+  }
+
+  #left img {
+    width: 126px;
+    height: 90px;
+  }
+
+  #top img {
+    width: 90px;
+    height: 126px;
+    transform: translateY(0px);  
+  }  
+
+  img {
+    width: 90px;
+    height: 126px;
+    transform: translateY(0px);
+  }
+
+  tr {
+    height: 50px;
+  }
+
+  #table{
+    width:300px;
+  }
+  
+  .game-ready{
+    width:300px;
+  }
+
+}
+
+@media only screen and (min-width: 1200px) {
   #right img {
     width: 140px;
     height: 100px;
@@ -388,7 +523,11 @@ tr td {
     width: 140px;
     height: 100px;
   }
-
+  #top img {
+    width: 100px;
+    height: 140px;
+    transform: translateY(0px);  
+  }
   img {
     width: 100px;
     height: 140px;
