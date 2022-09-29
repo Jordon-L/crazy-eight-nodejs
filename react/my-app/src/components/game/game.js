@@ -132,6 +132,11 @@ function reducer(state, action) {
         players: gameData.players,
         gameStatus: 2,
       }
+    case 'handleLeave':
+      return{
+        ...state,
+        gameStatus: 1,
+      }
     default:
       throw new Error();
   }
@@ -143,7 +148,10 @@ function Game(props){
  
 
     const onClickReadyButton = function() {
-         socket.emit('game ready');
+      socket.volatile.emit('game ready');
+    } 
+    const onClickLeaveButton = function() {
+      socket.volatile.emit('leave room');
     } 
 
     // const displayMessage = useCallback((message) => {
@@ -162,12 +170,12 @@ function Game(props){
     }
 
     function playAsGuest(){
-      socket.emit("play as guest");
+      socket.volatile.emit("play as guest");
     }
     //
     useEffect(() => {
+      console.log('useeffect')
       socket.disconnect().connect();
-
       if(state.playerName === ''){
         playAsGuest();
       }
@@ -180,9 +188,11 @@ function Game(props){
       socket.on('draw card', (payload) => handleSocket(payload, 'handleDraw'));
       socket.on('discard eight card', (payload) => handleSocket(payload, 'handleEightDiscard'));
       socket.on('winner', (payload) => handleSocket(payload, 'handleWinner'));
+      socket.on('leave room', (payload) => handleSocket(payload, 'handleLeave'));
+      
       return () => {
         socket.removeAllListeners();
-        socket.disconnect();
+        //socket.disconnect();
     }
     },[]);
     
@@ -207,6 +217,7 @@ function Game(props){
                             <h1>Crazy Eights</h1>
                             <h3>Game ID: {state.gameId}</h3>
                             <h3>You are: {state.playerName}</h3>
+                            <button class='game-button-input' onClick = {onClickLeaveButton}>Leave Room</button>
                           </div>
                           <PlayerTable players = {state.players}></PlayerTable>
                         </GameContext.Provider>

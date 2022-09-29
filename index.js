@@ -91,7 +91,7 @@ function gameStart(game){
 
 function generateName(){
   const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-  const randomString = uniqueNamesGenerator({ dictionaries: [colors, animals, numbers] });
+  const randomString = uniqueNamesGenerator({ dictionaries: [animals, numbers] });
   return randomString;
 }
 
@@ -106,10 +106,44 @@ function getGameList(){
   return gamelist;
 }
 
+function leaveRoom(socket){
+    if(games[socket.gameId] != undefined){
+      let game = games[socket.gameId];
+      game.numOfPlayers--;
+      if(game.numOfPlayers <= 0){
+          console.log("delete game")
+          delete games[socket.gameId];
+      }
+      else{
+          let playerName = socket.playerName;
+          delete game.playerSocketIds[socket.playerName];
+          delete game.players[socket.playerName];
+          if(game.whosTurn === socket.playerName && game.started === true){
+            game.nextTurn();
+          }
+          console.log(game.players);
+
+          let playersInGame = {
+              "players" : Object.values(game.players),
+              'otherHands': game.playerHandsLength,
+              'inPlay' : game.currentlyInPlay,
+              'whosTurn' : game.whosTurn,
+              'twoStack' : game.twoStack,
+              'currentSuit': game.currentSuit,  
+          }
+          
+          io.to(socket.gameId).emit('user change', playersInGame);
+          }
+  }
+}
+
 io.on('connection', function (socket) {
 
     console.log('a user connected');
     socket.on('create game', function(data) {
+        if(socket.gameId != undefined){
+          return;
+        }
         let newGame = new Game();
         
         let playerName = socket.playerName;
@@ -146,6 +180,9 @@ io.on('connection', function (socket) {
     })
 
     socket.on('join game', function(gameId) {
+        if(socket.gameId != undefined){
+          return;
+        }
         if(games[gameId] != null && games[gameId].numOfPlayers < 4){
 
             let game = games[gameId]
@@ -224,6 +261,9 @@ io.on('connection', function (socket) {
         let inPlay = [];
 
         if(game != undefined){
+            if(game.whosTurn != playerName){
+              return;
+            }
             let playerHand = game.playerHands[playerName];
             let selectedPlay = [];
             for(let i = 0; i < selectedIndices.length; i++){
@@ -321,38 +361,19 @@ io.on('connection', function (socket) {
        
     });
     socket.on('disconnecting', function(){
-        if(games[socket.gameId] != undefined){
-            let game = games[socket.gameId];
-            game.numOfPlayers--;
-            if(game.numOfPlayers <= 0){
-                console.log("delete game")
-                delete games[socket.gameId];
-            }
-            else{
-                let playerName = socket.playerName;
-                delete game.playerSocketIds[socket.playerName];
-                delete game.players[socket.playerName];
-                if(game.whosTurn === socket.playerName && game.started === true){
-                  game.nextTurn();
-                }
-                console.log(game.players);
-                //let slotNumber = player.number;
-                //let slot = game.players[socket.playerName];
-                //slot.name = 'empty slot ' + slotNumber;
-                //slot.ready = false;
-                let playersInGame = {
-                    "players" : Object.values(game.players),
-                    'otherHands': game.playerHandsLength,
-                    'inPlay' : game.currentlyInPlay,
-                    'whosTurn' : game.whosTurn,
-                    'twoStack' : game.twoStack,
-                    'currentSuit': game.currentSuit,  
-                }
-                
-                io.to(socket.gameId).emit('user change', playersInGame);
-            }
-        }
+      leaveRoom(socket);
     })
+
+
+    socket.on('leave room', function(){
+      leaveRoom(socket);
+      socket.leave(socket.gameId);
+      if(socket.gameId != undefined){
+        io.to(socket.id).emit('leave room');
+      }
+      
+      socket.gameId = undefined;
+    });
 
 
     socket.on('draw card', function () {   

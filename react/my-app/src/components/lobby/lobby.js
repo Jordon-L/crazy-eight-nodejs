@@ -5,7 +5,7 @@
 
 import React,{useCallback, useContext, useEffect, useState, useReducer} from 'react'
 import {SocketContext} from 'context/socket';
-import { AssessmentRounded } from '@mui/icons-material';
+import { AssessmentRounded, SportsCricketOutlined } from '@mui/icons-material';
 
 const initialState = {
   input: null,
@@ -35,21 +35,23 @@ function Lobby(props){
     const [state, dispatch] = useReducer(reducer, initialState);
 
     function join(){
-        socket.emit("join game", input);
+      socket.volatile.emit("join game", input);
     }
     
     function create(){
-        socket.emit("create game", 'create');
+      socket.volatile.emit("create game", 'create');
     }
 
     function keyPress(e){
         if(e.keyCode === 13){
             join();
         }
-     }
+    }
+
     function getGames(){
       socket.emit('game list');
     }
+
     function generateRow(gameId, name, gamemaster){
       return (<>
         <tr onClick={() => {
@@ -70,8 +72,9 @@ function Lobby(props){
       socket.on('game list', (payload) =>  handleSocket(payload, 'gameList'));
       return () => {
         socket.removeAllListeners('game list');
+        socket.removeAllListeners('connect');
       }
-  },[]);
+    },[]);
 
     return (
         <div id='home'>
@@ -99,7 +102,7 @@ function Lobby(props){
                 </table>
               </div>
               <div class="game-join">
-                <button class="game-button-input">Refresh</button>
+                <button class="game-button-input" onClick={getGames}>Refresh</button>
               </div>
             </div>
           </div>

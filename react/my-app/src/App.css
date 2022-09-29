@@ -204,19 +204,14 @@ tbody tr td:first-child{
   margin-bottom:10px;
 }
 
+.row-middle {
+  height:400px;
+}
+
 .column{
   display:flex;
-  padding: 1rem 0;
   flex: 1;
   justify-content: center;
-}
-
-.column-right{
-  justify-content: end;
-}
-
-.column-left{
-  justify-content: start;
 }
 
 #playerHand {
@@ -233,6 +228,7 @@ ul li {
 }
 
 #bottom {
+  width: 100vw;
   text-align: center;
 }
 
@@ -298,10 +294,6 @@ ul li {
   margin-left: 0px;
 }
 
-.discard-pile{
-  width:200px;
-}
-
 .discard-pile p {
   margin-top:0px;
 }
@@ -334,15 +326,30 @@ tr td {
 
 .text {
   position: absolute;
-  bottom: 150px;
+  bottom: 160px;
   left: 0px;
   padding-left: 20px;
   margin-bottom: 10px;
   padding-right: 20px;
 }
 
+.numberCard {
+  width: 28.125px;
+  height: 39.375px;
+  padding: 8px;
 
-@media only screen and (max-width: 1200px) {
+  border: 2px solid black;
+  text-align: center;
+  box-shadow: 5px 0 0 -2px black;
+  font: 32px Arial, sans-serif;
+}
+
+#left .numberCard{
+  margin-left: auto; 
+  margin-right: 0;
+}
+
+@media screen and (max-width: 1200px) {
   .home-content h1{
     font-size:64px;
 
@@ -394,6 +401,10 @@ tr td {
     margin-right:10px;
   }
 
+  .row-middle {
+    height: unset;
+  }
+
   #right img {
     width: 126px;
     height: 90px;
@@ -420,9 +431,13 @@ tr td {
     height: 50px;
   }
 
+  .text{
+    bottom:140px;
+  }
 }
 
-@media only screen and (max-width: 480px){
+@media screen and (max-width: 480px){
+
   .home-content h1{
     font-size:40px;
     margin:10px;
@@ -476,7 +491,20 @@ tr td {
     height:100px;
     width:100vw;
   }
+  .row{
+    gap:0px;
+    margin-bottom:0px;
+  }
 
+  .column-center{
+    flex:unset
+  }
+  #right ul,#left ul,#top ul {
+    display: none;
+  }
+  #right p, #left p, #top p, #bottom p{
+    font-size: 12px;
+  }
   #right img {
     width: 126px;
     height: 90px;
@@ -493,9 +521,13 @@ tr td {
     transform: translateY(0px);  
   }  
 
+  #playerHand{
+    margin-top: 25px;
+  }
+
   img {
-    width: 90px;
-    height: 126px;
+    width: 72px;
+    height: 100.8px;
     transform: translateY(0px);
   }
 
@@ -511,9 +543,16 @@ tr td {
     width:300px;
   }
 
+  .selected{
+    transform: translateY(-5px);
+  }
+
+  .text{
+    bottom:100px;
+  }
 }
 
-@media only screen and (min-width: 1200px) {
+@media screen and (min-width: 1200px) {
   #right img {
     width: 140px;
     height: 100px;
