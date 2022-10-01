@@ -19,6 +19,15 @@ function GameSession(props) {
         let right =  gameData.players[order[1]];
         let top = gameData.players[order[2]];
         let left = gameData.players[order[3]];
+        if(top === undefined && left !== undefined){
+          top = left;
+          left = undefined;
+        }
+        else if(top === undefined && right !== undefined){
+          top = right;
+          left = undefined;
+        }
+
         return (
             <div id = 'game'>
                 <div class='row'>

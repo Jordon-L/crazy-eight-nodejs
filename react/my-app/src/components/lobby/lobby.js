@@ -1,12 +1,12 @@
 /*
-    File name: joinRoom.js
-    Description: Display how to join a room and how to play game
+    File name: lobby.js
+    Description: Join a room or create a room
 */
 
 import React,{useCallback, useContext, useEffect, useState, useReducer} from 'react'
 import {SocketContext} from 'context/socket';
-import { AssessmentRounded, SportsCricketOutlined } from '@mui/icons-material';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import {Link} from "react-router-dom";
 const initialState = {
   input: null,
   gameList: [],
@@ -52,13 +52,13 @@ function Lobby(props){
       socket.emit('game list');
     }
 
-    function generateRow(gameId, name, gamemaster){
+    function generateRow(gameId, gamemaster, capacity){
       return (<>
         <tr onClick={() => {
           socket.emit("join game", gameId);}}>
           <td>{gameId}</td>
-          <td>{name}</td>
           <td>{gamemaster}</td>
+          <td>{capacity}</td>
         </tr>
       </>)
     }
@@ -72,12 +72,14 @@ function Lobby(props){
       socket.on('game list', (payload) =>  handleSocket(payload, 'gameList'));
       return () => {
         socket.removeAllListeners('game list');
-        socket.removeAllListeners('connect');
       }
     },[]);
 
     return (
         <div id='home'>
+          <div class='back-home'>
+            <Link to="/" ><ArrowBackIcon></ArrowBackIcon></Link>
+          </div>
           <div class='home-content'>
             <h1>Lobby</h1>
             <div class='user-input'>
@@ -92,8 +94,8 @@ function Lobby(props){
                   <thead>
                     <tr>
                       <th>Game ID</th>
-                      <th>Room name</th>
                       <th>Gamemaster</th>
+                      <th>Capacity</th>
                     </tr>
                   </thead>
                   <tbody>

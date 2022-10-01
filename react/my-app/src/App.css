@@ -304,6 +304,7 @@ ul li {
   padding: 10px;
   border-style: solid;
   border-radius: 8px;
+  margin-top:10px;
 }
 
 tr {
@@ -342,6 +343,21 @@ tr td {
   text-align: center;
   box-shadow: 5px 0 0 -2px black;
   font: 32px Arial, sans-serif;
+}
+
+.message {
+  height:16px;
+}
+
+.back-home {
+  position: absolute;
+  left:0;
+  margin:20px;
+  font-size:40px;
+}
+
+.back-home a {
+  color:black;
 }
 
 #left .numberCard{

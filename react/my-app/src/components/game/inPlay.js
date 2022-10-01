@@ -31,6 +31,7 @@ return (
      </ul>
     <DisplaySuit></DisplaySuit>
     <p>{gameData.whosTurn}'s Turn</p>
+    <p class='message'> {gameData.message}</p>
     </div>
 );
 }

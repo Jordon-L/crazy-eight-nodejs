@@ -100,8 +100,9 @@ function getGameList(){
   let keys = Object.keys(games);
   for(let i = 0; i < keys.length; i++){
     let game = games[keys[i]];
-    gamelist.push([keys[i], 'test name', 'test'])
-  
+    if(game.started == false){
+      gamelist.push([keys[i], Object.values(game.players)[0].name, game.numOfPlayers.toString().concat("/4")]);
+    }
   }
   return gamelist;
 }
@@ -270,7 +271,7 @@ io.on('connection', function (socket) {
                 let index = selectedIndices[i];
                 selectedPlay.push(playerHand[index]);
                 
-            }            
+            }           
             if(game.isValidPlay(selectedPlay)){
                 inPlay.push(...selectedPlay);
                 selectedIndices = selectedIndices.sort();
@@ -320,7 +321,22 @@ io.on('connection', function (socket) {
                     }
                 
                     io.to(socketId).emit('discard card', gameData);
-                    socket.broadcast.to(gameId).emit('other play turn', turn); 
+                    socket.broadcast.to(gameId).emit('other play turn', turn);
+                    let nextPlayer = game.playerSocketIds[game.whosTurn];
+                    let cardPlayed = selectedPlay[selectedPlay.length-1].rank;
+                    if(cardPlayed === 'two'){
+                      
+                      io.to(nextPlayer).emit('display message', {message:'draw cards or play a 2'});
+                    }
+                    else if(cardPlayed === 'queen'){
+                      let skippedPlayer = game.playerSocketIds[game.whoPrevTurn()]
+                      io.to(skippedPlayer).emit('display message', {message:'turn skipped'});
+                    } 
+                    else if(cardPlayed === 'ace'){
+                      let reversedPlayer = game.playerSocketIds[game.whoPrevTurn()]
+                      io.to(reversedPlayer).emit('display message', {message:'reversed order'});
+                    }
+
                 }
                 else{
                     game.nextTurn();
@@ -334,7 +350,9 @@ io.on('connection', function (socket) {
                 }                               
             }
             else{
-                console.log('invalid play');
+              if(game.twoStack === 0){
+                io.to(socketId).emit('display message', {message:'Invalid Play'});
+              } 
             }
         }
 
@@ -384,7 +402,7 @@ io.on('connection', function (socket) {
         if(game !== undefined){
             let playerHand = game.playerHands[playerName];
             if(game.isValidHand(playerHand) && game.twoStack === 0){
-                io.to(socketId).emit('display message', 'you have a valid play');
+                io.to(socketId).emit('display message', {message:'you have a valid play'});
                 return;
             }
 
@@ -396,7 +414,7 @@ io.on('connection', function (socket) {
             }
             if(deck.getLength() < numberOfCards){
                 if(game.discardPile.length === 0){
-                    io.to(socketId).emit('display message', 'no more cards available');
+                    io.to(socketId).emit('display message', {message:'no more cards available'});
                     return;
                 }
                 deck.insertDiscardPile(game.discardPile);

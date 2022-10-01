@@ -2,6 +2,7 @@ import 'App.css';
 import {SocketContext} from 'context/socket'
 import Game from "components/game/game";
 import Home from "components/home/home";
+import HowToPlay from "components/home/howToPlay";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import CssBaseline from "@mui/material/CssBaseline";
@@ -31,6 +32,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/rules" element={<HowToPlay />} />
           <Route path="/game" element={
           <>
           <ThemeProvider theme={theme}>

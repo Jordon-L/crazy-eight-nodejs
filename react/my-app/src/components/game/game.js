@@ -12,6 +12,7 @@ import Lobby from 'components/lobby/lobby';
 import PlayerTable from 'components/lobby/playerTable'
 import GameSession from 'components/game/gameSession';
 import MKButton from "components/materialKit/MKButton";
+import { Satellite } from '@mui/icons-material';
 export const GameContext = React.createContext();
 const socket = io();
 
@@ -28,6 +29,7 @@ const initialState = {
   showSelectSuit: false,
   currentSuit: 'placeholder',
   twoStack: 0,
+  message: '',
 };
 
 function reducer(state, action) {
@@ -93,6 +95,7 @@ function reducer(state, action) {
         turn : false,
         currentSuit: gameData.currentSuit,
         whosTurn : whosTurn,
+        message: '',
       }
     
     case 'handleTurn':
@@ -136,6 +139,11 @@ function reducer(state, action) {
       return{
         ...state,
         gameStatus: 1,
+      }
+    case 'handleMessage':
+      return{
+        ...state,
+        message: gameData.message,
       }
     default:
       throw new Error();
@@ -189,7 +197,7 @@ function Game(props){
       socket.on('discard eight card', (payload) => handleSocket(payload, 'handleEightDiscard'));
       socket.on('winner', (payload) => handleSocket(payload, 'handleWinner'));
       socket.on('leave room', (payload) => handleSocket(payload, 'handleLeave'));
-      
+      socket.on('display message', (payload) => handleSocket(payload, 'handleMessage'));
       return () => {
         socket.removeAllListeners();
         //socket.disconnect();

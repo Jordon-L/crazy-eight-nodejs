@@ -1,3 +1,8 @@
+/*
+    File name: playerTable.js
+    Description: Display players in the room.
+*/
+
 import React, { useState, useEffect} from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,9 +12,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import CheckMark from 'components/lobby/checkMark';
-
-// players {"name": name , "ready" : false}
-
 
 function PlayerTable(props) {
   

@@ -1,16 +1,15 @@
 /*
     File name: home.js
-    Description: home page of crazy eights, can login or play as guest
+    Description: home page of crazy eights
 */
 
-import React,{useCallback, useContext, useEffect, useState} from 'react'
-import {SocketContext} from 'context/socket';
+import React from 'react'
 import {Link} from "react-router-dom";
 import Card from 'components/cards/card'
 
+
 function Home(props){
 
-    const socket = useContext(SocketContext);
 
     return (
         <div id='home'>
@@ -24,6 +23,10 @@ function Home(props){
             </div>
             <div class="login">
               <div>
+              <Link to="/rules" ><button>How to Play</button></Link>
+              </div>
+              <div>
+                
                 <Link to="/game" ><button>Play</button></Link>
               </div>
             </div>
