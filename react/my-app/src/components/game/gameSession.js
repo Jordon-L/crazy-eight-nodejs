@@ -11,22 +11,48 @@ import PlayerHand from 'components/game/playerHand';
 import InPlay from 'components/game/inPlay';
 
 function GameSession(props) {
-    let gameData = useContext(GameDataContext);
-
+    let gameData = useContext(GameDataContext).state;
+    
     function cards() {
         //let bottom = gameData.players[order[0]];
         let order = displayOrder()
         let right =  gameData.players[order[1]];
         let top = gameData.players[order[2]];
         let left = gameData.players[order[3]];
+        if(top === undefined && left !== undefined){
+          top = left;
+          left = undefined;
+        }
+        else if(top === undefined && right !== undefined){
+          top = right;
+          left = undefined;
+        }
+
         return (
-            <div id = 'game'>  
-                <OtherPlayers location = 'top' number = {gameData.otherHands[top.name]} name = {top.name}> </OtherPlayers>
-                <OtherPlayers location = 'left' number = {gameData.otherHands[left.name]} name = {left.name}> </OtherPlayers>
-                <InPlay cards = {gameData.inPlay}></InPlay>
-                <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]} name = {right.name} > </OtherPlayers>
+            <div id = 'game'>
+                <div class='row'>
+                  <div class='column'>
+                    {top ? <OtherPlayers location = 'top' number = {gameData.otherHands[top.name]} name = {top.name}> </OtherPlayers> : <></>}
+                  </div>
+                </div> 
+                <div class='row row-middle'>
+                  <div class='column column-left'>
+                    {left ? <OtherPlayers location = 'left' number = {gameData.otherHands[left.name]} name = {left.name}> </OtherPlayers>  : <></>}         
+                  </div>
+                  <div class='column column-center'>
+                    <InPlay cards = {gameData.inPlay}></InPlay>
+                  </div>
+                  <div class='column column-right'>
+                    {right ? <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]} name = {right.name} > </OtherPlayers> : <></>}      
+                  </div>                  
+                </div>                  
+                <div class='row'>
+                  <div class='column'>
+                    <PlayerHand cards = {gameData.playerHand} name = {gameData.playerName}></PlayerHand>
+                  </div>
+                </div> 
                 
-                <PlayerHand cards = {gameData.cards} name = {gameData.name}></PlayerHand>
+                
             </div>
         );
     }
@@ -37,7 +63,7 @@ function GameSession(props) {
         let order = [0,1,2,3]
         for(let i = 0; i < gameData.players.length; i++){
             let players = gameData.players;
-            if(players[i].name === gameData.name){
+            if(players[i].name === gameData.playerName){
                 
                 bottom = i;
                 switch(bottom){

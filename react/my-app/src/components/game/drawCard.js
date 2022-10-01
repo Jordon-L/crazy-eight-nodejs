@@ -10,18 +10,10 @@ import cardStack from 'components/cards/cardImages/cardStack.png';
 
 function DrawCard(props) {
     let socket = useContext(SocketContext);
-    let gameData = useContext(GameDataContext);
+    let gameData = useContext(GameDataContext).state;
     function drawAction() {
         if(gameData.turn === true){
-            let twoStack = gameData.twoStack;
-            if(twoStack !== 0){
-                let draw = twoStack * 2;
-                socket.emit('draw card', draw.toString());
-                gameData.setTwoStack(0);
-            }
-            else{
-                socket.emit('draw card', "1");
-            }            
+          socket.emit('draw card');        
         }
     }
 

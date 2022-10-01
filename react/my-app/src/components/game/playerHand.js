@@ -30,12 +30,6 @@ function PlayerHand(props) {
     });
   
     let spacing = "-50px";
-    if(cards.length > 10){
-        spacing = "-75px"
-    }
-    if(cards.length > 20){
-        spacing = "-85px"
-    }
     let style = {marginLeft: spacing}
 
 return (

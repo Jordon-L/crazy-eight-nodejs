@@ -9,7 +9,8 @@ import {GameDataContext} from 'context/gameData';
 import MKButton from "components/materialKit/MKButton";
 function DiscardCard(props) {
     let socket = useContext(SocketContext);
-    let gameData = useContext(GameDataContext);
+    let gameData = useContext(GameDataContext).state;
+
     let isDisabled = !gameData.turn;
     function discardAction() {
         let selectedIndices = props.selected;
@@ -22,9 +23,11 @@ function DiscardCard(props) {
  
     }
     return (
-        <MKButton id = 'discard' onClick={discardAction} disabled = {isDisabled}>
-            Discard card
-        </MKButton>
+        <>
+          <button class='game-button-input' onClick={discardAction} disabled = {isDisabled}>
+              Discard card
+          </button>
+        </>
     );
 }
 

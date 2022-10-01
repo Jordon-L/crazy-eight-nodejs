@@ -6,7 +6,6 @@
 import React,{useCallback, useContext, useEffect, useState} from 'react'
 import {SocketContext} from 'context/socket';
 import MKButton from "components/materialKit/MKButton";
-import MKInput from "components/materialKit/MKInput";
 function JoinRoom(props){
 
     const socket = useContext(SocketContext);
@@ -25,7 +24,7 @@ function JoinRoom(props){
         }
      }
     return (
-        <div>
+        <div id='home'>
             <h1>Crazy Eights</h1>
             <h4> How to start playing </h4>
             <ol>
@@ -50,7 +49,7 @@ function JoinRoom(props){
             <MKButton onClick = {create}> create new game</MKButton>
 
             <h4>Join an existing game</h4>
-            <MKInput label="Game Id" onChange={event => setInput(event.target.value) } onKeyDown={keyPress} />
+            <input label="Game Id" onChange={event => setInput(event.target.value) } onKeyDown={keyPress} />
             <MKButton onClick = {join}>submit</MKButton>
         </div>
         

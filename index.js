@@ -1,13 +1,23 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+import { Server } from 'socket.io';
+import Game from './game.js';
+import { strict } from 'assert';
+import { fileURLToPath } from 'url';
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals
+} from "unique-names-generator";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const PORT = process.env.PORT || 5000;
 const app = express();
-const http = require('http');
+import http from 'http';
 const server = http.createServer(app);
-const { Server } = require("socket.io");
 const io = new Server(server);
-const Game = require('./game');
-const { strict } = require('assert');
 let users = 0;
 let userSockets = [];
 let games = {};
@@ -16,6 +26,10 @@ let latestGameId = 0;
 app.use(express.static(path.resolve(__dirname, './react/my-app/build')));
 
 app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './react/my-app/build', 'index.html'));
+});
+
+app.get('*', function(req, res) {
   res.sendFile(path.resolve(__dirname, './react/my-app/build', 'index.html'));
 });
 
@@ -60,6 +74,7 @@ function gameStart(game){
     game.whosTurnIndex = 0;
 
     for(let i = 0; i < keys.length; i++){
+        console.log(keys[i]);
         let playerName = keys[i];
         let socketId = playerSocketIds[playerName];
         let gameData = {
@@ -74,71 +89,137 @@ function gameStart(game){
 
 }
 
-io.on('connection', function (socket) {
-    console.log('a user connected');
+function generateName(){
+  const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+  const randomString = uniqueNamesGenerator({ dictionaries: [animals, numbers] });
+  return randomString;
+}
 
+function getGameList(){
+  let gamelist = [];
+  let keys = Object.keys(games);
+  for(let i = 0; i < keys.length; i++){
+    let game = games[keys[i]];
+    if(game.started == false){
+      gamelist.push([keys[i], Object.values(game.players)[0].name, game.numOfPlayers.toString().concat("/4")]);
+    }
+  }
+  return gamelist;
+}
+
+function leaveRoom(socket){
+    if(games[socket.gameId] != undefined){
+      let game = games[socket.gameId];
+      game.numOfPlayers--;
+      if(game.numOfPlayers <= 0){
+          console.log("delete game")
+          delete games[socket.gameId];
+      }
+      else{
+          let playerName = socket.playerName;
+          delete game.playerSocketIds[socket.playerName];
+          delete game.players[socket.playerName];
+          if(game.whosTurn === socket.playerName && game.started === true){
+            game.nextTurn();
+          }
+          console.log(game.players);
+
+          let playersInGame = {
+              "players" : Object.values(game.players),
+              'otherHands': game.playerHandsLength,
+              'inPlay' : game.currentlyInPlay,
+              'whosTurn' : game.whosTurn,
+              'twoStack' : game.twoStack,
+              'currentSuit': game.currentSuit,  
+          }
+          
+          io.to(socket.gameId).emit('user change', playersInGame);
+          }
+  }
+}
+
+io.on('connection', function (socket) {
+
+    console.log('a user connected');
     socket.on('create game', function(data) {
+        if(socket.gameId != undefined){
+          return;
+        }
         let newGame = new Game();
         
-        let playerName = 'player1';
+        let playerName = socket.playerName;
+        if(playerName == null){
+          playerName = generateName();
+          socket.playerName = playerName;
+        }
         newGame.playerSocketIds[playerName] = socket.id;
         newGame.players[playerName] = createPlayer(playerName, 1);
-        newGame.players['player2'] = createPlayer('empty slot 2', 2);
-        newGame.players['player3'] = createPlayer('empty slot 3', 3);
-        newGame.players['player4'] = createPlayer('empty slot 4' ,4);
         let gameId = "game" + latestGameId;
         newGame.gameId = gameId;    
         socket.join(gameId);
 
         let gameData = {
+            'playerName': playerName,
+            'gameId': gameId,
             "players" : Object.values(newGame.players),           
         }
-        socket.emit('join', gameData, playerName, gameId);
+        socket.emit('join', gameData);
 
         socket.gameId = gameId;
-        socket.playerName = playerName;
         newGame.numOfPlayers++;
         games[gameId] = newGame;
         
         latestGameId++;
     });
 
+    socket.on('play as guest', function(){
+        socket.playerName = generateName();
+    });
+
+    socket.on('game list', function() {
+      socket.emit('game list', {gameList: getGameList()} );
+    })
+
     socket.on('join game', function(gameId) {
+        if(socket.gameId != undefined){
+          return;
+        }
         if(games[gameId] != null && games[gameId].numOfPlayers < 4){
 
             let game = games[gameId]
             if(game.started === true){
+                socket.emit('join', -1);
                 return;
                 //gamefull
             }
-            let playerName = "placeholder"
-            let keys = Object.keys(game.players);
-            for(let i = 0; i < 4; i++){
-                let name = game.players[keys[i]].name
-                if(name.includes("empty slot")){
-                    game.players[keys[i]] = createPlayer(keys[i], i+1);
-                    game.playerSocketIds[keys[i]] = socket.id;
-                    playerName = keys[i];
-                    break;
-                }
-            }
-            let gameData = {
-                "players" : Object.values(game.players),         
+
+            let playerName = socket.playerName;
+            if(playerName == undefined){
+              playerName = generateName();
+              socket.playerName = playerName;
             }
 
-            socket.emit('join', gameData, playerName, gameId);
+            game.numOfPlayers++;
+            let playerNumber = game.numOfPlayers;
+            game.players[playerName] = createPlayer(playerName, playerNumber);
+            game.playerSocketIds[playerName] = socket.id;
+            let gameData = {
+              'playerName': playerName,
+              'gameId': gameId,
+              "players" : Object.values(game.players),        
+            }
+
+            socket.emit('join', gameData);
             socket.gameId = gameId;
-            socket.playerName = playerName;
 
             let playersInGame = {
                 "players" : Object.values(game.players),
             }
-            io.to(gameId).emit('user joined', playersInGame);
-            socket.join(gameId);
-            game.numOfPlayers++;             
+            io.to(gameId).emit('user change', playersInGame);
+            socket.join(gameId);          
         }
         else{
-            socket.emit('join game', -1);
+            socket.emit('join', -1);
         }
     });
 
@@ -159,12 +240,11 @@ io.on('connection', function (socket) {
             let playersInGame = {
                 "players" : Object.values(game.players),
             }
-            io.to(gameId).emit('game ready', playersInGame);
+            io.to(gameId).emit('user change', playersInGame);
             console.log(game.ready);
             if(game.ready >= 4){
                 console.log('start game');
                 gameStart(game);
-                //io.to(gameId).emit('start game');
             }            
         }
         else{
@@ -182,13 +262,16 @@ io.on('connection', function (socket) {
         let inPlay = [];
 
         if(game != undefined){
+            if(game.whosTurn != playerName){
+              return;
+            }
             let playerHand = game.playerHands[playerName];
             let selectedPlay = [];
             for(let i = 0; i < selectedIndices.length; i++){
                 let index = selectedIndices[i];
                 selectedPlay.push(playerHand[index]);
                 
-            }            
+            }           
             if(game.isValidPlay(selectedPlay)){
                 inPlay.push(...selectedPlay);
                 selectedIndices = selectedIndices.sort();
@@ -238,7 +321,22 @@ io.on('connection', function (socket) {
                     }
                 
                     io.to(socketId).emit('discard card', gameData);
-                    socket.broadcast.to(gameId).emit('other play turn', turn); 
+                    socket.broadcast.to(gameId).emit('other play turn', turn);
+                    let nextPlayer = game.playerSocketIds[game.whosTurn];
+                    let cardPlayed = selectedPlay[selectedPlay.length-1].rank;
+                    if(cardPlayed === 'two'){
+                      
+                      io.to(nextPlayer).emit('display message', {message:'draw cards or play a 2'});
+                    }
+                    else if(cardPlayed === 'queen'){
+                      let skippedPlayer = game.playerSocketIds[game.whoPrevTurn()]
+                      io.to(skippedPlayer).emit('display message', {message:'turn skipped'});
+                    } 
+                    else if(cardPlayed === 'ace'){
+                      let reversedPlayer = game.playerSocketIds[game.whoPrevTurn()]
+                      io.to(reversedPlayer).emit('display message', {message:'reversed order'});
+                    }
+
                 }
                 else{
                     game.nextTurn();
@@ -252,7 +350,9 @@ io.on('connection', function (socket) {
                 }                               
             }
             else{
-                console.log('invalid play');
+              if(game.twoStack === 0){
+                io.to(socketId).emit('display message', {message:'Invalid Play'});
+              } 
             }
         }
 
@@ -279,29 +379,22 @@ io.on('connection', function (socket) {
        
     });
     socket.on('disconnecting', function(){
-        if(socket.gameId != undefined){
-            let game = games[socket.gameId];
-            game.numOfPlayers--;
-            if(game.numOfPlayers <= 0){
-                console.log("delete game")
-                delete games[socket.gameId];
-            }
-            else{
-                let playerSockets = game.playerSocketIds;
-                playerSockets[socket.playerName] = null;
-                let player = game.players[socket.playerName];
-                let slotNumber = player.number;
-                let slot = game.players[socket.playerName];
-                slot.name = 'empty slot ' + slotNumber;
-                slot.ready = false;
-                let playersInGame = {
-                    "players" : Object.values(game.players),
-                }  
-                io.to(socket.gameId).emit('user leave', playersInGame);
-            }
-        }
+      leaveRoom(socket);
     })
-    socket.on('draw card', function (numberOfCards) {   
+
+
+    socket.on('leave room', function(){
+      leaveRoom(socket);
+      socket.leave(socket.gameId);
+      if(socket.gameId != undefined){
+        io.to(socket.id).emit('leave room');
+      }
+      
+      socket.gameId = undefined;
+    });
+
+
+    socket.on('draw card', function () {   
         let playerName = socket.playerName;
         let gameId = socket.gameId;
         let socketId = socket.id;
@@ -309,35 +402,41 @@ io.on('connection', function (socket) {
         if(game !== undefined){
             let playerHand = game.playerHands[playerName];
             if(game.isValidHand(playerHand) && game.twoStack === 0){
-                io.to(socketId).emit('display message', 'you have a valid play');
+                io.to(socketId).emit('display message', {message:'you have a valid play'});
                 return;
             }
+
             let deck = game.deck;
+            let numberOfCards = 1;
+            if(game.twoStack > 0){
+              numberOfCards = game.twoStack * 2;
+              game.twoStack = 0;
+            }
             if(deck.getLength() < numberOfCards){
                 if(game.discardPile.length === 0){
-                    io.to(socketId).emit('display message', 'no more cards available');
+                    io.to(socketId).emit('display message', {message:'no more cards available'});
                     return;
                 }
                 deck.insertDiscardPile(game.discardPile);
                 game.discardPile = [];
                 deck.shuffle();
             }
-            if(numberOfCards !== '1'){
-                game.twoStack = 0;
-            }
+            
             let cards = deck.drawNCards(numberOfCards);
             
             playerHand.push(...cards);
             game.playerHandsLength[playerName] = playerHand.length;
             let gameData = {
-                'newCards' : cards
+                'playerHand' : playerHand,
+                'twoStack' : 0,
             }
             io.to(socketId).emit('draw card', gameData);
     
             let turn = {
                 'otherHands': game.playerHandsLength,
                 'inPlay' : game.currentlyInPlay,
-                'whosTurn': game.whosTurn,            
+                'whosTurn': game.whosTurn,
+                'twoStack' : 0,            
             }
             socket.broadcast.to(gameId).emit('other play turn', turn);
         }

@@ -7,6 +7,13 @@ import React from 'react';
 import {cardPaths} from 'components/cards/cardPaths'
 
 /*
+    File name: clickableCard.js
+    Description: Card that is clickable
+*/
+
+
+
+/*
     Card Data
     {
         suit: clover,

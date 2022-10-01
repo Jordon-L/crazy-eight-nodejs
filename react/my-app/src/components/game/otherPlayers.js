@@ -22,15 +22,14 @@ function OtherPlayers(props) {
         }
         return list;
     };
-
-    let cardList = cards(props.number);      
+    let number = props.number;
+    if(props.number > 8){
+      number = 8;
+    }
+    let cardList = cards(number);
+    
     let spacing = "-50px";
-    if(props.number > 10){
-        spacing = "-75px"
-    }
-    if(props.number > 20){
-        spacing = "-85px"
-    }
+
     let style = {};
     if(props.location !== 'top'){
         style = {marginTop: spacing}
@@ -41,6 +40,7 @@ function OtherPlayers(props) {
 return (
     <div id = {props.location}>  
         <p> {props.name} </p>
+        <div class='numberCard'>{props.number}</div>
         <ul>
             
             {cardList.map((item,index) =>

@@ -1,4 +1,4 @@
-const Deck = require('./deck')
+import Deck from './deck.js';
 
 class Game {
     constructor(){
@@ -14,7 +14,7 @@ class Game {
         this.currentlyInPlay = [];
         this.currentSuit = '';
         this.playerHandsLength = {};
-        this.whosTurn = 'player1';
+        this.whosTurn = undefined;
         this.whosTurnIndex = 0;
         this.direction = 'counterClockwise';
         this.twoStack = 0;
@@ -165,4 +165,4 @@ class Game {
     }
 }
 
-module.exports = Game;
+export default Game;

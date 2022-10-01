@@ -10,7 +10,7 @@ import DisplaySuit from 'components/game/displaySuit'
 import { GameDataContext } from 'context/gameData';
 
 function InPlay(props) {
-    let gameData = useContext(GameDataContext);
+    let gameData = useContext(GameDataContext).state;
     function onItemClick(id) {
 
     }
@@ -21,17 +21,17 @@ function InPlay(props) {
 
 return (
     <div id = 'inPlay'>
-        <ul>
-            <DrawCard></DrawCard>
-        </ul>
-        
-        <ul>   
-            {cardList.map((item,index) =>
-                <ListItem index={index} item={item} onItemClick={onItemClick} />
-            )}
-            <DisplaySuit></DisplaySuit>
-        </ul>
-        <p>{gameData.whosTurn}'s Turn</p>
+     <ul>
+      <DrawCard></DrawCard>
+     </ul>
+     <ul class='discard-pile'>   
+      {cardList.map((item,index) =>
+          <ListItem index={index} item={item} onItemClick={onItemClick} />
+      )}
+     </ul>
+    <DisplaySuit></DisplaySuit>
+    <p>{gameData.whosTurn}'s Turn</p>
+    <p class='message'> {gameData.message}</p>
     </div>
 );
 }
