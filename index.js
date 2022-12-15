@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import Game from './game.js';
 import { strict } from 'assert';
 import { fileURLToPath } from 'url';
+import {createPlayer } from './player.js'
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -33,9 +34,7 @@ app.get('*', function(req, res) {
   res.sendFile(path.resolve(__dirname, './react/my-app/build', 'index.html'));
 });
 
-function createPlayer(name, number){
-    return {'name': name, 'ready': false, 'number': number};
-}
+
 
 function gameStart(game){
     let gameId = game.gameId;
@@ -67,7 +66,6 @@ function gameStart(game){
         firstCard = deck.drawNCards(1)[0];
     }
     game.currentlyInPlay.push(firstCard);
-    console.log(game.currentlyInPlay);
     game.changeSuit(firstCard.suit);
     //send out to client
     game.whosTurn = keys[0];
@@ -229,23 +227,14 @@ io.on('connection', function (socket) {
         let playerName = socket.playerName;
         let game = games[gameId];
         if(game != undefined){
-            let player = game.players[playerName];
-            player.ready = !(player.ready);
-            if(player.ready == true){
-                game.ready++;
-            }
-            else{
-                game.ready--;
-            }
+            game.toggleReady(playerName);
             let playersInGame = {
-                "players" : Object.values(game.players),
+                "players" : game.getPlayers(),
             }
             io.to(gameId).emit('user change', playersInGame);
-            console.log(game.ready);
-            if(game.ready >= 4){
-                console.log('start game');
+            if(game.startCondition()){
                 gameStart(game);
-            }            
+            }
         }
         else{
             console.log('error game ready');
@@ -270,7 +259,6 @@ io.on('connection', function (socket) {
             for(let i = 0; i < selectedIndices.length; i++){
                 let index = selectedIndices[i];
                 selectedPlay.push(playerHand[index]);
-                
             }           
             if(game.isValidPlay(selectedPlay)){
                 inPlay.push(...selectedPlay);
@@ -359,22 +347,11 @@ io.on('connection', function (socket) {
     });
     socket.on('discard eight card', function(selectedSuit){
         let gameId = socket.gameId;
-        let playerName = socket.playerName;
-        let socketId = socket.id;
         let game = games[gameId];
-        let direction = game.direction; 
 
         if(game !== undefined){
             game.changeSuit(selectedSuit);
-            let turn = {
-                'otherHands': game.playerHandsLength,
-                'inPlay' : game.currentlyInPlay,
-                'whosTurn' : game.whosTurn,
-                'twoStack' : game.twoStack,
-                'currentSuit': game.currentSuit            
-            }
-            
-            io.to(gameId).emit('other play turn', turn); 
+            io.to(gameId).emit('other play turn', game.getEndTurnData()); 
         }
        
     });
@@ -417,9 +394,7 @@ io.on('connection', function (socket) {
                     io.to(socketId).emit('display message', {message:'no more cards available'});
                     return;
                 }
-                deck.insertDiscardPile(game.discardPile);
-                game.discardPile = [];
-                deck.shuffle();
+                game.shuffleDiscardIntoDeck();
             }
             
             let cards = deck.drawNCards(numberOfCards);
