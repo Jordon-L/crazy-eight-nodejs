@@ -46,6 +46,7 @@ class Game {
       } else {
         this.ready--;
       }
+      this.players[playerName].ready = ready;
     }
   }
 
@@ -59,6 +60,16 @@ class Game {
     this.discardPile = [];
   }
 
+  drawCards(n){
+    if(this.deck.getLength() < n){
+      let cardsLeftToDraw = n - this.deck.getLength();
+      let cards = this.deck.drawNCards(this.deck.getLength());
+      this.gameId.shuffleDiscardIntoDeck();
+      cards.push(...this.deck.drawNCards(cardsLeftToDraw));
+      return cards;
+    }
+    return this.deck.drawNCards(n);
+  }
   startCondition() {
     return this.ready >= 4;
   }
@@ -73,41 +84,57 @@ class Game {
     };
   }
 
-  getGameData() {}
+  getGameData(playerName) {
+    return {
+      playerHand: this.playerHands[playerName],
+      otherHands: this.playerHandsLength,
+      inPlay: this.currentlyInPlay,
+      whosTurn: this.whosTurn,
+      currentSuit: this.currentSuit,
+    };
+  }
+
+  joinLobby(playerName) {
+    return {
+      playerName: playerName,
+      gameId: this.gameId,
+      players: Object.values(this.players),
+    };
+  }
   //
   //Game logic
   //
   specialCard(card) {
     let rank = card.rank;
-    if (rank === "queen") {
+    if (rank === "Q") {
       this.nextTurn();
-    } else if (rank === "ace") {
+    } else if (rank === "A") {
       if (this.direction === "clockwise") {
         this.direction = "counterClockwise";
       } else {
         this.direction = "clockwise";
       }
-    } else if (rank === "two") {
+    } else if (rank === "2") {
       this.twoStack++;
     }
   }
   checkCards(cards, currentCard) {
     let rank = cards[0].rank;
     let count = 0;
-    let isSuit = false;
+    let valid = false;
     for (let card of cards) {
-      if (card.rank !== rank && card.rank !== "eight") {
+      if (card.rank !== rank && card.rank !== "8") {
         return false;
       }
       if (card.suit === currentCard.suit) {
-        isSuit = true;
+        valid = true;
       }
       count++;
     }
-    if (rank === "eight") {
-      isSuit = true;
+    if (rank === "8" || rank === currentCard.rank) {
+      valid = true;
     }
-    return count === cards.length && isSuit;
+    return count === cards.length && valid;
   }
   //is this a valid play
   isValidPlay(cards) {
@@ -131,7 +158,7 @@ class Game {
       if (
         card.rank === currentCard.rank ||
         card.suit === this.currentSuit ||
-        card.rank === "eight"
+        card.rank === "8"
       ) {
         return true;
       }
@@ -144,7 +171,7 @@ class Game {
     let currentCard = this.currentlyInPlay[currentCardIndex];
     for (let i = 0; i < cards.length; i++) {
       let card = cards[i];
-      if (card.rank !== "two" || currentCard.rank !== "two") {
+      if (card.rank !== "2" || currentCard.rank !== "2") {
         return false;
       }
     }

@@ -1,8 +1,8 @@
 class Card {
-    constructor(rank, suit, fileName){
+    constructor(rank, suit){
         this.suit = suit;
         this.rank = rank;
-        this.fileName = fileName;
+        this.fileName = rank+suit;
     }
 }
 

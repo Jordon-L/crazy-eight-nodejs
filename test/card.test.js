@@ -10,10 +10,10 @@ describe('new Card()', function() {
   // test a functionality
   it('return back inputted arguments', function() {
     // add an assertion
-    let card = new Card("ace", "club", "ace club");
+    let card = new Card("ace", "club");
     expect(card.rank).to.equal("ace");
     expect(card.suit).to.equal("club");
-    expect(card.fileName).to.equal("ace club");
+    expect(card.fileName).to.equal("aceclub");
   })
 
   // ...some more tests

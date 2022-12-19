@@ -6,16 +6,13 @@ class Deck {
     }
     createDeck(){
         this.cards = [];
-        let suits = ["club", "spade", "heart", "diamond"];
-        let ranks = ["ace", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "jack", "queen", "king"]; 
-        let fileSuits = ["C", "S", "H", "D"];
-        let fileRanks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"];              
+        let suits = ["C", "S", "H", "D"];
+        let ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"];              
         let ranksLength = ranks.length;
         let suitsLength = suits.length;
         for(let i = 0; i < ranksLength; i++){
             for(let j = 0; j < suitsLength; j++){
-                let fileName = fileRanks[i] + fileSuits[j];
-                this.cards.push(new Card(ranks[i], suits[j], fileName));
+                this.cards.push(new Card(ranks[i], suits[j]));
             }
         }
     }
