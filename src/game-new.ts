@@ -1,12 +1,9 @@
-import Player from "./player-new";
-import Card from "./card";
-import Deck from "./deck-new";
-import { SocketInfo } from "./types";
+import Player from "./player-new.js";
+import Card from "./card.js";
+import Deck from "./deck-new.js";
+import { Direction, SocketInfo } from "./types";
 
-enum Direction {
-  Clockwise,
-  CounterClockwise,
-}
+
 
 class Game {
   id: number;

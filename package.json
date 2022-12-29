@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node dist/index-new.js",
     "test": "mocha --verbose ./tests",
-    "dev": "nodemon index-new.ts"
+    "dev": "nodemon dist/index-new.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,5 +1,5 @@
-import Game from "./game-new";
-import Player from "./player-new";
+import Game from "./game-new.js";
+import Player from "./player-new.js";
 import { SocketInfo } from "./types";
 
 class RoomController {

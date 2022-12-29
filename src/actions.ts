@@ -1,6 +1,6 @@
-import Player from "./player-new";
-import RoomController from "./roomController";
-import { SocketInfo } from "./types";
+import Player from "./player-new.js";
+import RoomController from "./roomController.js";
+import { GameStateWrapper, SocketInfo } from "./types";
 
 abstract class Action {
   constructor() {}
@@ -8,7 +8,7 @@ abstract class Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     data: any
-  ): void;
+  ): void
 }
 
 class discardAction extends Action {
@@ -137,7 +137,7 @@ class ActionHandler {
 
   executeAction(command: string, socketInfo: SocketInfo) {
     let action = this.actions.get(command);
-    action?.execute(socketInfo, this.roomController, null);
+    return action?.execute(socketInfo, this.roomController, null);
   }
   getGameList() {
     return this.roomController.getGameList();

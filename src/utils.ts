@@ -1,4 +1,4 @@
-import Game from "./game-new";
+import Game from "./game-new.js";
 
 function formatGameList(gameList: Map<Number, Game>) {
   let games = [];
