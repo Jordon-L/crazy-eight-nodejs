@@ -23,6 +23,10 @@ class Player {
   getReady() {
     return this.ready;
   }
+
+  getJSONFormat(){
+    return {id: this.id, name: this.name, ready: this.ready};
+  }
 }
 
 export default Player;

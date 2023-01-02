@@ -3,33 +3,38 @@ import Player from "./player-new.js";
 import { SocketInfo } from "./types";
 
 class RoomController {
-  gameList: Map<Number, Game>;
-  playerList: Map<string, Number>;
+  gameList: Map<string, Game>;
+  playerList: Map<string, string>;
   idCounter: number;
   constructor() {
     this.idCounter = 0;
-    this.gameList = new Map<Number, Game>();
-    this.playerList = new Map<string, Number>();
+    this.gameList = new Map<string, Game>();
+    this.playerList = new Map<string, string>();
   }
 
   getGameList() {
-    return this.gameList;
+    return Array.from(this.gameList.values());
   }
   getIdCounter() {
     this.idCounter++;
     return this.idCounter;
   }
-  createGame(socketInfo: SocketInfo) {
+  createGame(socketInfo: SocketInfo) : Game {
     let game = new Game(this.getIdCounter(), socketInfo);
-    this.gameList.set(game.getID(), game);
-    this.playerList.set(socketInfo.id, game.getID());
+    let gameId = game.getID().toString();
+    this.gameList.set(gameId, game);
+    this.playerList.set(socketInfo.id, gameId);
+    return game;
   }
-  joinGame(socketInfo: SocketInfo, gameId: number) {
+  joinGame(socketInfo: SocketInfo, gameId: string) {
     let targetGame = this.gameList.get(gameId);
     let player = new Player(socketInfo.name, socketInfo.id);
     if (targetGame != undefined) {
       targetGame?.addPlayer(player);
+      this.gameList.set(gameId, targetGame);
+      this.playerList.set(socketInfo.id, gameId);
     }
+    return targetGame;
   }
   leaveGame(socketInfo: SocketInfo) {
     let roomID = this.playerList.get(socketInfo.id);
@@ -43,7 +48,7 @@ class RoomController {
     }
   }
 
-  deleteGame(id: Number) {
+  deleteGame(id: string) {
     this.gameList.delete(id);
   }
   deletePlayer(id: string) {

@@ -14,7 +14,7 @@ const initialState = {
 
 function reducer(state, action) {
   let payload = action.payload;
-
+  console.log(payload.gameList)
   switch (action.type) {
     case 'gameList':
       return {
@@ -99,7 +99,7 @@ function Lobby(props){
                     </tr>
                   </thead>
                   <tbody>
-                    {state.gameList.map((game) => generateRow(game[0], game[1], game[2]))}
+                    {state.gameList.map((game) => generateRow(game.id, game.master, game.capacity))}
                   </tbody>
                 </table>
               </div>
