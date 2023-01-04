@@ -39,6 +39,15 @@ function isGameState(object: any): object is GameStateWrapper {
    return (object as GameStateWrapper).gameId !== undefined;
 }
 
+function isErrorMessage(object: any): object is ErrorMessage {
+  return (object as ErrorMessage).message !== undefined;
+}
+
+function isGameStateArray(object: any): object is GameStateWrapper[] {
+  return (object as GameStateWrapper[])[0].playerId !== undefined;
+}
+
+
 io.on("connection", function (socket) {
   console.log("a user connected typescript");
   socket.data.data = { id: socket.id, name: generateName() } as SocketInfo;
@@ -67,6 +76,7 @@ io.on("connection", function (socket) {
     if(isGameState(data)){
       socket.emit("room join", data);
       let id = data.gameId as number;
+      console.log(data);
       io.to(id.toString()).emit("room update", data);
       socket.join(id.toString());
     }
@@ -81,12 +91,22 @@ io.on("connection", function (socket) {
     }
   });
 
-  socket.on("game start", function () {
+  socket.on("start game", function () {
     console.log("start");
+    let dataArray = actionHandler.executeAction("start game", socket.data.data);
+    if(isErrorMessage(dataArray)){
+      return;
+    }
+    if(isGameStateArray(dataArray)){
+      for(let data of dataArray){
+        let playerId = data.playerId as string;
+        io.to(playerId).emit("start game", data);
+      }
+    }
   });
 
-  socket.on("discard card", function () {
-    actionHandler.executeAction("discard card", socket.data.data);
+  socket.on("discard card", function (cards) {
+    actionHandler.executeAction("discard card", socket.data.data, cards);
 
   });
 

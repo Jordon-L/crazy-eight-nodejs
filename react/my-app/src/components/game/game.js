@@ -188,7 +188,7 @@ function Game(props) {
     socket.volatile.emit("game ready");
   };
   const onClickStartButton = function () {
-    socket.volatile.emit("game start");
+    socket.volatile.emit("start game");
   };
   const onClickLeaveButton = function () {
     socket.volatile.emit("leave room");
@@ -208,7 +208,6 @@ function Game(props) {
     if (state.playerName === "") {
       playAsGuest();
     }
-    console.log("tst");
     socket.on("start game", (payload) => handleSocket(payload, "handleStart"));
     socket.on("room join", (payload) => handleSocket(payload, "handleJoin"));
     socket.on("room update", (payload) =>

@@ -16,7 +16,6 @@ function DiscardCard(props) {
         let selectedIndices = props.selected;
         console.log(gameData.twoStack);
         if(props.selected.length !== 0){
-            console.log('discard');
             socket.emit('discard card', selectedIndices);          
         }
         props.setSelected([]);

@@ -3,8 +3,6 @@ import Card from "./card.js";
 import Deck from "./deck-new.js";
 import { Direction, GameStateWrapper, SocketInfo } from "./types.js";
 
-
-
 class Game {
   id: number;
   playerList: Map<string, Player>;
@@ -15,7 +13,7 @@ class Game {
   turnDirection: Direction;
   numOfPlayers: number;
   numReady: number;
-  currentCard: Card;
+  currentCard: Card[] | undefined;
   deck: Deck;
   twoStack: number;
   started: boolean;
@@ -33,13 +31,35 @@ class Game {
     this.turnDirection = Direction.Clockwise;
     this.numOfPlayers = 1;
     this.deck = new Deck();
-    this.currentCard = this.deck.drawNCards(1)[0];
+    this.currentCard = undefined;
     this.twoStack = 0;
     this.started = false;
     this.currentSuit = "S";
     this.numReady = 0;
   }
-  getEndTurnData() : GameStateWrapper {
+  gameStart(socketInfo: SocketInfo): boolean{
+    if(socketInfo.id !== Array.from(this.playerList.values())[0].id || this.numReady != this.numOfPlayers){
+      console.log(this.numReady, this.numOfPlayers)
+      return false;
+    }
+    let players = this.getPlayerNameList();
+    this.currentCard = this.deck.drawNCards(1);
+    this.currentSuit = this.currentCard[0].suit;
+    this.numReady = 0;
+
+    for(let player of players){
+      this.currentTurn = this.getRoomMaster();
+      this.discardPile = [];
+      this.turnDirection = Direction.Clockwise;
+      this.twoStack = 0;
+      this.playerHand.set(player.name, this.deck.drawNCards(5)); 
+      this.playerHandsLength.set(player.name, 5);
+      this.started = true;
+      player.ready = false;
+    }
+    return true;
+  }
+  getEndTurnData(): GameStateWrapper {
     return {
       otherHands: this.playerHandsLength,
       inPlay: this.currentCard,
@@ -48,22 +68,26 @@ class Game {
       currentSuit: this.currentSuit,
     };
   }
-  getGameData(socketInfo: SocketInfo) : GameStateWrapper {
+  getGameData(socketInfo: SocketInfo | Player): GameStateWrapper {
+    const otherHands = new Map(
+      [...this.playerHandsLength]
+      .filter(([k]) => k != socketInfo.name )
+    );
     return {
-      playerHand: this.playerHand.get(socketInfo.id) as Card[],
-      otherHands: this.playerHandsLength,
+      playerId: socketInfo.id,
+      playerHand: this.playerHand.get(socketInfo.name) as Card[],
+      otherHands: Object.fromEntries(otherHands),
       inPlay: this.currentCard,
       whosTurn: this.currentTurn,
       currentSuit: this.currentSuit,
     };
   }
-  getRoomMaster() : string{
+  getRoomMaster(): string {
     let master = Array.from(this.playerList.values())[0];
-    console.log(master)
-    if(master != undefined){
+    if (master != undefined) {
       return master.name;
     }
-    return '';
+    return "";
   }
   addPlayer(socketInfo: SocketInfo) {
     let player = new Player(socketInfo.name, socketInfo.id);
@@ -76,7 +100,7 @@ class Game {
     this.numOfPlayers--;
   }
 
-  getPlayerNameList(){
+  getPlayerNameList(): Player[] {
     let list = Array.from(this.playerList.values());
     return list;
   }
@@ -95,8 +119,10 @@ class Game {
       return;
     }
     let hand = this.playerHand.get(player.id);
-    hand?.filter((card) => !cardstoDiscard.includes(card));
-    //this.playerHand.set(player.id, hand);
+    if(hand != undefined){
+      hand?.filter((card) => !cardstoDiscard.includes(card));
+      this.playerHand.set(player.id, hand);
+    }
   }
 
   drawCards(socketInfo: SocketInfo, num: number) {
@@ -115,12 +141,14 @@ class Game {
     if (player == undefined) {
       return;
     }
-    if (!this.started) {
+    console.log(player.ready);
+    if (!player.ready) {
       this.numReady++;
     } else {
       this.numReady--;
     }
-    player.ready = !player.ready;
+    player.toggleReady()
+    console.log(player.ready);
   }
 }
 

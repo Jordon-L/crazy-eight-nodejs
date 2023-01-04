@@ -9,7 +9,7 @@ abstract class Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     data: any
-  ): GameStateWrapper | ErrorMessage
+  ): GameStateWrapper | GameStateWrapper[] | ErrorMessage;
 }
 
 class discardAction extends Action {
@@ -22,11 +22,11 @@ class discardAction extends Action {
     _data: any
   ): GameStateWrapper | ErrorMessage {
     let game = roomController.getGame(socketInfo) as Game | undefined;
-    if (game != undefined) {
+    if (game != undefined && game.currentTurn === socketInfo.name) {
       game.discardCards(socketInfo, _data);
       return game.getGameData(socketInfo);
     }
-    return errorMessage("game does not exist");
+    return errorMessage("game does not exist or not players turn");
   }
 }
 
@@ -40,11 +40,11 @@ class drawAction extends Action {
     _data: any
   ): GameStateWrapper | ErrorMessage {
     let game = roomController.getGame(socketInfo) as Game | undefined;
-    if (game != undefined) {
+    if (game != undefined && game.currentTurn === socketInfo.name) {
       game.drawCards(socketInfo, 1);
       return game.getGameData(socketInfo);
     }
-    return errorMessage("game does not exist");
+    return errorMessage("game does not exist or not players turn");
   }
 }
 
@@ -75,8 +75,13 @@ class createAction extends Action {
     roomController: RoomController,
     _data: any
   ): GameStateWrapper | ErrorMessage {
-    let game = roomController.createGame(socketInfo) as Game
-    return {gameId: game.getID(), players: game.getPlayerNameList(), playerName: socketInfo.name, master: socketInfo.name} as GameStateWrapper;
+    let game = roomController.createGame(socketInfo) as Game;
+    return {
+      gameId: game.getID(),
+      players: game.getPlayerNameList(),
+      playerName: socketInfo.name,
+      master: socketInfo.name,
+    } as GameStateWrapper;
   }
 }
 
@@ -92,8 +97,12 @@ class joinAction extends Action {
     let game = roomController.joinGame(socketInfo, _data);
     if (game != undefined) {
       let master = game.getRoomMaster();
-      console.log(master);
-      return {gameId: game!.getID(), players: game!.getPlayerNameList(), playerName: socketInfo.name, master: master} as GameStateWrapper;
+      return {
+        gameId: game!.getID(),
+        players: game!.getPlayerNameList(),
+        playerName: socketInfo.name,
+        master: master,
+      } as GameStateWrapper;
     }
     return errorMessage("Game does not exist");
   }
@@ -112,7 +121,12 @@ class leaveAction extends Action {
     if (game != undefined) {
       roomController.leaveGame(socketInfo);
       let master = game.getRoomMaster();
-      return {gameId: game!.getID(), players: game!.getPlayerNameList(), playerName: socketInfo.name, master: master} as GameStateWrapper;
+      return {
+        gameId: game!.getID(),
+        players: game!.getPlayerNameList(),
+        playerName: socketInfo.name,
+        master: master,
+      } as GameStateWrapper;
     }
     return errorMessage("Not in game");
   }
@@ -130,7 +144,11 @@ class readyAction extends Action {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       game!.ready(socketInfo);
-      return {gameId: game!.getID(), players: game!.getPlayerNameList(), playerName: socketInfo.name};
+      return {
+        gameId: game!.getID(),
+        players: game!.getPlayerNameList(),
+        playerName: socketInfo.name,
+      };
     }
     return errorMessage("Game does not exist");
   }
@@ -144,13 +162,23 @@ class startAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper[] | ErrorMessage {
     let game = roomController.getGame(socketInfo);
-    //game!.start(socketInfo);
-    return {gameId: game!.getID(), players: game!.getPlayerNameList(), playerName: socketInfo.name};
+    if (game != undefined) {
+      if (game.gameStart(socketInfo)) {
+        let dataArray = [];
+        let players = game.getPlayerNameList();
+        for (let player of players) {
+          let data = game.getGameData(player);
+          dataArray.push(data);
+        }
+        return dataArray;
+      }
+      return errorMessage("Everyone is not ready");
+    }
+    return errorMessage("Game does not exist");
   }
 }
-
 
 class ActionHandler {
   roomController: RoomController;
@@ -169,13 +197,17 @@ class ActionHandler {
     this.actions.set("leave game", new leaveAction());
   }
 
-  executeAction(command: string, socketInfo: SocketInfo, incomingData: string | null = null) {
+  executeAction(
+    command: string,
+    socketInfo: SocketInfo,
+    incomingData: string | null = null
+  ) {
     let action = this.actions.get(command);
     return action?.execute(socketInfo, this.roomController, incomingData);
   }
   getGameList() {
     let games = formatGameList(this.roomController.getGameList());
-    return {gameList: games} as GameList;
+    return { gameList: games } as GameList;
   }
 }
 export default ActionHandler;

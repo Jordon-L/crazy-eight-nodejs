@@ -9,41 +9,33 @@ import {GameDataContext} from 'context/gameData';
 import OtherPlayers from 'components/game/otherPlayers';
 import PlayerHand from 'components/game/playerHand';
 import InPlay from 'components/game/inPlay';
+import { object } from 'prop-types';
 
 function GameSession(props) {
     let gameData = useContext(GameDataContext).state;
     
     function cards() {
         //let bottom = gameData.players[order[0]];
-        let order = displayOrder()
-        let right =  gameData.players[order[1]];
-        let top = gameData.players[order[2]];
-        let left = gameData.players[order[3]];
-        if(top === undefined && left !== undefined){
-          top = left;
-          left = undefined;
-        }
-        else if(top === undefined && right !== undefined){
-          top = right;
-          left = undefined;
-        }
-
+        let names = Object.keys(gameData.otherHands);
+        let right =  names[0];
+        let top = names[1];
+        let left = names[2];
         return (
             <div id = 'game'>
                 <div class='row'>
                   <div class='column'>
-                    {top ? <OtherPlayers location = 'top' number = {gameData.otherHands[top.name]} name = {top.name}> </OtherPlayers> : <></>}
+                    {top ? <OtherPlayers location = 'top' number = {gameData.otherHands[top]} name = {top}> </OtherPlayers> : <></>}
                   </div>
                 </div> 
                 <div class='row row-middle'>
                   <div class='column column-left'>
-                    {left ? <OtherPlayers location = 'left' number = {gameData.otherHands[left.name]} name = {left.name}> </OtherPlayers>  : <></>}         
+                    {left ? <OtherPlayers location = 'left' number = {gameData.otherHands[left]} name = {left}> </OtherPlayers>  : <></>}         
                   </div>
                   <div class='column column-center'>
                     <InPlay cards = {gameData.inPlay}></InPlay>
                   </div>
                   <div class='column column-right'>
-                    {right ? <OtherPlayers location = 'right' number = {gameData.otherHands[right.name]} name = {right.name} > </OtherPlayers> : <></>}      
+                    {right ? <OtherPlayers location = 'right' number = {gameData.otherHands[right]} name = {right} > </OtherPlayers> : <></>}      
                   </div>                  
                 </div>                  
                 <div class='row'>

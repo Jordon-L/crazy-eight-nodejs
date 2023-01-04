@@ -13,16 +13,17 @@ export interface SocketInfo {
 }
 
 export interface GameStateWrapper {
+  playerId?: string,
   gameId?: number;
   playerName?: string,
   players?: Player[],
   playerHand?: Card[];
-  otherHands?: Map<string, number>;
+  otherHands?: {};
   whosTurn?: string;
   turnDirection?: Direction;
   numOfPlayers?: number;
   numReady?: number;
-  inPlay?: Card;
+  inPlay?: Card[];
   deck?: Deck; 
   twoStack?: number;
   started?: boolean;
