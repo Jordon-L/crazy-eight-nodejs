@@ -44,15 +44,13 @@ function isErrorMessage(object: any): object is ErrorMessage {
 }
 
 function isGameStateArray(object: any): object is GameStateWrapper[] {
-  return (object as GameStateWrapper[])[0].playerId !== undefined;
+  return (object as GameStateWrapper[])[0].gameId !== undefined;
 }
 
 
 io.on("connection", function (socket) {
-  console.log("a user connected typescript");
   socket.data.data = { id: socket.id, name: generateName() } as SocketInfo;
   socket.on("create game", function () {
-    console.log("create");
     let data = actionHandler.executeAction("create game", socket.data.data) as GameStateWrapper | ErrorMessage;
     if(isGameState(data)){
       socket.emit("room join", data);
@@ -71,12 +69,10 @@ io.on("connection", function (socket) {
   });
 
   socket.on("join game", function (incomingData) {
-    console.log(incomingData);
     let data = actionHandler.executeAction("join game", socket.data.data, incomingData);
     if(isGameState(data)){
       socket.emit("room join", data);
       let id = data.gameId as number;
-      console.log(data);
       io.to(id.toString()).emit("room update", data);
       socket.join(id.toString());
     }
@@ -92,7 +88,6 @@ io.on("connection", function (socket) {
   });
 
   socket.on("start game", function () {
-    console.log("start");
     let dataArray = actionHandler.executeAction("start game", socket.data.data);
     if(isErrorMessage(dataArray)){
       return;
@@ -106,8 +101,22 @@ io.on("connection", function (socket) {
   });
 
   socket.on("discard card", function (cards) {
-    actionHandler.executeAction("discard card", socket.data.data, cards);
-
+    let data = actionHandler.executeAction("discard card", socket.data.data, cards);
+    
+    if(isGameState(data)){
+      socket.emit("discard card", data);
+    }
+    
+    let endTurn = actionHandler.executeAction("end turn", socket.data.data);
+    if(isErrorMessage(endTurn)){
+      return;
+    }
+    if(isGameStateArray(endTurn)){
+      for(let data of endTurn){
+        let playerId = data.playerId as string;
+        io.to(playerId).emit("end turn", data);
+      }
+    }
   });
 
   socket.on("draw card", function () {

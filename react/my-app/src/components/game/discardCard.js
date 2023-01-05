@@ -14,9 +14,13 @@ function DiscardCard(props) {
     let isDisabled = !gameData.turn;
     function discardAction() {
         let selectedIndices = props.selected;
-        console.log(gameData.twoStack);
         if(props.selected.length !== 0){
-            socket.emit('discard card', selectedIndices);          
+            let hand = gameData.playerHand;
+            let discard = [];
+            for(const index of selectedIndices){
+              discard.push(hand[index]);
+            }
+            socket.emit('discard card', discard);          
         }
         props.setSelected([]);
  

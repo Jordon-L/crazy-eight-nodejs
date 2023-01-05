@@ -28,7 +28,7 @@ class Deck {
     let suitsLength = suits.length;
     for (let i = 0; i < ranksLength; i++) {
       for (let j = 0; j < suitsLength; j++) {
-        cards.push(new Card(ranks[i], suits[j]));
+        cards.push(new Card({rank:ranks[i], suit:suits[j]}));
       }
     }
     return cards;

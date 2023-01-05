@@ -136,6 +136,7 @@ function reducer(state, action) {
       if (gameData.whosTurn === state.playerName) {
         turn = true;
       }
+      console.log(state.playerName, whosTurn)
       return {
         ...state,
         otherHands: gameData.otherHands,
@@ -203,7 +204,6 @@ function Game(props) {
   }
   //
   useEffect(() => {
-    console.log("useeffect");
     socket.disconnect().connect();
     if (state.playerName === "") {
       playAsGuest();
@@ -222,7 +222,7 @@ function Game(props) {
     socket.on("discard card", (payload) =>
       handleSocket(payload, "handleDiscard")
     );
-    socket.on("other play turn", (payload) =>
+    socket.on("end turn", (payload) =>
       handleSocket(payload, "handleTurn")
     );
     socket.on("draw card", (payload) => handleSocket(payload, "handleDraw"));

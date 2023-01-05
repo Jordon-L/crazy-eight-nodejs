@@ -2,10 +2,10 @@ class Card {
   rank: string;
   suit: string;
   fileName: string;
-  constructor(rank: string, suit: string) {
-    this.suit = suit;
-    this.rank = rank;
-    this.fileName = rank + suit;
+  constructor(options = {suit:'', rank:''}) {
+    this.suit = options.suit;
+    this.rank = options.rank;
+    this.fileName = options.rank + options.suit;
   }
 }
 

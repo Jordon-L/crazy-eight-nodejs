@@ -6,6 +6,7 @@ import { Direction, GameStateWrapper, SocketInfo } from "./types.js";
 class Game {
   id: number;
   playerList: Map<string, Player>;
+  playerOrder: Player[];
   playerHand: Map<string, Card[]>;
   playerHandsLength: Map<string, number>;
   discardPile: Card[];
@@ -27,7 +28,8 @@ class Game {
     this.playerHandsLength = new Map<string, number>();
     this.discardPile = [];
     this.playerList.set(socketInfo.id, player);
-    this.currentTurn = player.getName();
+    this.playerOrder = [player];
+    this.currentTurn = this.playerOrder[0].name;
     this.turnDirection = Direction.Clockwise;
     this.numOfPlayers = 1;
     this.deck = new Deck();
@@ -36,10 +38,10 @@ class Game {
     this.started = false;
     this.currentSuit = "S";
     this.numReady = 0;
+    
   }
   gameStart(socketInfo: SocketInfo): boolean{
     if(socketInfo.id !== Array.from(this.playerList.values())[0].id || this.numReady != this.numOfPlayers){
-      console.log(this.numReady, this.numOfPlayers)
       return false;
     }
     let players = this.getPlayerNameList();
@@ -59,9 +61,16 @@ class Game {
     }
     return true;
   }
-  getEndTurnData(): GameStateWrapper {
+  getEndTurnData(socketInfo: SocketInfo | Player): GameStateWrapper {
+    const otherHands = new Map(
+      [...this.playerHandsLength]
+      .filter(([k]) => k != socketInfo.name )
+    );
+
     return {
-      otherHands: this.playerHandsLength,
+      playerId: socketInfo.id,
+      gameId: this.getID(),
+      otherHands: Object.fromEntries(otherHands),
       inPlay: this.currentCard,
       whosTurn: this.currentTurn,
       twoStack: this.twoStack,
@@ -75,6 +84,7 @@ class Game {
     );
     return {
       playerId: socketInfo.id,
+      gameId: this.getID(),
       playerHand: this.playerHand.get(socketInfo.name) as Card[],
       otherHands: Object.fromEntries(otherHands),
       inPlay: this.currentCard,
@@ -92,11 +102,13 @@ class Game {
   addPlayer(socketInfo: SocketInfo) {
     let player = new Player(socketInfo.name, socketInfo.id);
     this.playerList.set(player.id, player);
+    this.playerOrder.push(player);
     this.numOfPlayers++;
   }
 
   removePlayer(socketInfo: SocketInfo) {
     this.playerList.delete(socketInfo.id);
+    this.playerOrder.filter((player) => socketInfo.id === player.id);
     this.numOfPlayers--;
   }
 
@@ -118,19 +130,31 @@ class Game {
     if (player == undefined) {
       return;
     }
-    let hand = this.playerHand.get(player.id);
+    
+    let hand = this.playerHand.get(player.name);
+    
     if(hand != undefined){
-      hand?.filter((card) => !cardstoDiscard.includes(card));
-      this.playerHand.set(player.id, hand);
+      let stringifyCards = cardstoDiscard.map((card) => JSON.stringify(card));
+      let newHand = hand?.filter((card) => !stringifyCards.includes(JSON.stringify(card)));
+      this.playerHand.set(player.name, newHand);
+      this.discardPile = [...this.discardPile, ...cardstoDiscard];
+      this.currentCard = cardstoDiscard;
+      this.playerHandsLength.set(player.name, newHand.length);
+      this.currentTurn = this.nextPlayer(player);
     }
   }
 
+  nextPlayer(player: Player){
+    let index = this.playerOrder.indexOf(player) + 1;
+    let length = this.playerOrder.length;
+    return this.playerOrder[(index % length + length) % length].name;
+  }
   drawCards(socketInfo: SocketInfo, num: number) {
     let player = this.playerList.get(socketInfo.id) as Player | undefined;
     if (player == undefined) {
       return;
     }
-    let hand = this.playerHand.get(player.id);
+    let hand = this.playerHand.get(player.name);
     hand?.push(...this.deck.drawNCards(num));
   }
   changeSuit(suit: string) {
@@ -141,14 +165,12 @@ class Game {
     if (player == undefined) {
       return;
     }
-    console.log(player.ready);
     if (!player.ready) {
       this.numReady++;
     } else {
       this.numReady--;
     }
     player.toggleReady()
-    console.log(player.ready);
   }
 }
 
