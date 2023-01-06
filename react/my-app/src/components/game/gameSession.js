@@ -16,10 +16,26 @@ function GameSession(props) {
     
     function cards() {
         //let bottom = gameData.players[order[0]];
-        let names = Object.keys(gameData.otherHands);
-        let right =  names[0];
-        let top = names[1];
-        let left = names[2];
+        let names =  Object.keys(gameData.otherHands);
+        
+        let index = indexOfPlayer(names);
+        names = names.filter(e => e !== gameData.playerName);
+        let n = names.length;
+        let right =  undefined;
+        let top = undefined;
+        let left = undefined;
+        if(n >= 1){
+          console.log(index);
+          console.log((index % n + n) % n)
+          right =  names[(index % n + n) % n];
+        }
+        if(n >= 2){
+          console.log(((index+1) % n + n) % n)
+          top = names[((index+1) % n + n) % n];
+        }
+        if(n >= 3){
+          left = names[((index+2) % n + n) % n];
+        }
         return (
             <div id = 'game'>
                 <div class='row'>
@@ -50,34 +66,9 @@ function GameSession(props) {
     }
     //bottom,right,top,left
 
-    function displayOrder(){
-        let bottom = 0;
-        let order = [0,1,2,3]
-        for(let i = 0; i < gameData.players.length; i++){
-            let players = gameData.players;
-            if(players[i].name === gameData.playerName){
-                
-                bottom = i;
-                switch(bottom){
-                    case 0:
-                        order = [0,1,2,3];
-                        break;
-                    case 1:
-                        order = [1,2,3,0];
-                        break;
-                    case 2:
-                        order = [2,3,0,1];
-                        break;
-                    case 3:
-                        order = [3,0,1,2];
-                        break;
-                    default:
-                        order = [0,1,2,3];
-                }
-                break;
-            }
-        }
-        return order;
+    function indexOfPlayer(names){
+        let index = names.indexOf(gameData.playerName);
+        return index;
     }
 
     return (

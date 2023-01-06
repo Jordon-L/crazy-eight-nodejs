@@ -50,6 +50,7 @@ class Game {
     this.numReady = 0;
 
     for(let player of players){
+      this.currentTurn = this.playerOrder[0].name;
       this.currentTurn = this.getRoomMaster();
       this.discardPile = [];
       this.turnDirection = Direction.Clockwise;
@@ -62,15 +63,11 @@ class Game {
     return true;
   }
   getEndTurnData(socketInfo: SocketInfo | Player): GameStateWrapper {
-    const otherHands = new Map(
-      [...this.playerHandsLength]
-      .filter(([k]) => k != socketInfo.name )
-    );
 
     return {
       playerId: socketInfo.id,
       gameId: this.getID(),
-      otherHands: Object.fromEntries(otherHands),
+      otherHands: Object.fromEntries(this.playerHandsLength),
       inPlay: this.currentCard,
       whosTurn: this.currentTurn,
       twoStack: this.twoStack,
@@ -78,15 +75,11 @@ class Game {
     };
   }
   getGameData(socketInfo: SocketInfo | Player): GameStateWrapper {
-    const otherHands = new Map(
-      [...this.playerHandsLength]
-      .filter(([k]) => k != socketInfo.name )
-    );
     return {
       playerId: socketInfo.id,
       gameId: this.getID(),
       playerHand: this.playerHand.get(socketInfo.name) as Card[],
-      otherHands: Object.fromEntries(otherHands),
+      otherHands: Object.fromEntries(this.playerHandsLength),
       inPlay: this.currentCard,
       whosTurn: this.currentTurn,
       currentSuit: this.currentSuit,
@@ -107,9 +100,18 @@ class Game {
   }
 
   removePlayer(socketInfo: SocketInfo) {
+    let player = this.playerList.get(socketInfo.id) as Player | undefined;
+    if (player == undefined) {
+      return;
+    }
+    if(this.currentTurn === player.name){
+      this.currentTurn = this.nextPlayer(player);
+    }
     this.playerList.delete(socketInfo.id);
-    this.playerOrder.filter((player) => socketInfo.id === player.id);
+    this.playerHandsLength.delete(socketInfo.name);
+    this.playerOrder = this.playerOrder.filter(player => player.id !== socketInfo.id)
     this.numOfPlayers--;
+
   }
 
   getPlayerNameList(): Player[] {

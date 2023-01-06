@@ -121,17 +121,27 @@ class leaveAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | GameStateWrapper[] | ErrorMessage {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       roomController.leaveGame(socketInfo);
       let master = game.getRoomMaster();
-      return {
-        gameId: game!.getID(),
-        players: game!.getPlayerNameList(),
-        playerName: socketInfo.name,
-        master: master,
-      } as GameStateWrapper;
+      if (game.started) {
+        let dataArray = [];
+        let players = game.getPlayerNameList();
+        for (let player of players) {
+          let data = game.getGameData(player);
+          dataArray.push(data);
+        }
+        return dataArray;
+      }
+      else {
+        return {
+          gameId: game!.getID(),
+          players: game!.getPlayerNameList(),
+          master: master,
+        } as GameStateWrapper;
+      }
     }
     return errorMessage("Not in game");
   }

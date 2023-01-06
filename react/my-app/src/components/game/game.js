@@ -136,7 +136,6 @@ function reducer(state, action) {
       if (gameData.whosTurn === state.playerName) {
         turn = true;
       }
-      console.log(state.playerName, whosTurn)
       return {
         ...state,
         otherHands: gameData.otherHands,
@@ -199,15 +198,8 @@ function Game(props) {
     return dispatch({ type: type, payload: payload });
   }
 
-  function playAsGuest() {
-    socket.volatile.emit("play as guest");
-  }
   //
   useEffect(() => {
-    socket.disconnect().connect();
-    if (state.playerName === "") {
-      playAsGuest();
-    }
     socket.on("start game", (payload) => handleSocket(payload, "handleStart"));
     socket.on("room join", (payload) => handleSocket(payload, "handleJoin"));
     socket.on("room update", (payload) =>

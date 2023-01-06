@@ -120,7 +120,10 @@ io.on("connection", function (socket) {
   });
 
   socket.on("draw card", function () {
-    actionHandler.executeAction("draw card", socket.data.data);
+    let data = actionHandler.executeAction("draw card", socket.data.data);
+    if(isGameState(data)){
+      socket.emit("discard card", data);
+    }
   });
 
   socket.on("close", function () {
@@ -130,17 +133,29 @@ io.on("connection", function (socket) {
   socket.on("disconnecting", function () {
     console.log("disconnecting");
     let data = actionHandler.executeAction("leave game", socket.data.data);
+    if(isErrorMessage(data)){
+      return;
+    }
     if(isGameState(data)){
       let id = data.gameId as number;
       io.to(socket.id).emit("leave room");
       socket.leave(id.toString());
       io.to(id.toString()).emit("room join/update", data);
     }
+    if(isGameStateArray(data)){
+      for(let d of data){
+        let playerId = d.playerId as string;
+        io.to(playerId).emit("user change", d);
+      }      
+    }
   });
 
   socket.on("leave room", function () {
     console.log("leave");
     let data = actionHandler.executeAction("leave game", socket.data.data);
+    if(isErrorMessage(data)){
+      return;
+    }
     if(isGameState(data)){
       let id = data.gameId as number;
       io.to(socket.id).emit("leave room");

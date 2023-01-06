@@ -68,8 +68,8 @@ function Lobby(props){
     }
 
     useEffect(() =>{
-      getGames();
       socket.on('game list', (payload) =>  handleSocket(payload, 'gameList'));
+      getGames();
       return () => {
         socket.removeAllListeners('game list');
       }
