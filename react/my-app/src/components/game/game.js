@@ -114,21 +114,6 @@ function reducer(state, action) {
         showSelectSuit: false,
         master: gameData.master,
       };
-    case "handleDiscard":
-      if (gameData.whosTurn !== undefined) {
-        whosTurn = gameData.whosTurn;
-      }
-      return {
-        ...state,
-        playerHand: gameData.playerHand,
-        otherHands: gameData.otherHands,
-        inPlay: gameData.inPlay,
-        turn: false,
-        currentSuit: gameData.currentSuit,
-        whosTurn: whosTurn,
-        message: "",
-      };
-
     case "handleTurn":
       if (gameData.whosTurn !== undefined) {
         whosTurn = gameData.whosTurn;
@@ -146,6 +131,20 @@ function reducer(state, action) {
         twoStack: gameData.twoStack,
         showSelectSuit: false,
       };
+    case "handleDiscard":
+      if (gameData.whosTurn !== undefined) {
+        whosTurn = gameData.whosTurn;
+      }
+      return {
+        ...state,
+        playerHand: gameData.playerHand,
+        otherHands: gameData.otherHands,
+        inPlay: gameData.inPlay,
+        turn: false,
+        currentSuit: gameData.currentSuit,
+        whosTurn: whosTurn,
+        message: "",
+      };
     case "handleEightDiscard":
       return {
         ...state,
@@ -158,6 +157,12 @@ function reducer(state, action) {
       return {
         ...state,
         playerHand: gameData.playerHand,
+        twoStack: gameData.twoStack,
+      };
+    case "handleOtherPlayerUpdate":
+      return {
+        ...state,
+        otherHands: gameData.otherHands,
         twoStack: gameData.twoStack,
       };
     case "handleWinner":
@@ -214,10 +219,11 @@ function Game(props) {
     socket.on("discard card", (payload) =>
       handleSocket(payload, "handleDiscard")
     );
-    socket.on("end turn", (payload) =>
-      handleSocket(payload, "handleTurn")
-    );
+    socket.on("end turn", (payload) => handleSocket(payload, "handleTurn"));
     socket.on("draw card", (payload) => handleSocket(payload, "handleDraw"));
+    socket.on("update hands", (payload) =>
+      handleSocket(payload, "handleOtherPlayerUpdate")
+    );
     socket.on("discard eight card", (payload) =>
       handleSocket(payload, "handleEightDiscard")
     );

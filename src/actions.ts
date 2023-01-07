@@ -195,7 +195,7 @@ class startAction extends Action {
   }
 }
 
-class endTurnAction extends Action {
+class updateAction extends Action {
   constructor() {
     super();
   }
@@ -203,16 +203,29 @@ class endTurnAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper[] | ErrorMessage {
+  ): GameStateWrapper | ErrorMessage {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
-      let dataArray = [];
-      let players = game.getPlayerNameList();
-      for (let player of players) {
-        let data = game.getEndTurnData(player);
-        dataArray.push(data);
-      }
-      return dataArray;
+      let data = game.getTurnData();
+      return data;
+    }
+    return errorMessage("Game does not exist");
+  }
+}
+
+class updateHandsAction extends Action {
+  constructor() {
+    super();
+  }
+  execute(
+    socketInfo: SocketInfo,
+    roomController: RoomController,
+    _data: any
+  ): GameStateWrapper | ErrorMessage {
+    let game = roomController.getGame(socketInfo);
+    if (game != undefined) {
+      let data = game.getHandData();
+      return data;
     }
     return errorMessage("Game does not exist");
   }
@@ -227,8 +240,9 @@ class ActionHandler {
     this.actions.set("discard card", new discardAction());
     this.actions.set("draw card", new drawAction());
     this.actions.set("selectSuit", new selectSuitAction());
-    this.actions.set("end turn", new endTurnAction());
 
+    this.actions.set("end turn", new updateAction());
+    this.actions.set("update hands", new updateHandsAction());
     this.actions.set("join game", new joinAction());
     this.actions.set("ready game", new readyAction());
     this.actions.set("create game", new createAction());

@@ -62,10 +62,9 @@ class Game {
     }
     return true;
   }
-  getEndTurnData(socketInfo: SocketInfo | Player): GameStateWrapper {
+  getTurnData(): GameStateWrapper {
 
     return {
-      playerId: socketInfo.id,
       gameId: this.getID(),
       otherHands: Object.fromEntries(this.playerHandsLength),
       inPlay: this.currentCard,
@@ -83,6 +82,14 @@ class Game {
       inPlay: this.currentCard,
       whosTurn: this.currentTurn,
       currentSuit: this.currentSuit,
+    };
+  }
+  getHandData(): GameStateWrapper {
+
+    return {
+      gameId: this.getID(),
+      otherHands: Object.fromEntries(this.playerHandsLength),
+      twoStack: this.twoStack,
     };
   }
   getRoomMaster(): string {
@@ -157,7 +164,11 @@ class Game {
       return;
     }
     let hand = this.playerHand.get(player.name);
-    hand?.push(...this.deck.drawNCards(num));
+    if(hand != undefined){
+      hand.push(...this.deck.drawNCards(num));
+      this.playerHandsLength.set(player.name, hand.length)
+    }
+
   }
   changeSuit(suit: string) {
     this.currentSuit = suit;

@@ -111,19 +111,23 @@ io.on("connection", function (socket) {
     if(isErrorMessage(endTurn)){
       return;
     }
-    if(isGameStateArray(endTurn)){
-      for(let data of endTurn){
-        let playerId = data.playerId as string;
-        io.to(playerId).emit("end turn", data);
-      }
+    if(isGameState(endTurn)){
+      let id = endTurn.gameId as number;
+      io.to(id.toString()).emit("end turn", data);
     }
   });
 
   socket.on("draw card", function () {
     let data = actionHandler.executeAction("draw card", socket.data.data);
     if(isGameState(data)){
-      socket.emit("discard card", data);
+      socket.emit("draw card", data);
+      let update = actionHandler.executeAction("update hands", socket.data.data);
+      if(isGameState(update)){
+        let id = update.gameId as number;
+        io.to(id.toString()).emit("update hands", update);
+      }    
     }
+
   });
 
   socket.on("close", function () {
