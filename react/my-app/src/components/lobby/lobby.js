@@ -14,7 +14,6 @@ const initialState = {
 
 function reducer(state, action) {
   let payload = action.payload;
-  console.log(payload.gameList)
   switch (action.type) {
     case 'gameList':
       return {

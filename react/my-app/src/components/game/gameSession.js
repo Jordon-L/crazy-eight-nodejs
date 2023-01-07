@@ -25,12 +25,9 @@ function GameSession(props) {
         let top = undefined;
         let left = undefined;
         if(n >= 1){
-          console.log(index);
-          console.log((index % n + n) % n)
           right =  names[(index % n + n) % n];
         }
         if(n >= 2){
-          console.log(((index+1) % n + n) % n)
           top = names[((index+1) % n + n) % n];
         }
         if(n >= 3){

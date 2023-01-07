@@ -61,7 +61,6 @@ function reducer(state, action) {
       };
     case "handleJoin":
       if (gameData === -1) {
-        console.log("error");
         return { ...state };
       }
       return {
@@ -74,7 +73,6 @@ function reducer(state, action) {
       };
     case "handleRoomUpdate":
       if (gameData === -1) {
-        console.log("error");
         return { ...state };
       }
       return {
@@ -86,7 +84,6 @@ function reducer(state, action) {
       };
     case "handleRoomReady":
       if (gameData === -1) {
-        console.log("error");
         return { ...state };
       }
       return {
