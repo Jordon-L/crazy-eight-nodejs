@@ -16,16 +16,16 @@ function SelectSuit(props) {
     }
     return (
         <>
-            <button class='game-button-input' onClick={() => select('heart')}>
+            <button class='game-button-input' onClick={() => select('H')}>
                 Heart
             </button>
-            <button class='game-button-input' onClick={() => select('spade')}>
+            <button class='game-button-input' onClick={() => select('S')}>
                 Spade
             </button>
-            <button class='game-button-input' onClick={() => select('club')}>
+            <button class='game-button-input' onClick={() => select('C')}>
                 Club
             </button>
-            <button class='game-button-input' onClick={() => select('diamond')}>
+            <button class='game-button-input' onClick={() => select('D')}>
                 Diamond
             </button>                                    
         </>        

@@ -32,6 +32,7 @@ return (
     <DisplaySuit></DisplaySuit>
     <p>{gameData.whosTurn}'s Turn</p>
     <p class='message'> {gameData.message}</p>
+    <p class='message'> {gameData.specialMessage} </p>
     </div>
 );
 }

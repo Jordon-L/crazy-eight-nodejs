@@ -1,4 +1,5 @@
 import Game from "./game-new.js";
+import Player from "./player-new.js";
 
 function formatGameList(gameList: Game[]) {
   let games = [];
@@ -6,9 +7,10 @@ function formatGameList(gameList: Game[]) {
   for (let i = 0; i < keys.length; i++) {
     let game = gameList[i];
     if (game?.started == false) {
+      let master = game.getRoomMaster() as Player;
       let f = {
         id: game.getID().toString(),
-        master: game.getRoomMaster(),
+        master: master.name,
         capacity: game.getNumOfPlayers(),
       };
       games.push(f);
@@ -17,7 +19,7 @@ function formatGameList(gameList: Game[]) {
   return games;
 }
 
-function errorMessage(message: string){
+function createMessage(message: string){
   return {message: message};
 }
-export { formatGameList, errorMessage};
+export { formatGameList, createMessage};

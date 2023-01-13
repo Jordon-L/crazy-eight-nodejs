@@ -28,10 +28,12 @@ export interface GameStateWrapper {
   twoStack?: number;
   started?: boolean;
   currentSuit?: string;
+  currentRank?: string;
   master?: string;
+  specialMessage?: string;
 }
 
-export interface ErrorMessage {
+export interface Message {
   message: string;
 }
 

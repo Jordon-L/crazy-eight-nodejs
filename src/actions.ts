@@ -1,8 +1,9 @@
 import Card from "./card.js";
 import Game from "./game-new.js";
+import Player from "./player-new.js";
 import RoomController from "./roomController.js";
-import { ErrorMessage, GameList, GameStateWrapper, SocketInfo } from "./types";
-import { errorMessage, formatGameList } from "./utils.js";
+import { Message, GameList, GameStateWrapper, SocketInfo } from "./types";
+import { createMessage, formatGameList } from "./utils.js";
 
 abstract class Action {
   constructor() {}
@@ -10,7 +11,7 @@ abstract class Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     data: any
-  ): GameStateWrapper | GameStateWrapper[] | ErrorMessage;
+  ): GameStateWrapper | GameStateWrapper[] | Message;
 }
 
 class discardAction extends Action {
@@ -21,17 +22,20 @@ class discardAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.getGame(socketInfo) as Game | undefined;
     if (game != undefined && game.currentTurn === socketInfo.name) {
       let cards = [];
       for (let i of data) {
         cards.push(new Card(i));
       }
-      game.discardCards(socketInfo, cards);
-      return game.getGameData(socketInfo);
+      let results = game.discardCards(socketInfo, cards);
+      if(results == true){
+        return game.getGameData(socketInfo);
+      }
+      return createMessage("Invalid Play");
     }
-    return errorMessage("game does not exist or not players turn");
+    return createMessage("game does not exist or not players turn");
   }
 }
 
@@ -43,13 +47,13 @@ class drawAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.getGame(socketInfo) as Game | undefined;
     if (game != undefined && game.currentTurn === socketInfo.name) {
-      game.drawCards(socketInfo, 1);
+      game.drawCards(socketInfo);
       return game.getGameData(socketInfo);
     }
-    return errorMessage("game does not exist or not players turn");
+    return createMessage("game does not exist or not players turn");
   }
 }
 
@@ -61,13 +65,13 @@ class selectSuitAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.getGame(socketInfo) as Game | undefined;
     if (game != undefined) {
       game.changeSuit(_data);
       return game.getGameData(socketInfo);
     }
-    return errorMessage("Game does not exist");
+    return createMessage("Game does not exist");
   }
 }
 
@@ -79,7 +83,7 @@ class createAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.createGame(socketInfo) as Game;
     return {
       gameId: game.getID(),
@@ -98,18 +102,18 @@ class joinAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.joinGame(socketInfo, _data);
     if (game != undefined) {
-      let master = game.getRoomMaster();
+      let master = game.getRoomMaster() as Player;
       return {
         gameId: game!.getID(),
         players: game!.getPlayerNameList(),
         playerName: socketInfo.name,
-        master: master,
+        master: master.name,
       } as GameStateWrapper;
     }
-    return errorMessage("Game does not exist");
+    return createMessage("Game does not exist");
   }
 }
 
@@ -121,11 +125,11 @@ class leaveAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | GameStateWrapper[] | ErrorMessage {
+  ): GameStateWrapper | GameStateWrapper[] | Message {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       roomController.leaveGame(socketInfo);
-      let master = game.getRoomMaster();
+      let master = game.getRoomMaster() as Player;
       if (game.started) {
         let dataArray = [];
         let players = game.getPlayerNameList();
@@ -133,17 +137,23 @@ class leaveAction extends Action {
           let data = game.getGameData(player);
           dataArray.push(data);
         }
+        if(dataArray.length == 0){
+          return createMessage("Game is empty");   
+        }
         return dataArray;
       }
       else {
+        if(master == undefined){
+          return createMessage("Game is empty");
+        }
         return {
           gameId: game!.getID(),
           players: game!.getPlayerNameList(),
-          master: master,
+          master: master.name,
         } as GameStateWrapper;
       }
     }
-    return errorMessage("Not in game");
+    return createMessage("Not in game");
   }
 }
 
@@ -155,7 +165,7 @@ class readyAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       game!.ready(socketInfo);
@@ -165,7 +175,7 @@ class readyAction extends Action {
         playerName: socketInfo.name,
       };
     }
-    return errorMessage("Game does not exist");
+    return createMessage("Game does not exist");
   }
 }
 
@@ -177,7 +187,7 @@ class startAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper[] | ErrorMessage {
+  ): GameStateWrapper[] | Message {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       if (game.gameStart(socketInfo)) {
@@ -189,9 +199,9 @@ class startAction extends Action {
         }
         return dataArray;
       }
-      return errorMessage("Everyone is not ready");
+      return createMessage("Everyone is not ready");
     }
-    return errorMessage("Game does not exist");
+    return createMessage("Game does not exist");
   }
 }
 
@@ -203,13 +213,13 @@ class updateAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       let data = game.getTurnData();
       return data;
     }
-    return errorMessage("Game does not exist");
+    return createMessage("Game does not exist");
   }
 }
 
@@ -221,13 +231,13 @@ class updateHandsAction extends Action {
     socketInfo: SocketInfo,
     roomController: RoomController,
     _data: any
-  ): GameStateWrapper | ErrorMessage {
+  ): GameStateWrapper | Message {
     let game = roomController.getGame(socketInfo);
     if (game != undefined) {
       let data = game.getHandData();
       return data;
     }
-    return errorMessage("Game does not exist");
+    return createMessage("Game does not exist");
   }
 }
 

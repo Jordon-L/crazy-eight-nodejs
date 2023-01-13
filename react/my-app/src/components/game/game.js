@@ -35,6 +35,7 @@ const initialState = {
   currentSuit: "placeholder",
   twoStack: 0,
   message: "",
+  specialMessage:"",
   master: "",
 };
 
@@ -42,6 +43,8 @@ function reducer(state, action) {
   let gameData = action.payload;
   let turn = false;
   let whosTurn = state.whosTurn;
+  let message = state.message;
+  let specialMessage = state.specialMessage;
   switch (action.type) {
     case "handleStart":
       if (gameData.whosTurn === state.playerName) {
@@ -117,6 +120,7 @@ function reducer(state, action) {
       }
       if (gameData.whosTurn === state.playerName) {
         turn = true;
+        message =  "Your Turn";
       }
       return {
         ...state,
@@ -127,6 +131,7 @@ function reducer(state, action) {
         turn: turn,
         twoStack: gameData.twoStack,
         showSelectSuit: false,
+        message: message,
       };
     case "handleDiscard":
       if (gameData.whosTurn !== undefined) {
@@ -178,6 +183,11 @@ function reducer(state, action) {
         ...state,
         message: gameData.message,
       };
+      case "handleSpecialMessage":
+        return {
+          ...state,
+          specialMessage: gameData.message,
+        };
     default:
       throw new Error();
   }
@@ -229,6 +239,9 @@ function Game(props) {
     socket.on("display message", (payload) =>
       handleSocket(payload, "handleMessage")
     );
+    socket.on("display special message", (payload) =>
+    handleSocket(payload, "handleSpecialMessage")
+  );
     return () => {
       socket.removeAllListeners();
     };
