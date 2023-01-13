@@ -1,5 +1,5 @@
-import Card from '../card.js';
-import Deck from '../deck.js';
+import Card from '../dist/card.js';
+import Deck from '../dist/deck-new.js';
 import { expect } from 'chai'; 
 describe('new Deck()', function() {
   let deck = null;
@@ -24,8 +24,8 @@ describe('new Deck()', function() {
     expect(deck.getLength()).to.equal(49);
   });
 
-  it('draw 1 card using drawCard', function() {
-    let card = deck.drawCard();
+  it('draw 1 card', function() {
+    let card = deck.drawNCards(1);
     expect(deck.getLength()).to.equal(51);
   });
 

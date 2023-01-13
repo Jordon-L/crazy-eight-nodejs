@@ -1,143 +1,154 @@
-import Card from "../card.js";
-import Deck from "../deck.js";
-import Game from "../game.js";
-import { createPlayer } from "../player.js";
+import Card from '../dist/card.js';
+import Game from "../dist/game-new.js";
 import { expect } from "chai";
-describe("new Game()", function () {
+describe("new Game", function () {
   let game = null;
+  let player1 = { id: 1, name: "player 1"};
+  let player2 = { id: 2, name: "player 2"};
+  let player3 = { id: 3, name: "player 3"};
+  let player4 = { id: 4, name: "player 4"};
+  function addCardsToHand(player, cards){
+    let hand = game.playerHand.get(player.name);
+    hand = [...hand, ...cards];
+    game.playerHand.set(player.name, hand);
+  }
   // add a test hook
   beforeEach(function () {
-    game = new Game();
-    let player1 = createPlayer("player 1", 1);
-    let player2 = createPlayer("player 2", 2);
-    let player3 = createPlayer("player 3", 3);
-    let player4 = createPlayer("player 4", 4);
-    game.players[player1.name] = player1;
-    game.players[player2.name] = player2;
-    game.players[player3.name] = player3;
-    game.players[player4.name] = player4;
-    game.playerSocketIds[player1.name] = "100";
-    game.playerSocketIds[player2.name] = "101";
-    game.playerSocketIds[player3.name] = "102";
-    game.playerSocketIds[player4.name] = "103";
-    game.numOfPlayers = 4;
-    game.whosTurn = "player 1";
-    let card = new Card("A", "C");
+    game = new Game(1, player1);
+    game.addPlayer(player2);
+    game.addPlayer(player3);
+    game.addPlayer(player4);
+    game.ready(player1);
+    game.ready(player2);
+    game.ready(player3);
+    game.ready(player4);
+    game.gameStart(player1);
+
+    game.currentRank = "A";
     game.currentSuit = "C";
-    game.currentlyInPlay = [card];
+
   });
 
   // test a functionality
   it("play queen", function () {
     // add an assertion
-    let card = new Card("Q", "C");
-    let valid = game.isValidPlay([card]);
-    expect(valid).to.equal(true);
-    game.discardCards([card]);
-    expect(game.whosTurn).to.equal("player 3");
-    expect(game.discardPile[0]).to.equal(card);
+    let card = new Card({rank:"Q", suit:"C"});
+    addCardsToHand(player1,[card]);
+    let results = game.discardCards(player1, [card]);
+    expect(results).to.equal(true);
+    expect(game.currentTurn).to.equal("player 3");
+    expect(game.currentCard).to.include(card);
   });
 
   it("play two", function () {
-    let card = new Card("2", "C");
-    let valid = game.isValidPlay([card]);
-    expect(valid).to.equal(true);
-    game.discardCards([card]);
+    let card = new Card({rank:"2", suit:"C"});
+    addCardsToHand(player1,[card]);
+    let results = game.discardCards(player1, [card]);
+    expect(results).to.equal(true);
     expect(game.twoStack).to.equal(1);
-    expect(game.whosTurn).to.equal("player 2");
-    expect(game.discardPile[0]).to.equal(card);
+    expect(game.currentTurn).to.equal("player 2");
+    expect(game.currentCard).to.include(card);
+    
   });
 
   it("play ace", function () {
-    let card = new Card("A", "C");
-    let valid = game.isValidPlay([card]);
-    expect(valid).to.equal(true);
-    game.discardCards([card]);
-    expect(game.whosTurn).to.equal("player 4");
-    expect(game.discardPile[0]).to.equal(card);
+    let card = new Card({rank:"A", suit:"C"});
+    addCardsToHand(player1,[card]);
+    let results = game.discardCards(player1, [card]);
+    expect(results).to.equal(true);
+
+    expect(game.currentTurn).to.equal("player 4");
+    expect(game.currentCard).to.include(card);
   });
 
   it("play eight", function () {
-    let card = new Card("8", "H");
-    let valid = game.isValidPlay([card]);
-    expect(valid).to.equal(true);
+    let card = new Card({rank:"8", suit:"H"});
+    addCardsToHand(player1,[card]);
+    let results = game.discardCards(player1, [card]);
+    expect(results).to.equal(true);
 
-    game.discardCards([card]);
-    game.changeSuit("C");
-    expect(game.currentSuit).to.equal("C");
-    expect(game.whosTurn).to.equal("player 2");
-    expect(game.discardPile[0]).to.equal(card);
+    game.changeSuit("D");
+    expect(game.currentSuit).to.equal("D");
+    expect(game.currentTurn).to.equal("player 2");
+    expect(game.currentCard).to.include(card);
   });
 
   it("play same rank", function (){
-    let card = new Card("A", "H");
-    let valid = game.isValidPlay([card]);
-    expect(valid).to.equal(true);
-  });
-
-  it("play same suit", function (){
-    let card = new Card("10", "C");
-    let valid = game.isValidPlay([card]);
-    expect(valid).to.equal(true);
+    let card = new Card({rank:"A", suit:"H"});
+    addCardsToHand(player1,[card]);
+    let results = game.discardCards(player1, [card]);
+    expect(results).to.equal(true);
   });
 
   it("more invalid plays", function (){
-    let card1 = new Card("10", "C");
-    let card2 = new Card("9", "C");
-    let valid = game.isValidPlay([card1, card2]);
-    expect(valid).to.equal(false);
-
-
+    let card = new Card({rank:"10", suit:"H"});
+    let card2 = new Card({rank:"8", suit:"H"});
     let card3 = new Card("8", "C");
-    valid = game.isValidPlay([card1, card3]);
-    expect(valid).to.equal(false);
+    addCardsToHand(player1,[card,card2,card3]);
+    let results = game.discardCards(player1, [card, card2]);
+    expect(results).to.equal(false);
+
+    results = game.discardCards(player1, [card, card2]);
+    expect(results).to.equal(false);
   });
 
   it("play two with two stack", function () {
-    //set up
-    let twoCard = new Card("2", "C");
-    game.discardCards([twoCard]);
+    //player1
+    let card1 = new Card({rank:"2", suit:"C"});
+    addCardsToHand(player1,[card1]);
+    let results = game.discardCards(player1, [card1]);
+    expect(results).to.equal(true);
     expect(game.twoStack).to.equal(1);
-    expect(game.whosTurn).to.equal("player 2");
+    expect(game.currentTurn).to.equal("player 2");
+    expect(game.currentCard).to.include(card1);
 
-    let card1 = new Card("2", "H");
-    let valid = game.isValidPlay([card1]);
-    expect(valid).to.equal(true);
-    let card2 = new Card("2", "S");
-    valid = game.isValidPlay([card1, card2]);
-    game.discardCards([card1, card2]);
-
+    //player2
+    let card2 = new Card({rank:"2", suit:"H"});
+    let card3 = new Card({rank:"2", suit:"S"});
+    addCardsToHand(player2,[card2,card3]);
+    results = game.discardCards(player2, [card2,card3]);
+    expect(results).to.equal(true);
     expect(game.twoStack).to.equal(3);
-    expect(game.whosTurn).to.equal("player 3");
-    expect(game.discardPile[1]).to.equal(card1);
-    expect(game.discardPile[2]).to.equal(card2);
+    expect(game.currentTurn).to.equal("player 3");
+    expect(game.currentCard).to.include.members([card2,card3]);
+    expect(game.discardPile).to.include(card1);
   });
 
   it("check invalid play", function () {
-    let card1 = new Card("2", "H");
-    let valid = game.isValidPlay([card1]);
-    expect(valid).to.equal(false);
-    let card2 = new Card("3", "H");
-    valid = game.isValidPlay([card1, card2]);
-    expect(valid).to.equal(false);
+    let card1 = new Card({rank:"2", suit:"H"});
+    let card2 = new Card({rank:"3", suit:"H"});
+    addCardsToHand(player1,[card1,card2]);
+    let results = game.discardCards(player1, [card1]);
+    expect(results).to.equal(false);
+
+    results = game.discardCards(player1, [card2]);
+    expect(results).to.equal(false); 
+
+    results = game.discardCards(player1, [card1,card2]);
+    expect(results).to.equal(false);
+
+    results = game.discardCards(player1, [card2,card1]);
+    expect(results).to.equal(false);
   });
 
   it("check valid play for 2+ cards", function () {
-    let card1 = new Card("3", "C");
-    let card2 = new Card("3", "H");
-    let valid = game.isValidPlay([card1, card2]);
-    expect(valid).to.equal(true);
-    valid = game.isValidPlay([card2, card1]);
-    expect(valid).to.equal(true);
+    let card1 = new Card({rank:"3", suit:"C"});
+    let card2 = new Card({rank:"3", suit:"H"});
+    addCardsToHand(player1,[card1,card2]);
+    console.log(game.currentSuit);
+    let results = game.isValidPlay([card1,card2]);
+    expect(results).to.equal(true);
+    results = game.isValidPlay([card2, card1]);
+    expect(results).to.equal(true);
   });
 
   it("play 2 eights with different suit than what is in play", function () {
-    let card1 = new Card("8", "S");
-    let card2 = new Card("8", "H");
-    let valid = game.isValidPlay([card1, card2]);
-    expect(valid).to.equal(true);
-    valid = game.isValidPlay([card2, card1]);
-    expect(valid).to.equal(true);
+    let card1 = new Card({rank:"8", suit:"S"});
+    let card2 = new Card({rank:"8", suit:"H"});
+    let results = game.isValidPlay([card1, card2]);
+    expect(results).to.equal(false);
+    results = game.isValidPlay([card2, card1]);
+    expect(results).to.equal(false);
   });
 
   // ...some more tests

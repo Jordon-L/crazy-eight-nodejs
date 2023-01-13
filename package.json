@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node dist/index-new.js",
-    "test": "mocha ./tests/**/*.spec.ts",
+    "test": "mocha ./tests/ --exit",
     "dev": "nodemon dist/index-new.js"
   },
   "author": "",

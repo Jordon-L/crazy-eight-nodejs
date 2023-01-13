@@ -176,7 +176,9 @@ class Game {
         cardstoDiscard = [validCard, ...otherCards];
       }
       this.playerHand.set(player.name, newHand);
-      this.discardPile = [...this.discardPile, ...cardstoDiscard];
+      if(this.currentCard != undefined){
+        this.discardPile = [...this.discardPile, ...this.currentCard];
+      }
       this.currentCard = cardstoDiscard;
       let length = cardstoDiscard.length;
       this.currentSuit = cardstoDiscard[length - 1].suit;
