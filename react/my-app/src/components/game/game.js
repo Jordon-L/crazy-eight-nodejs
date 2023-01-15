@@ -44,7 +44,6 @@ function reducer(state, action) {
   let turn = false;
   let whosTurn = state.whosTurn;
   let message = state.message;
-  let specialMessage = state.specialMessage;
   switch (action.type) {
     case "handleStart":
       if (gameData.whosTurn === state.playerName) {
@@ -61,6 +60,7 @@ function reducer(state, action) {
         twoStack: 0,
         turn: turn,
         gameStatus: 3,
+        specialMessage: "",
       };
     case "handleJoin":
       if (gameData === -1) {

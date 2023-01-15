@@ -31,6 +31,7 @@ export interface GameStateWrapper {
   currentRank?: string;
   master?: string;
   specialMessage?: string;
+  winner?: string;
 }
 
 export interface Message {

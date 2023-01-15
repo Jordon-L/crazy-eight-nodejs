@@ -96,7 +96,6 @@ class Game {
       whosTurn: this.currentTurn,
       currentSuit: this.currentSuit,
       currentRank: this.currentRank,
-      specialMessage: this.specialCardMessage,
     };
   }
   getHandData(): GameStateWrapper {
@@ -158,6 +157,10 @@ class Game {
 
     let hand = this.playerHand.get(player.name);
     if (hand != undefined && this.isValidPlay(cardstoDiscard)) {
+      let players = this.getPlayerNameList();
+      for (let p of players) {
+        displaySpecialMessage(p.getID(), createMessage(""));
+      }
       for (let i = 0; i < cardstoDiscard.length; i++) {
         let card = cardstoDiscard[i];
         this.specialCard(card);

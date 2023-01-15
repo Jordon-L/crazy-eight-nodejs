@@ -30,7 +30,7 @@ class discardAction extends Action {
         cards.push(new Card(i));
       }
       let results = game.discardCards(socketInfo, cards);
-      if(results == true){
+      if (results == true) {
         return game.getGameData(socketInfo);
       }
       return createMessage("Invalid Play");
@@ -137,13 +137,12 @@ class leaveAction extends Action {
           let data = game.getGameData(player);
           dataArray.push(data);
         }
-        if(dataArray.length == 0){
-          return createMessage("Game is empty");   
+        if (dataArray.length == 0) {
+          return createMessage("Game is empty");
         }
         return dataArray;
-      }
-      else {
-        if(master == undefined){
+      } else {
+        if (master == undefined) {
           return createMessage("Game is empty");
         }
         return {
@@ -241,6 +240,31 @@ class updateHandsAction extends Action {
   }
 }
 
+class winAction extends Action {
+  constructor() {
+    super();
+  }
+  execute(
+    socketInfo: SocketInfo,
+    roomController: RoomController,
+    _data: any
+  ): GameStateWrapper | Message {
+    let game = roomController.getGame(socketInfo);
+    if (game != undefined) {
+      let data = game.getGameData(socketInfo);
+      if (data.playerHand!.length == 0) {
+        return {
+          gameId: game!.getID(),
+          players: game!.getPlayerNameList(),
+          playerName: socketInfo.name,
+          winner: socketInfo.name,
+        };
+      }
+    }
+    return createMessage("Game does not exist");
+  }
+}
+
 class ActionHandler {
   roomController: RoomController;
   actions: Map<string, Action>;
@@ -258,6 +282,7 @@ class ActionHandler {
     this.actions.set("create game", new createAction());
     this.actions.set("start game", new startAction());
     this.actions.set("leave game", new leaveAction());
+    this.actions.set("winner", new winAction());
   }
 
   executeAction(

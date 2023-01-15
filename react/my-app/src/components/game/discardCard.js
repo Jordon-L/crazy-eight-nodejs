@@ -6,7 +6,6 @@
 import React, {useContext} from 'react';
 import {SocketContext} from 'context/socket';
 import {GameDataContext} from 'context/gameData';
-import MKButton from "components/materialKit/MKButton";
 function DiscardCard(props) {
     let socket = useContext(SocketContext);
     let gameData = useContext(GameDataContext).state;

@@ -121,6 +121,12 @@ io.on("connection", function (socket) {
       let id = endTurn.gameId as number;
       io.to(id.toString()).emit("end turn", endTurn);
     }
+
+    let winnerData = actionHandler.executeAction("winner", socket.data.data);
+    if(isGameState(winnerData)){
+      let id = winnerData.gameId as number;
+      io.to(id.toString()).emit("winner", winnerData);     
+    }
   }
   socket.on("discard card", function (cards) {
     let data = actionHandler.executeAction(
