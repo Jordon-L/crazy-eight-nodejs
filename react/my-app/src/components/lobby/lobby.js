@@ -7,8 +7,11 @@ import React,{useCallback, useContext, useEffect, useState, useReducer} from 're
 import {SocketContext} from 'context/socket';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {Link} from "react-router-dom";
+import BasicModal from "components/modal/modal"
 const initialState = {
   input: null,
+  lobbyMessage:"",
+  openModal: false,
   gameList: [],
 };
 
@@ -19,6 +22,18 @@ function reducer(state, action) {
       return {
         ...state,
         gameList:payload.gameList,
+      }
+    case 'lobbyMessage':
+      return {
+        ...state,
+        lobbyMessage:payload.message,
+        openModal: true,
+      }
+    case 'closeModal':
+      return {
+        ...state,
+        lobbyMessage:"",
+        openModal: false,
       }
     default:
       throw new Error();
@@ -66,49 +81,55 @@ function Lobby(props){
       return dispatch({type: type, payload: payload});
     }
 
+    function closeModal(){
+      dispatch({type:"closeModal", payload: {}});
+    }
+
     useEffect(() =>{
       socket.on('game list', (payload) =>  handleSocket(payload, 'gameList'));
+      socket.on('lobby message', (payload) =>  handleSocket(payload, 'lobbyMessage'));
       getGames();
+      
       return () => {
         socket.removeAllListeners('game list');
+        socket.removeAllListeners('lobby message');
       }
     },[]);
 
     return (
-        <div id='home'>
-          <div class='back-home'>
-            <Link to="/" ><ArrowBackIcon></ArrowBackIcon></Link>
+        <><div id='home'>
+        <div class='back-home'>
+          <Link to="/"><ArrowBackIcon></ArrowBackIcon></Link>
+        </div>
+        <div class='home-content'>
+          <h1>Lobby</h1>
+          <div class='user-input'>
+            <button class="game-button-input" onClick={create}>Create New Game</button>
+            <p>Enter in Game ID or select from below</p>
+            <input class="game-button-input" type="text" placeholder="Enter Game ID" onChange={event => setInput(event.target.value)} onKeyDown={keyPress}></input>
+            <button class="game-button-input" onClick={join}>Submit</button>
           </div>
-          <div class='home-content'>
-            <h1>Lobby</h1>
-            <div class='user-input'>
-              <button class="game-button-input" onClick={create}>Create New Game</button>
-              <p>Enter in Game ID or select from below</p>
-              <input class="game-button-input" type="text" placeholder="Enter Game ID" onChange={event => setInput(event.target.value) } onKeyDown={keyPress}></input>
-              <button class="game-button-input" onClick={join}>Submit</button>
+          <div id="lobby">
+            <div class="game-rooms">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Game ID</th>
+                    <th>Gamemaster</th>
+                    <th>Capacity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {state.gameList.map((game) => generateRow(game.id, game.master, game.capacity))}
+                </tbody>
+              </table>
             </div>
-            <div id="lobby">
-              <div class="game-rooms">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Game ID</th>
-                      <th>Gamemaster</th>
-                      <th>Capacity</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {state.gameList.map((game) => generateRow(game.id, game.master, game.capacity))}
-                  </tbody>
-                </table>
-              </div>
-              <div class="game-join">
-                <button class="game-button-input" onClick={getGames}>Refresh</button>
-              </div>
+            <div class="game-join">
+              <button class="game-button-input" onClick={getGames}>Refresh</button>
             </div>
           </div>
         </div>
-        
+      </div><BasicModal text={state.lobbyMessage} open={state.openModal} closeModal={closeModal}></BasicModal></>
     )   
 }
 

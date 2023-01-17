@@ -13,7 +13,8 @@ class RoomController {
   }
 
   getGameList() {
-    return Array.from(this.gameList.values());
+    let games = Array.from(this.gameList.values()).filter(game => game.numOfPlayers < 4);
+    return games;
   }
   getIdCounter() {
     this.idCounter++;
@@ -29,12 +30,13 @@ class RoomController {
   joinGame(socketInfo: SocketInfo, gameId: string) {
     let targetGame = this.gameList.get(gameId);
     let player = new Player(socketInfo.name, socketInfo.id);
-    if (targetGame != undefined) {
+    if (targetGame != undefined && targetGame.getNumOfPlayers() < 4) {
       targetGame?.addPlayer(player);
       this.gameList.set(gameId, targetGame);
       this.playerList.set(socketInfo.id, gameId);
+      return targetGame;
     }
-    return targetGame;
+    return undefined;
   }
   leaveGame(socketInfo: SocketInfo) {
     let roomID = this.playerList.get(socketInfo.id);

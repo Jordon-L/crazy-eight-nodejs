@@ -82,6 +82,9 @@ io.on("connection", function (socket) {
       socket.data.data,
       incomingData
     );
+    if (isMessage(data)) {
+      socket.emit("lobby message", data);
+    }
     if (isGameState(data)) {
       socket.emit("room join", data);
       let id = data.gameId as number;
@@ -194,7 +197,8 @@ io.on("connection", function (socket) {
       let id = data.gameId as number;
       io.to(socket.id).emit("leave room");
       socket.leave(id.toString());
-      io.to(id.toString()).emit("room join/update", data);
+      io.to(id.toString()).emit("room update", data);
+      return;
     }
     if (isGameStateArray(data)) {
       for (let d of data) {

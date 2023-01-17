@@ -135,7 +135,6 @@ describe("new Game", function () {
     let card1 = new Card({rank:"3", suit:"C"});
     let card2 = new Card({rank:"3", suit:"H"});
     addCardsToHand(player1,[card1,card2]);
-    console.log(game.currentSuit);
     let results = game.isValidPlay([card1,card2]);
     expect(results).to.equal(true);
     results = game.isValidPlay([card2, card1]);
@@ -150,6 +149,26 @@ describe("new Game", function () {
     results = game.isValidPlay([card2, card1]);
     expect(results).to.equal(false);
   });
+
+  it("shuffle discard pile back into deck 1", function () {
+    let cards = game.deck.drawNCards(game.deck.getLength());
+    let card1 = new Card({rank:"3", suit:"S"});
+    game.playerHand.set(player1.name,[card1]);
+    let card2 = new Card({rank:"8", suit:"S"});
+    game.discardPile = [card2];
+    game.drawCards(player1);
+    expect(game.getGameData(player1).playerHand).to.include(card2);
+  });
+
+  it("shuffle discard pile back into deck, draw multiple cards", function () {
+    let cards = game.deck.drawNCards(game.deck.getLength() - 3);
+    let card1 = new Card({rank:"3", suit:"S"});
+    game.twoStack = 2;
+    game.playerHand.set(player1.name,[card1]);
+    game.discardPile = cards;
+    game.drawCards(player1);  
+    expect(game.getGameData(player1).playerHand.length).to.equal(5);
+  }); 
 
   // ...some more tests
 });

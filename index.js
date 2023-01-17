@@ -113,7 +113,6 @@ function leaveRoom(socket) {
       if (game.whosTurn === socket.playerName && game.started === true) {
         game.nextTurn();
       }
-      console.log(game.players);
 
       let playersInGame = {
         players: Object.values(game.players),

@@ -113,7 +113,7 @@ class joinAction extends Action {
         master: master.name,
       } as GameStateWrapper;
     }
-    return createMessage("Game does not exist");
+    return createMessage("Game does not exist or is full");
   }
 }
 

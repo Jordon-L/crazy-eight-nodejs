@@ -133,6 +133,9 @@ class Game {
     this.playerOrder = this.playerOrder.filter(
       (player) => player.id !== socketInfo.id
     );
+    if(player.ready){
+      this.numReady--;
+    }
     this.numOfPlayers--;
   }
 
@@ -218,9 +221,22 @@ class Game {
           displayMessage(player.id, createMessage(`you have a valid play ${validHand.rank} of ${this.allSuits[validHand.suit]}`))
           return;
         }
+        if(this.deck.getLength() <= 0){
+          
+          this.deck.insertDiscardPile(this.discardPile);
+        }
         hand.push(...this.deck.drawNCards(1));
       } else {
-        hand.push(...this.deck.drawNCards(this.twoStack * 2));
+        if(this.deck.getLength() < this.twoStack * 2){
+          let remaining = this.twoStack * 2 - this.deck.getLength();
+          hand.push(...this.deck.drawNCards(this.deck.getLength()));
+          this.deck.insertDiscardPile(this.discardPile);
+          hand.push(...this.deck.drawNCards(remaining));
+        }
+        else{
+          hand.push(...this.deck.drawNCards(this.twoStack * 2));
+        }
+        
         this.twoStack = 0;
       }
       this.playerHandsLength.set(player.name, hand.length);

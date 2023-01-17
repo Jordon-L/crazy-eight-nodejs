@@ -34,7 +34,7 @@ function PlayerHand(props) {
 
 return (
     <div id = "bottom">
-        <p> You ({props.name})</p>
+        <p class="playerName"> You ({props.name})</p>
         <PlayerActions selected ={clicked} setSelected = {setClicked}></PlayerActions>
         <ul id = 'playerHand'>   
             {cardList.map((item,index) => {
