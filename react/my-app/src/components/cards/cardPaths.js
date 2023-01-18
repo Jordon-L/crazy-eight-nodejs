@@ -11,3 +11,4 @@ export const cardPaths = reqSvgs
     images[path] = reqSvgs ( path )
     return images
 }, {} );
+

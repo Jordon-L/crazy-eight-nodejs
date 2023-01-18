@@ -19,4 +19,5 @@ function DisplaySuit(props) {
   return <p>current suit : <img style={{width: "25px", height: "25px"}} src={currentSuit} alt= {gameData.currentSuit}></img> </p>;
 }
 
+
 export default DisplaySuit;

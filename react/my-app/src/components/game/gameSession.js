@@ -53,7 +53,7 @@ function GameSession(props) {
                 </div>                  
                 <div class='row'>
                   <div class='column'>
-                    <PlayerHand cards = {gameData.playerHand} name = {gameData.playerName}></PlayerHand>
+                    <PlayerHand number = {gameData.playerHand.length} cards = {gameData.playerHand} name = {gameData.playerName} turn = {gameData.whosTurn === gameData.playerName}></PlayerHand>
                   </div>
                 </div> 
                 
