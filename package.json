@@ -5,9 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsc && node dist/index-new.js",
+    "start": "node dist/index-new.js",
     "test": "mocha ./tests/ --exit",
-    "dev": "nodemon dist/index-new.js"
+    "dev": "nodemon dist/index-new.js",
+    "tsc": "tsc",
+    "postinstall": "npm run tsc"
   },
   "author": "",
   "license": "ISC",
