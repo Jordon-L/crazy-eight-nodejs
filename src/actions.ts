@@ -253,10 +253,9 @@ class winAction extends Action {
     if (game != undefined) {
       let data = game.getGameData(socketInfo);
       if (data.playerHand!.length == 0) {
+        game.started = false;
         return {
           gameId: game!.getID(),
-          players: game!.getPlayerNameList(),
-          playerName: socketInfo.name,
           winner: socketInfo.name,
         };
       }

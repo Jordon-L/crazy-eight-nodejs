@@ -171,7 +171,6 @@ function reducer(state, action) {
     case "handleWinner":
       return {
         ...state,
-        players: gameData.players,
         winner: gameData.winner,
         openModal: true,
         gameStatus: 2,
