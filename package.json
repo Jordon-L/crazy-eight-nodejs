@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/index-new.js",
+    "start": "tsc && node dist/index-new.js",
     "test": "mocha ./tests/ --exit",
     "dev": "nodemon dist/index-new.js"
   },
