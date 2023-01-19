@@ -5,9 +5,8 @@
 import React, {useState} from 'react';
 import ClickableCard from 'components/cards/clickableCard'
 import ListItem from 'components/cards/listItem'
-import DiscardCard from 'components/game/discardCard'
-import SelectSuit from 'components/game/selectSuit'
 import PlayerActions from './playerActions';
+import PlayerInfo from 'components/game/playerInfo'
 
 function PlayerHand(props) {
     
@@ -34,7 +33,9 @@ function PlayerHand(props) {
 
 return (
     <div id = "bottom">
-        <p> You ({props.name})</p>
+        <div>
+          <PlayerInfo {...props} ></PlayerInfo>
+        </div>
         <PlayerActions selected ={clicked} setSelected = {setClicked}></PlayerActions>
         <ul id = 'playerHand'>   
             {cardList.map((item,index) => {

@@ -2,7 +2,6 @@
   text-align: center;
 }
 
-
 h1 {
   margin: 30px;
   text-align: center;
@@ -21,21 +20,20 @@ body {
 }
 
 button {
-  background-color:white;
+  background-color: white;
   border-style: solid;
   padding: 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   border-radius: 8px;
-  font-size:36px;
+  font-size: 36px;
   letter-spacing: 1px;
-  font-weight:800;
+  font-weight: 800;
 }
 
-
 button:hover {
-	-webkit-transform: translateY(-2px);
+  -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
   cursor: pointer;
 }
@@ -50,7 +48,6 @@ button:hover {
   min-height: 900px;
   height: 100vh;
   max-height: 1080px;
-
 }
 
 .home-content h1 {
@@ -61,7 +58,7 @@ button:hover {
   font-style: italic;
 }
 
-.home-image{
+.home-image {
   margin-top: 100px;
   margin-bottom: 200px;
 }
@@ -69,11 +66,11 @@ button:hover {
 .home-image img {
   width: 225px;
   height: 315px;
-  margin-left:100px;
+  margin-left: 100px;
 }
 
 .home-image img:first-child {
-  margin-left:0;
+  margin-left: 0;
 }
 
 .login {
@@ -81,75 +78,74 @@ button:hover {
 }
 
 .login button {
-  margin-bottom:50px;
+  margin-bottom: 50px;
 }
 
-#lobby{
-  display:flex;
+#lobby {
+  display: flex;
   justify-content: center;
   flex-wrap: wrap;
   width: 700px;
   height: 700px;
 }
 
-.user-input{
+.user-input {
   text-align: center;
 }
 
 .user-input p {
-  font-size:24px;
+  font-size: 24px;
   font-weight: 800;
 }
 
-.user-input input[type=text]{
-  border-style:solid;
-  border-color:black;
+.user-input input[type="text"] {
+  border-style: solid;
+  border-color: black;
   padding: 10px;
   text-align: center;
   border-radius: 8px;
-  font-size:24px;
+  font-size: 24px;
   font-weight: 800;
   font-family: inherit;
-  margin-right:20px;
+  margin-right: 20px;
 }
 
 .game-button-input {
-  padding:10px;
-  font-size:24px;
+  padding: 10px;
+  font-size: 24px;
 }
 
-.game-rooms{
-  background-color:white;
+.game-rooms {
+  background-color: white;
   align-self: center;
   margin: 10px;
-  height:500px;
-  width:600px;
+  height: 500px;
+  width: 600px;
   overflow-y: scroll;
   border-style: solid;
 }
 
-
-.game-join{
-  height:100px;
-  width:600px;
+.game-join {
+  height: 100px;
+  width: 600px;
 }
 
 .game-rooms table {
   table-layout: fixed;
-  width:100%;
+  width: 100%;
   border-collapse: collapse;
 }
 
-.game-rooms thead{
+.game-rooms thead {
   position: sticky;
   top: 0px;
-  background-color: aliceblue;
+  background-color: #c7f8ff;
 }
 
-.game-rooms tr { 
+.game-rooms tr {
   border: solid;
   border-width: 0px 0px 1px 0px;
-  height:100px;
+  height: 100px;
 }
 
 .game-rooms tbody tr:hover {
@@ -157,35 +153,34 @@ button:hover {
   cursor: pointer;
 }
 
-.game-rooms th{
-  height:50px;
+.game-rooms th {
+  height: 50px;
 }
 
-.game-rooms td{
-  margin:2px;
+.game-rooms td {
+  margin: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-tbody{
+tbody {
   text-align: center;
 }
 
-tbody tr td:first-child{
-  padding-left:10px;
+tbody tr td:first-child {
+  padding-left: 10px;
 }
 
-.game-join{
+.game-join {
   text-align: end;
 }
 
-
-.game-info{
+.game-info {
   text-align: center;
 }
 
-.game-ready{
+.game-ready {
   text-align: end;
   margin: auto;
   width: 50%;
@@ -193,30 +188,25 @@ tbody tr td:first-child{
 }
 
 #game {
-  min-height: 900px;
+  min-height: 700px;
   height: 100vh;
-  margin: auto
+  margin: auto;
 }
 
-.row{
-  display:flex;
+.row {
+  display: flex;
   gap: 10px;
-  margin-bottom:10px;
+  margin-bottom: 10px;
 }
 
 .row-middle {
-  height:400px;
+  height: 400px;
 }
 
-.column{
-  display:flex;
+.column {
+  display: flex;
   flex: 1;
   justify-content: center;
-}
-
-#playerHand {
-  margin-top: 50px;
-  white-space: nowrap;
 }
 
 ul {
@@ -225,6 +215,14 @@ ul {
 
 ul li {
   display: inline;
+}
+
+#top {
+  display: flex;
+}
+
+#top div {
+  margin: 20px;
 }
 
 #bottom {
@@ -238,8 +236,8 @@ ul li {
 }
 
 #right ul {
-  padding-right:40px;
-  padding-left:0px;
+  padding-right: 40px;
+  padding-left: 0px;
 }
 
 #right ul li:first-child {
@@ -262,10 +260,6 @@ ul li {
 
 #left li {
   display: list-item;
-}
-
-#left p {
-  text-align: end;
 }
 
 #inPlay {
@@ -294,8 +288,15 @@ ul li {
   margin-left: 0px;
 }
 
+#inPlay .info {
+  background: #ffffcc;
+  border: 2px solid black;
+  padding: 2px;
+  width: 250px;
+  margin: auto;
+}
 .discard-pile p {
-  margin-top:0px;
+  margin-top: 0px;
 }
 
 #table {
@@ -304,7 +305,7 @@ ul li {
   padding: 10px;
   border-style: solid;
   border-radius: 8px;
-  margin-top:10px;
+  margin-top: 10px;
 }
 
 tr {
@@ -334,87 +335,134 @@ tr td {
   padding-right: 20px;
 }
 
+.playerName {
+  background-color: #c7f8ff;
+  border-radius: 15px;
+  font-size: 20px;
+  text-align: center;
+  min-width: 100px;
+  max-width: 200px;
+  margin: auto;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+@keyframes indicator {
+  0% {
+    background-color: #c7f8ff;
+  }
+  50% {
+    background-color: #efe583;
+  }
+  100% {
+    background-color: #c7f8ff;
+  }
+}
+
+.highlight {
+  animation: indicator 2s linear infinite;
+}
 .numberCard {
-  width: 28.125px;
-  height: 39.375px;
-  padding: 8px;
+  background-color: #ffffcc;
+  width: 36px;
+  height: 48px;
+  margin: auto;
+  border: 2px solid #000;
+  text-align: center;
+  font: 32px Arial, sans-serif;
+  line-height: 1.5;
+}
+
+#bottom .numberCard {
+  margin: 20px auto;
+}
+
+.numberCard:after {
+  content: "0";
+  display: block;
+  position: relative;
+  width: 36px;
+  height: 48px;
+
+  top: -55px;
+  right: 10px;
 
   border: 2px solid black;
   text-align: center;
-  box-shadow: 5px 0 0 -2px black;
   font: 32px Arial, sans-serif;
+  color: #ffffcc;
+  background-color: #ffffcc;
+  z-index: -1;
 }
 
 .message {
-  height:16px;
+  height: 16px;
+}
+
+#playerHand {
+  margin-top: 50px;
 }
 
 .back-home {
   position: absolute;
-  left:0;
-  margin:20px;
-  font-size:40px;
+  left: 0;
+  margin: 20px;
+  font-size: 40px;
 }
 
 .back-home a {
-  color:black;
-}
-
-#left .numberCard{
-  margin-left: auto; 
-  margin-right: 0;
+  color: black;
 }
 
 @media screen and (max-width: 1200px) {
-  .home-content h1{
-    font-size:64px;
-
+  .home-content h1 {
+    font-size: 64px;
   }
   .home-image {
-    margin-top:50px;
-    margin-bottom:100px;
+    margin-top: 50px;
+    margin-bottom: 100px;
   }
 
   .home-image img {
-    width:112.5px;
-    height:157.5px;
-    margin-left:50px;
+    width: 112.5px;
+    height: 157.5px;
+    margin-left: 50px;
   }
 
   button {
-    font-size:24px;
+    font-size: 24px;
   }
-   
-  #lobby{
-    width:400px;
-    height:400px;
+
+  #lobby {
+    width: 400px;
+    height: 400px;
   }
 
   .user-input p {
-    font-size:16px;
+    font-size: 16px;
   }
-  
-  .user-input input[type=text]{
-    font-size:16px;
+
+  .user-input input[type="text"] {
+    font-size: 16px;
   }
-  
+
   .game-button-input {
-    padding:10px;
-    font-size:16px;
+    padding: 10px;
+    font-size: 16px;
   }
 
-  .game-rooms{
-    height:300px;
-    width:400px;
-  }
-  
-  .game-join{
-    height:100px;
-    width:400px;
+  .game-rooms {
+    height: 300px;
+    width: 400px;
   }
 
-  .game-join .game-button-input{
-    margin-right:10px;
+  .game-join {
+    height: 100px;
+    width: 400px;
+  }
+
+  .game-join .game-button-input {
+    margin-right: 10px;
   }
 
   .row-middle {
@@ -434,8 +482,8 @@ tr td {
   #top img {
     width: 90px;
     height: 126px;
-    transform: translateY(0px);  
-  }  
+    transform: translateY(0px);
+  }
 
   img {
     width: 90px;
@@ -447,78 +495,81 @@ tr td {
     height: 50px;
   }
 
-  .text{
-    bottom:140px;
+  .text {
+    bottom: 140px;
   }
 }
 
-@media screen and (max-width: 480px){
-
-  .home-content h1{
-    font-size:40px;
-    margin:10px;
-
+@media screen and (max-width: 480px) {
+  .home-content h1 {
+    font-size: 40px;
+    margin: 10px;
   }
   .home-image {
     text-align: center;
-    margin-top:25px;
-    margin-bottom:50px;
+    margin-top: 25px;
+    margin-bottom: 50px;
   }
 
   .home-image img {
     width: 72px;
     height: 100.8px;
-    margin-left:0px;
+    margin-left: 0px;
   }
 
   button {
-    font-size:24px;
+    font-size: 24px;
   }
-   
-  #lobby{
-    width:100vw;
-    height:400px;
+
+  #lobby {
+    width: 100vw;
+    height: 400px;
   }
 
   .user-input p {
-    font-size:16px;
+    font-size: 16px;
   }
-  
-  .user-input input[type=text]{
-    font-size:16px;
-    margin-right:0px;
+
+  .user-input input[type="text"] {
+    font-size: 16px;
+    margin-right: 0px;
   }
-  
+
   .game-button-input {
-    padding:10px;
-    font-size:16px;
+    padding: 10px;
+    font-size: 16px;
   }
 
-  .game-rooms{
-    height:250px;
-    width:100vw;
+  .game-rooms {
+    height: 250px;
+    width: 100vw;
   }
 
-  .game-rooms tr { 
-    height:50px;
+  .game-rooms tr {
+    height: 50px;
   }
 
-  .game-join{
-    height:100px;
-    width:100vw;
+  .game-join {
+    height: 100px;
+    width: 100vw;
   }
-  .row{
-    gap:0px;
-    margin-bottom:0px;
+  .row {
+    gap: 0px;
+    margin-bottom: 0px;
   }
 
-  .column-center{
-    flex:unset
+  #top div {
+    margin: auto;
   }
-  #right ul,#left ul,#top ul {
+  #right ul,
+  #left ul,
+  #top ul {
     display: none;
   }
-  #right p, #left p, #top p, #bottom p{
+  #right p,
+  #left p,
+  #top p,
+  #bottom p {
     font-size: 12px;
   }
   #right img {
@@ -534,10 +585,10 @@ tr td {
   #top img {
     width: 90px;
     height: 126px;
-    transform: translateY(0px);  
-  }  
+    transform: translateY(0px);
+  }
 
-  #playerHand{
+  #playerHand {
     margin-top: 25px;
   }
 
@@ -551,20 +602,32 @@ tr td {
     height: 50px;
   }
 
-  #table{
-    width:300px;
-  }
-  
-  .game-ready{
-    width:300px;
+  #table {
+    width: 300px;
   }
 
-  .selected{
+  .game-ready {
+    width: 300px;
+  }
+
+  .selected {
     transform: translateY(-5px);
   }
 
-  .text{
-    bottom:100px;
+  .text {
+    bottom: 100px;
+  }
+  #inPlay {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  #inPlay ul {
+    flex: 0 1 50%;
+    padding:0px;
+  }
+  #inPlay .info {
+    flex: 1 0 100%;
   }
 }
 
@@ -581,7 +644,7 @@ tr td {
   #top img {
     width: 100px;
     height: 140px;
-    transform: translateY(0px);  
+    transform: translateY(0px);
   }
   img {
     width: 100px;

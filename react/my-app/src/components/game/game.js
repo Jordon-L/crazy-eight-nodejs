@@ -4,41 +4,50 @@
 
 */
 
-import React,{useCallback, useContext, useEffect, useState, useRef, useReducer} from 'react'
-import io from 'socket.io-client';
-import {SocketContext} from 'context/socket';
-import {GameDataContext} from 'context/gameData';
-import Lobby from 'components/lobby/lobby';
-import PlayerTable from 'components/lobby/playerTable'
-import GameSession from 'components/game/gameSession';
-import MKButton from "components/materialKit/MKButton";
-import { Satellite } from '@mui/icons-material';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useReducer,
+} from "react";
+import io from "socket.io-client";
+import { SocketContext } from "context/socket";
+import { GameDataContext } from "context/gameData";
+import Lobby from "components/lobby/lobby";
+import PlayerTable from "components/lobby/playerTable";
+import GameSession from "components/game/gameSession";
+import BasicModal from "components/modal/modal";
 export const GameContext = React.createContext();
 const socket = io();
 
 const initialState = {
   gameStatus: 1,
   playerHand: [],
-  gameId: 'placeholder',
+  gameId: "placeholder",
   players: [],
   otherHands: [],
-  playerName: '',
+  playerName: "",
   inPlay: [],
   turn: false,
-  whosTurn: '',
+  whosTurn: "",
   showSelectSuit: false,
-  currentSuit: 'placeholder',
+  currentSuit: "placeholder",
   twoStack: 0,
-  message: '',
+  message: "",
+  specialMessage: "",
+  master: "",
 };
 
 function reducer(state, action) {
   let gameData = action.payload;
-  let turn  = false;
+  let turn = false;
   let whosTurn = state.whosTurn;
+  let message = state.message;
   switch (action.type) {
-    case 'handleStart':
-      if(gameData.whosTurn === state.playerName){
+    case "handleStart":
+      if (gameData.whosTurn === state.playerName) {
         turn = true;
       }
       return {
@@ -52,24 +61,46 @@ function reducer(state, action) {
         twoStack: 0,
         turn: turn,
         gameStatus: 3,
-      }
-    case 'handleGameId':
-      if(gameData === -1){
-        console.log('error');
-        return {...state};
+        specialMessage: "",
+      };
+    case "handleJoin":
+      if (gameData === -1) {
+        return { ...state };
       }
       return {
         ...state,
         gameId: gameData.gameId,
         players: gameData.players,
         playerName: gameData.playerName,
-        gameStatus:2,
+        master: gameData.master,
+        gameStatus: 2,
+      };
+    case "handleRoomUpdate":
+      if (gameData === -1) {
+        return { ...state };
       }
-    case 'handleUserChange':
-      if(gameData.whosTurn !== undefined){
+      return {
+        ...state,
+        gameId: gameData.gameId,
+        players: gameData.players,
+        master: gameData.master,
+        gameStatus: 2,
+      };
+    case "handleRoomReady":
+      if (gameData === -1) {
+        return { ...state };
+      }
+      return {
+        ...state,
+        gameId: gameData.gameId,
+        players: gameData.players,
+        gameStatus: 2,
+      };
+    case "handleUserChange":
+      if (gameData.whosTurn !== undefined) {
         whosTurn = gameData.whosTurn;
       }
-      if(gameData.whosTurn === state.playerName){
+      if (gameData.whosTurn === state.playerName) {
         turn = true;
       }
       return {
@@ -78,13 +109,33 @@ function reducer(state, action) {
         otherHands: gameData.otherHands,
         inPlay: gameData.inPlay,
         currentSuit: gameData.currentSuit,
-        whosTurn : whosTurn,
+        whosTurn: whosTurn,
         turn: turn,
         twoStack: gameData.twoStack,
-        showSelectSuit:false,
+        showSelectSuit: false,
+        master: gameData.master,
+      };
+    case "handleTurn":
+      if (gameData.whosTurn !== undefined) {
+        whosTurn = gameData.whosTurn;
       }
-    case 'handleDiscard':
-      if(gameData.whosTurn !== undefined){
+      if (gameData.whosTurn === state.playerName) {
+        turn = true;
+        message = "Your Turn";
+      }
+      return {
+        ...state,
+        otherHands: gameData.otherHands,
+        inPlay: gameData.inPlay,
+        currentSuit: gameData.currentSuit,
+        whosTurn: whosTurn,
+        turn: turn,
+        twoStack: gameData.twoStack,
+        showSelectSuit: false,
+        message: message,
+      };
+    case "handleDiscard":
+      if (gameData.whosTurn !== undefined) {
         whosTurn = gameData.whosTurn;
       }
       return {
@@ -92,162 +143,188 @@ function reducer(state, action) {
         playerHand: gameData.playerHand,
         otherHands: gameData.otherHands,
         inPlay: gameData.inPlay,
-        turn : false,
+        turn: false,
         currentSuit: gameData.currentSuit,
-        whosTurn : whosTurn,
-        message: '',
-      }
-    
-    case 'handleTurn':
-      if(gameData.whosTurn !== undefined){
-        whosTurn = gameData.whosTurn;
-      }
-      if(gameData.whosTurn === state.playerName){
-        turn = true;
-      }
-      return {
-        ...state,
-        otherHands: gameData.otherHands,
-        inPlay: gameData.inPlay,
-        currentSuit: gameData.currentSuit,
-        whosTurn : whosTurn,
-        turn: turn,
-        twoStack: gameData.twoStack,
-        showSelectSuit:false,
-     }
-    case 'handleEightDiscard':
+        whosTurn: whosTurn,
+        message: "",
+      };
+    case "handleEightDiscard":
       return {
         ...state,
         playerHand: gameData.playerHand,
         inPlay: gameData.inPlay,
         showSelectSuit: true,
         turn: false,
-      }
-    case 'handleDraw':
-     return{
-       ...state,
-       playerHand: gameData.playerHand,
-       twoStack: gameData.twoStack,
-     }
-    case 'handleWinner':
-      return{
+      };
+    case "handleDraw":
+      return {
+        ...state,
+        playerHand: gameData.playerHand,
+        twoStack: gameData.twoStack,
+      };
+    case "handleOtherPlayerUpdate":
+      return {
+        ...state,
+        otherHands: gameData.otherHands,
+        twoStack: gameData.twoStack,
+      };
+    case "handleWinner":
+      return {
         ...state,
         players: gameData.players,
+        winner: gameData.winner,
+        openModal: true,
         gameStatus: 2,
-      }
-    case 'handleLeave':
-      return{
+      };
+    case "handleLeave":
+      return {
         ...state,
         gameStatus: 1,
-      }
-    case 'handleMessage':
-      return{
+      };
+    case "handleMessage":
+      return {
         ...state,
         message: gameData.message,
-      }
+      };
+    case "handleSpecialMessage":
+      return {
+        ...state,
+        specialMessage: gameData.message,
+      };
+      case "closeModal":
+        return {
+          ...state,
+          winner: "",
+          openModal: false,
+        };
     default:
       throw new Error();
   }
 }
 
-function Game(props){
-    const [state, dispatch] = useReducer(reducer, initialState);
+function Game(props) {
+  const [state, dispatch] = useReducer(reducer, initialState);
 
- 
+  const onClickReadyButton = function () {
+    socket.volatile.emit("game ready");
+  };
+  const onClickStartButton = function () {
+    socket.volatile.emit("start game");
+  };
+  const onClickLeaveButton = function () {
+    socket.volatile.emit("leave room");
+  };
 
-    const onClickReadyButton = function() {
-      socket.volatile.emit('game ready');
-    } 
-    const onClickLeaveButton = function() {
-      socket.volatile.emit('leave room');
-    } 
+  function handleSocket(payload, type) {
+    return dispatch({ type: type, payload: payload });
+  }
 
-    // const displayMessage = useCallback((message) => {
-    //     alert(message);            
-    // }, []);  
+  function closeModal() {
+    dispatch({ type: "closeModal", payload: {} });
+  }
+  //
+  useEffect(() => {
+    socket.on("start game", (payload) => handleSocket(payload, "handleStart"));
+    socket.on("room join", (payload) => handleSocket(payload, "handleJoin"));
+    socket.on("room update", (payload) =>
+      handleSocket(payload, "handleRoomUpdate")
+    );
+    socket.on("room ready", (payload) =>
+      handleSocket(payload, "handleRoomReady")
+    );
+    socket.on("user change", (payload) =>
+      handleSocket(payload, "handleUserChange")
+    );
+    socket.on("discard card", (payload) =>
+      handleSocket(payload, "handleDiscard")
+    );
+    socket.on("end turn", (payload) => handleSocket(payload, "handleTurn"));
+    socket.on("draw card", (payload) => handleSocket(payload, "handleDraw"));
+    socket.on("update hands", (payload) =>
+      handleSocket(payload, "handleOtherPlayerUpdate")
+    );
+    socket.on("discard eight card", (payload) =>
+      handleSocket(payload, "handleEightDiscard")
+    );
+    socket.on("winner", (payload) => handleSocket(payload, "handleWinner"));
+    socket.on("leave room", (payload) => handleSocket(payload, "handleLeave"));
+    socket.on("display message", (payload) =>
+      handleSocket(payload, "handleMessage")
+    );
+    socket.on("display special message", (payload) =>
+      handleSocket(payload, "handleSpecialMessage")
+    );
+    return () => {
+      socket.removeAllListeners();
+    };
+  }, []);
 
-    // const winner = useCallback((gameData) => {
-    //     alert('game over ' + gameData.winner + ' won');
-    //     setPlayers(gameData.players);
-    //     setGameStatus(2);          
-    // }, []);
+  function display() {
+    switch (state.gameStatus) {
+      case 1:
+        return (
+          <SocketContext.Provider value={socket}>
+            <Lobby></Lobby>
+          </SocketContext.Provider>
+        );
+      case 2:
+        return (
+          <React.Fragment>
+            <SocketContext.Provider value={socket}>
+              <div>
+                <GameContext.Provider value={{ state }}>
+                  <div class="game-info">
+                    <h1>Crazy Eights</h1>
+                    <h3>Game ID: {state.gameId}</h3>
+                    <h3>You are: {state.playerName}</h3>
+                    <button
+                      class="game-button-input"
+                      onClick={onClickLeaveButton}
+                    >
+                      Leave Room
+                    </button>
+                  </div>
+                  <PlayerTable players={state.players}></PlayerTable>
+                </GameContext.Provider>
+                <div class="game-ready">
+                  <button
+                    class="game-button-input"
+                    onClick={onClickReadyButton}
+                  >
+                    Ready
+                  </button>
+                  <button
+                    class="game-button-input"
+                    onClick={onClickStartButton}
+                    disabled={!(state.playerName === state.master)}
+                  >
+                    Start
+                  </button>
+                </div>
+              </div>
+              <BasicModal
+                title={"Winner"}
+                text={state.winner}
+                open={state.openModal}
+                closeModal={closeModal}
+              ></BasicModal>
+            </SocketContext.Provider>
+          </React.Fragment>
+        );
+      case 3:
+        return (
+          <SocketContext.Provider value={socket}>
+            <GameDataContext.Provider value={{ state }}>
+              <GameSession></GameSession>
+            </GameDataContext.Provider>
+          </SocketContext.Provider>
+        );
 
-    function handleSocket(payload, type){
-      console.log('asds');
-      return dispatch({type: type, payload: payload});
+      default:
+        return <div>Error</div>;
     }
-
-    function playAsGuest(){
-      socket.volatile.emit("play as guest");
-    }
-    //
-    useEffect(() => {
-      console.log('useeffect')
-      socket.disconnect().connect();
-      if(state.playerName === ''){
-        playAsGuest();
-      }
-      console.log('tst')
-      socket.on('start game', (payload) => handleSocket(payload, 'handleStart'));
-      socket.on('join', (payload) => handleSocket(payload, 'handleGameId'));
-      socket.on('user change', (payload) => handleSocket(payload, 'handleUserChange'));
-      socket.on('discard card', (payload) => handleSocket(payload, 'handleDiscard'));
-      socket.on('other play turn', (payload) => handleSocket(payload, 'handleTurn'));
-      socket.on('draw card', (payload) => handleSocket(payload, 'handleDraw'));
-      socket.on('discard eight card', (payload) => handleSocket(payload, 'handleEightDiscard'));
-      socket.on('winner', (payload) => handleSocket(payload, 'handleWinner'));
-      socket.on('leave room', (payload) => handleSocket(payload, 'handleLeave'));
-      socket.on('display message', (payload) => handleSocket(payload, 'handleMessage'));
-      return () => {
-        socket.removeAllListeners();
-        //socket.disconnect();
-    }
-    },[]);
-    
-        
-        // socket.on('discard card', handleDiscard);
-        // socket.on('other play turn', handleTurn);
-        // socket.on('discard eight card', handleEightDiscard);
-        // socket.on('display message', displayMessage);
-        //socket.on('winner', winner);
-
-
-    function display(){
-        switch(state.gameStatus) {
-            case 1:
-                return <SocketContext.Provider value ={socket}><Lobby></Lobby></SocketContext.Provider>;
-            case 2:
-                return <React.Fragment>
-                    <SocketContext.Provider value ={socket}>
-                      <div>
-                        <GameContext.Provider value ={{state}}>
-                          <div class='game-info'>     
-                            <h1>Crazy Eights</h1>
-                            <h3>Game ID: {state.gameId}</h3>
-                            <h3>You are: {state.playerName}</h3>
-                            <button class='game-button-input' onClick = {onClickLeaveButton}>Leave Room</button>
-                          </div>
-                          <PlayerTable players = {state.players}></PlayerTable>
-                        </GameContext.Provider>
-                        <div class='game-ready'>
-                          <button class='game-button-input' onClick = {onClickReadyButton}>Ready</button>
-                        </div>
-                      </div>
-                    </SocketContext.Provider>
-                </React.Fragment>;
-             case 3:
-                 return <SocketContext.Provider value ={socket}>
-                    <GameDataContext.Provider value = {{state}}>
-                      <GameSession></GameSession>
-                    </GameDataContext.Provider>
-                  </SocketContext.Provider>
-            default:
-                return <div>Error</div>;
-        }
-    }
-    return (
-        display()
-    )   
+  }
+  return display();
 }
 
 export default Game;
