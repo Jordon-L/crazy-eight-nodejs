@@ -18,6 +18,7 @@ import { GameDataContext } from "context/gameData";
 import Lobby from "components/lobby/lobby";
 import PlayerTable from "components/lobby/playerTable";
 import GameSession from "components/game/gameSession";
+import BasicModal from "components/modal/modal";
 export const GameContext = React.createContext();
 const socket = io();
 
@@ -35,7 +36,7 @@ const initialState = {
   currentSuit: "placeholder",
   twoStack: 0,
   message: "",
-  specialMessage:"",
+  specialMessage: "",
   master: "",
 };
 
@@ -120,7 +121,7 @@ function reducer(state, action) {
       }
       if (gameData.whosTurn === state.playerName) {
         turn = true;
-        message =  "Your Turn";
+        message = "Your Turn";
       }
       return {
         ...state,
@@ -171,6 +172,8 @@ function reducer(state, action) {
       return {
         ...state,
         players: gameData.players,
+        winner: gameData.winner,
+        openModal: true,
         gameStatus: 2,
       };
     case "handleLeave":
@@ -183,10 +186,16 @@ function reducer(state, action) {
         ...state,
         message: gameData.message,
       };
-      case "handleSpecialMessage":
+    case "handleSpecialMessage":
+      return {
+        ...state,
+        specialMessage: gameData.message,
+      };
+      case "closeModal":
         return {
           ...state,
-          specialMessage: gameData.message,
+          winner: "",
+          openModal: false,
         };
     default:
       throw new Error();
@@ -210,6 +219,9 @@ function Game(props) {
     return dispatch({ type: type, payload: payload });
   }
 
+  function closeModal() {
+    dispatch({ type: "closeModal", payload: {} });
+  }
   //
   useEffect(() => {
     socket.on("start game", (payload) => handleSocket(payload, "handleStart"));
@@ -240,8 +252,8 @@ function Game(props) {
       handleSocket(payload, "handleMessage")
     );
     socket.on("display special message", (payload) =>
-    handleSocket(payload, "handleSpecialMessage")
-  );
+      handleSocket(payload, "handleSpecialMessage")
+    );
     return () => {
       socket.removeAllListeners();
     };
@@ -290,6 +302,12 @@ function Game(props) {
                   </button>
                 </div>
               </div>
+              <BasicModal
+                title={"Winner"}
+                text={state.winner}
+                open={state.openModal}
+                closeModal={closeModal}
+              ></BasicModal>
             </SocketContext.Provider>
           </React.Fragment>
         );
@@ -301,6 +319,7 @@ function Game(props) {
             </GameDataContext.Provider>
           </SocketContext.Provider>
         );
+
       default:
         return <div>Error</div>;
     }

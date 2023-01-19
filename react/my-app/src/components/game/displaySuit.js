@@ -16,7 +16,7 @@ let suits = {
 function DisplaySuit(props) {
   let gameData = useContext(GameDataContext).state;
   let currentSuit = suits[gameData.currentSuit].default;
-  return <p>current suit : <img style={{width: "25px", height: "25px"}} src={currentSuit} alt= {gameData.currentSuit}></img> </p>;
+  return <p>current suit : <img style={{width: "50px", height: "50px"}} src={currentSuit} alt= {gameData.currentSuit}></img> </p>;
 }
 
 

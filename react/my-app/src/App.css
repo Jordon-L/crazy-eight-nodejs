@@ -139,7 +139,7 @@ button:hover {
 .game-rooms thead {
   position: sticky;
   top: 0px;
-  background-color: #C7F8FF;
+  background-color: #c7f8ff;
 }
 
 .game-rooms tr {
@@ -188,7 +188,7 @@ tbody tr td:first-child {
 }
 
 #game {
-  min-height: 900px;
+  min-height: 700px;
   height: 100vh;
   margin: auto;
 }
@@ -218,11 +218,11 @@ ul li {
 }
 
 #top {
-  display:flex;
+  display: flex;
 }
 
 #top div {
-  margin:20px;
+  margin: 20px;
 }
 
 #bottom {
@@ -288,6 +288,13 @@ ul li {
   margin-left: 0px;
 }
 
+#inPlay .info {
+  background: #ffffcc;
+  border: 2px solid black;
+  padding: 2px;
+  width: 200px;
+  margin: auto;
+}
 .discard-pile p {
   margin-top: 0px;
 }
@@ -329,63 +336,62 @@ tr td {
 }
 
 .playerName {
-  background-color: #C7F8FF;
+  background-color: #c7f8ff;
   border-radius: 15px;
   font-size: 20px;
   text-align: center;
   min-width: 100px;
   max-width: 200px;
-  margin:auto;
+  margin: auto;
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
 @keyframes indicator {
   0% {
-    background-color: #C7F8FF;
+    background-color: #c7f8ff;
   }
   50% {
-    background-color: #EFE583;
+    background-color: #efe583;
   }
-  100%{
-    background-color: #C7F8FF;
+  100% {
+    background-color: #c7f8ff;
   }
 }
 
 .highlight {
-  animation: indicator ease-in-out 2s infinite
+  animation: indicator 2s linear infinite;
 }
 .numberCard {
-  background-color: beige;
-  width: 20px;
-  height: 32px;
-  padding: 8px;
-  margin:auto;
-  border: 2px solid black;
+  background-color: #ffffcc;
+  width: 36px;
+  height: 48px;
+  margin: auto;
+  border: 2px solid #000;
   text-align: center;
   font: 32px Arial, sans-serif;
+  line-height: 1.5;
 }
 
 #bottom .numberCard {
-  margin:20px auto;
+  margin: 20px auto;
 }
 
 .numberCard:after {
   content: "0";
   display: block;
   position: relative;
-  width: 20px;
-  height: 32px;
-  padding: 8px;
+  width: 36px;
+  height: 48px;
 
   top: -55px;
-  right: 20px;
+  right: 10px;
 
   border: 2px solid black;
   text-align: center;
   font: 32px Arial, sans-serif;
-  color: beige;
-  background-color: beige;
+  color: #ffffcc;
+  background-color: #ffffcc;
   z-index: -1;
 }
 
@@ -552,8 +558,8 @@ tr td {
     margin-bottom: 0px;
   }
 
-  .column-center {
-    flex: unset;
+  #top div {
+    margin: auto;
   }
   #right ul,
   #left ul,
@@ -610,6 +616,18 @@ tr td {
 
   .text {
     bottom: 100px;
+  }
+  #inPlay {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  #inPlay ul {
+    flex: 0 1 50%;
+    padding:0px;
+  }
+  #inPlay .info {
+    flex: 1 0 100%;
   }
 }
 
