@@ -14,7 +14,7 @@ function Home(props){
     return (
         <div id='home'>
           <div class='home-content'>
-            <h1>Crazy Eights</h1>
+            <h1>Crazy Eights V2</h1>
             <div class='home-image'>
               <Card cardName = '8S'></Card>
               <Card cardName = '8H'></Card>
